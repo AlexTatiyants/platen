@@ -1,0 +1,22 @@
+@base-color: #f3f3f3;
+@sans-font: 'Ubuntu';
+@pad-unit: 1em;
+
+body {
+	background-color: @base-color;
+	font-family: @sans-font;	
+}
+
+.preview-panel {
+	background-color: darken(@base-color, 40%);
+	float: right;
+	width: 10%;
+	color: white;
+	padding: @pad-unit * 0.5;
+}
+
+.config-panel {
+	background-color: darken(@base-color, 60%);	
+	color: white;
+	padding: @pad-unit * 0.5;
+}
