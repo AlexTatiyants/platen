@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<script src="lib/mimic.js"></script>
+	<script src="lib/wordpress.min.js"></script>
+	<script src="lib/angular.min.js"></script>
+	<script src="lib/marked.js"></script>
+	<script src="controllers/editor.js"></script>
+	<script src="main.js"></script>
+	<title>Document</title>
+</head>
+<body data-ng-app>
+	<section data-ng-controller="EditorController">
+		<div>
+			<label>title</label>
+			<input type="text" data-ng-model="post.title" placeholder="Enter a name here">
+		</div>
+		<label>Markdown</label>
+		<div>
+			<textarea data-ng-model="post.rawContent"></textarea>
+		</div>
+
+		<label>HTML</label>
+		<textarea style="border: 1px solid red; width: 300px; height: 300px;" data-ng-model="post.htmlContent">
+			
+		</textarea>
+		<button data-ng-click="update()">update</button>
+	</section>
+</body>
+</html>
