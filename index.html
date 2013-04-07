@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="styles/style.css" />ls
+	<script src="vendor/jquery-1.9.1.min.js"></script>
+	<script src="vendor/mimic.js"></script>
+	<script src="vendor/wordpress.min.js"></script>
+	<script src="vendor/angular.min.js"></script>
+	<script src="vendor/marked.js"></script>
+	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="scripts/platen.js"></script>
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700,300italic,400italic,500italic,700italic' rel='stylesheet' type='text/css'>	
+	<title>platen</title>
+</head>
+<body data-ng-app>
+	<section id="post-container" data-ng-controller="EditorController">
+		<edit-panel></edit-panel>
+		<aside class="preview-panel">
+			<div class="collapser">></div>
+		</aside>
+
+		<aside class="config-panel">
+			<a class="collapser" data-toggle="collapse" data-target="#config-options">></a>
+			<section id="config-options" class="collapse">
+				<label>exceprt</label>
+				<textarea id="post-excerpt"></textarea>
+				<label>tags</label>
+				<button class="round-button">+</button>
+				<input type="text" id="tag-list"></input>
+			</section>
+		</aside>
+	</section>
+</body>
+</html>	
