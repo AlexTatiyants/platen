@@ -5,11 +5,13 @@
     pkg: grunt.file.readJSON('package.json'),
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+        compress: false,
+        beautify: true
       },
       build: {
         files: {
-          'scripts/platen.js': ['scripts/**/*.js']
+          'scripts/platen.js': ['scripts/*/*.js', 'scripts/app.js']
         }
       }
     },
