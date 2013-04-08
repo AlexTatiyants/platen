@@ -102,7 +102,10 @@ body, input, textarea, button {
 	background-color: @emphasis-color;
 	position: relative;
 	top: -5px;
-//	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,@emphasis-color), color-stop(100%, darken(@emphasis-color, 10%)));
+}
+
+#post-container {
+	height: 100%;
 }
 
 .collapse {
@@ -117,4 +120,12 @@ body, input, textarea, button {
 
 .collapse.in {
   height: auto;
+}
+
+#status-panel {
+	display: block;
+	font-size: @base-font-size * 0.8;
+	border: 1px red;
+	margin-top: @pad-unit;
+	color: lighten(@text-color, 20%);
 }

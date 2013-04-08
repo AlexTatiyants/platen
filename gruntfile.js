@@ -22,7 +22,11 @@
         options: {
           nospawn: true
         }
-      } 
+      },
+      styles: {
+        files: ['styles/*.less'],
+        tasks: ['less']
+      }
     },
     less: {   
       development: {

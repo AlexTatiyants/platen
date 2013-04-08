@@ -1,4 +1,4 @@
-/*! platen 2013-04-07 */
+/*! platen 2013-04-08 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -6,8 +6,6 @@ angular.module("platen.directives", []);
 angular.module("platen.services", []);
 
 angular.module("platen", [ "platen.directives", "platen.services" ]);
-
-"use strict";
 
 var fs = null;
 
@@ -21,49 +19,51 @@ var fs = null;
 
 var FOLDERNAME = "test";
 
-function writeFile(e) {
-    if (!fs) {
-        return;
-    }
-    fs.root.getDirectory(FOLDERNAME, {
-        create: true
-    }, function(t) {
-        t.getFile(e.title, {
-            create: true,
-            exclusive: false
-        }, function(t) {
-            t.createWriter(function(t) {
-                var r = new Blob([ e.toString() ]);
-                t.onerror = onError;
-                t.onwriteend = function(e) {
-                    console.log("Write completed.");
-                };
-                t.write(r);
-            }, onError);
-        }, onError);
-    }, onError);
-}
-
-var EditorController = function(e, t) {
-    var r = 3e3;
-    e.post = {};
-    e.post.title = "UNTITLED";
-    e.autoSave = function() {
-        console.log("autosaving");
-        writeFile(e.post);
-        n = t(e.autoSave, r);
-    };
-    var n = t(e.autoSave, r);
-    $("#post-title").focus();
-};
-
-EditorController.$inject = [ "$scope", "$timeout" ];
-
 document.addEventListener("DOMContentLoaded", function(e) {
-    window.webkitRequestFileSystem(TEMPORARY, 1024 * 1024, function(e) {
+    window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(e) {
         fs = e;
     }, onError);
 });
+
+"use strict";
+
+var EditorController = function(e, t, r) {
+    var n = 6e3;
+    e.post = {};
+    e.status = {};
+    e.post.title = "UNTITLED";
+    e.autoSave = function() {
+        o(e.post);
+        i = t(e.autoSave, n);
+    };
+    var i = t(e.autoSave, n);
+    var o = function(t) {
+        if (!fs) {
+            return;
+        }
+        fs.root.getDirectory(FOLDERNAME, {
+            create: true
+        }, function(n) {
+            n.getFile(t.title, {
+                create: true,
+                exclusive: false
+            }, function(n) {
+                console.log(n);
+                n.createWriter(function(n) {
+                    var i = new Blob([ t.toString() ]);
+                    n.onerror = onError;
+                    n.onwriteend = function(t) {
+                        e.status.autoSaveTime = r("date")(new Date(), "shortTime");
+                    };
+                    n.write(i);
+                }, onError);
+            }, onError);
+        }, onError);
+    };
+    $("#post-title").focus();
+};
+
+EditorController.$inject = [ "$scope", "$timeout", "$filter" ];
 
 "use strict";
 
@@ -85,5 +85,12 @@ angular.module("platen.directives").directive("configPanel", function() {
     return {
         restrict: "E",
         templateUrl: "views/config-panel.html"
+    };
+});
+
+angular.module("platen.directives").directive("statusPanel", function() {
+    return {
+        restrict: "E",
+        templateUrl: "views/status-panel.html"
     };
 });

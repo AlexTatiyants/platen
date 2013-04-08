@@ -10,7 +10,7 @@
     },
     "permissions": [
       "fileSystem",
-      "storage",
+      "unlimitedStorage",
       "http://*/",
       "https://*/"
     ],

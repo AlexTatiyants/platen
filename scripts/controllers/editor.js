@@ -1,50 +1,19 @@
 'use strict';
 
-var fs = null;
-var FOLDERNAME = 'platen';
 
-function onError(e) {
-  console.log(e);
-}
 
-var fs = null;
-var FOLDERNAME = 'test';
+var EditorController = function($scope, $timeout, $filter) {
+  var AUTOSAVE_INTERVAL = 6000;
 
-function writeFile(post) {
-  if (!fs) {
-    return;
+  $scope.post = {};
+  $scope.status = {};
+  $scope.post.title='UNTITLED';
+
+  $scope.autoSave = function(){
+    writeFile($scope.post);
+    t = $timeout($scope.autoSave,AUTOSAVE_INTERVAL);
   }
-
-  fs.root.getDirectory(FOLDERNAME, {create: true}, function(dirEntry) {
-    dirEntry.getFile(post.title, {create: true, exclusive: false}, function(fileEntry) {
-      // Create a FileWriter object for our FileEntry, and write out blob.
-
-      fileEntry.createWriter(function(fileWriter) {
-        var blob = new Blob([post.toString()]);
-
-        fileWriter.onerror = onError;
-        fileWriter.onwriteend = function(e) {
-          console.log('Write completed.');
-        };
-        fileWriter.write(blob);
-      }, onError);
-    }, onError);
-  }, onError);
-}
-
-var EditorController = function($scope, $timeout) {
-    var AUTOSAVE_INTERVAL = 3000;
-
-    $scope.post = {};
-
-    $scope.post.title='UNTITLED';
-
-    $scope.autoSave = function(){
-        console.log("autosaving");
-        writeFile($scope.post);
-        t = $timeout($scope.autoSave,AUTOSAVE_INTERVAL);
-    }
-    var t = $timeout($scope.autoSave,AUTOSAVE_INTERVAL);
+  var t = $timeout($scope.autoSave,AUTOSAVE_INTERVAL);
 
 
 	// $scope.update = function () {
@@ -52,14 +21,34 @@ var EditorController = function($scope, $timeout) {
 	// 	console.log($scope.post);
 	// }
 
-	$('#post-title').focus();
+
+  var writeFile = function(post) {
+    if (!fs) {
+      return;
+    }
+
+    fs.root.getDirectory(FOLDERNAME, {create: true}, function(dirEntry) {
+      dirEntry.getFile(post.title, {create: true, exclusive: false}, function(fileEntry) {
+
+        console.log(fileEntry);
+        
+        fileEntry.createWriter(function(fileWriter) {
+
+          var blob = new Blob([post.toString()]);
+
+          fileWriter.onerror = onError;
+          fileWriter.onwriteend = function(e) {
+
+            $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
+          };
+          fileWriter.write(blob);
+        }, onError);
+      }, onError);
+    }, onError);
+  };
+
+
+  $('#post-title').focus();
 };
 
-EditorController.$inject = ['$scope', '$timeout'];
-
-
-document.addEventListener('DOMContentLoaded', function(e) {
-  window.webkitRequestFileSystem(TEMPORARY, 1024 * 1024, function(localFs) {
-    fs = localFs;
-  }, onError);
-});
+EditorController.$inject = ['$scope', '$timeout', '$filter'];

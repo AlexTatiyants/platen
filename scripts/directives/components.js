@@ -20,3 +20,10 @@ angular.module('platen.directives').directive('configPanel', function() {
         templateUrl: 'views/config-panel.html'
     }
 });
+
+angular.module('platen.directives').directive('statusPanel', function() {
+    return {
+        restrict: 'E',
+        templateUrl: 'views/status-panel.html'
+    }
+});
