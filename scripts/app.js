@@ -1,2 +1,5 @@
-angular.module('platen', ['components']);
-//
+'use strict';
+
+angular.module('platen.directives', []);
+angular.module('platen', ['platen.directives']);
+

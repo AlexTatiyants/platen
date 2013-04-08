@@ -11,7 +11,7 @@
       },
       build: {
         files: {
-          'scripts/platen.js': ['scripts/*/*.js', 'scripts/app.js']
+          'scripts/platen.js': ['scripts/app.js', 'scripts/*/*.js']
         }
       }
     },

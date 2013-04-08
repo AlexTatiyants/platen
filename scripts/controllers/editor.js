@@ -1,8 +1,9 @@
+'use strict';
+
 var EditorController = function($scope) {
 
 	$scope.post = {};
 
-// new
 	$scope.update = function () {
 		$scope.post.htmlContent = marked($scope.post.rawContent);
 		console.log($scope.post);
@@ -10,3 +11,5 @@ var EditorController = function($scope) {
 
 	$('#post-title').focus();
 };
+
+EditorController.$inject = ['$scope'];

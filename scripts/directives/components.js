@@ -1,20 +1,22 @@
-angular.module('components', [])
-.directive('editPanel', function() {
+'use strict';
+
+angular.module('platen.directives').directive('editPanel', function() {
     return {
         restrict: 'E',
         templateUrl: 'views/edit-panel.html'
     }
-})
-.directive('previewPanel', function() {
+});
+
+angular.module('platen.directives').directive('previewPanel', function() {
     return {
         restrict: 'E',
         templateUrl: 'views/preview-panel.html'
     }
-})
-.directive('configPanel', function() {
+});
+
+angular.module('platen.directives').directive('configPanel', function() {
     return {
         restrict: 'E',
         templateUrl: 'views/config-panel.html'
     }
-})
-;
+});
