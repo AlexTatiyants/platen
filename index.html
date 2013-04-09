@@ -14,10 +14,9 @@
 	<title>platen</title>
 </head>
 <body data-ng-app="platen">
-	<section id="post-container" data-ng-controller="EditorController">
-		<edit-panel></edit-panel>
-		<preview-panel></preview-panel>
-		<config-panel></config-panel>		
-	</section>
+	<div data-ng-controller="MainController">
+		<a href="#" data-ng-click="getPosts()">posts</a>
+		<a href="#" data-ng-click="getPost(123)">post 123</a>
+	</div>
 </body>
 </html>	

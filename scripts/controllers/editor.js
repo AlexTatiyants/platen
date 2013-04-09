@@ -1,11 +1,11 @@
 'use strict';
 
-
-
 var EditorController = function($scope, $timeout, $filter) {
   var AUTOSAVE_INTERVAL = 6000;
 
   $scope.post = {};
+
+  $scope.post.id = new Date().getTime();
   $scope.status = {};
   $scope.post.title='UNTITLED';
 
@@ -21,16 +21,13 @@ var EditorController = function($scope, $timeout, $filter) {
 	// 	console.log($scope.post);
 	// }
 
-
   var writeFile = function(post) {
     if (!fs) {
       return;
     }
 
     fs.root.getDirectory(FOLDERNAME, {create: true}, function(dirEntry) {
-      dirEntry.getFile(post.title, {create: true, exclusive: false}, function(fileEntry) {
-
-        console.log(fileEntry);
+      dirEntry.getFile(post.id, {create: true, exclusive: false}, function(fileEntry) {
         
         fileEntry.createWriter(function(fileWriter) {
 
@@ -38,7 +35,6 @@ var EditorController = function($scope, $timeout, $filter) {
 
           fileWriter.onerror = onError;
           fileWriter.onwriteend = function(e) {
-
             $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
           };
           fileWriter.write(blob);
@@ -46,7 +42,6 @@ var EditorController = function($scope, $timeout, $filter) {
       }, onError);
     }, onError);
   };
-
 
   $('#post-title').focus();
 };
