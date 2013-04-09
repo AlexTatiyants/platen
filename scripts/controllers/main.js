@@ -2,15 +2,15 @@
 
 var MainController = function($scope, $location) {
 
-    $scope.getPosts = function() {
-        console.log("in posts");
-        $location.path('posts/');
-    };
+	$scope.getPosts = function() {
+		$location.path('posts/');
+		console.log($location);
+	};
 
-    $scope.getPost = function(id) {
-        console.log("in post " + id);
-        $location.path('posts/' + id);
-    };
+	$scope.getPost = function(id) {
+		$location.path('posts/' + id);
+		console.log($location);
+	};
 
 };
 

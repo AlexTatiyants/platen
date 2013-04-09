@@ -4,11 +4,15 @@
   "version": "0.1",
   "manifest_version": 2,
   "app": {
+      // "background": {
+      //   "scripts": ["main.js"]
+      // }
     "launch": {
       "local_path": "index.html"
     }
     },
     "permissions": [
+      "experimental",
       "fileSystem",
       "unlimitedStorage",
       "http://*/",

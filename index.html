@@ -6,17 +6,22 @@
 	<script src="vendor/jquery-1.9.1.min.js"></script>
 	<script src="vendor/mimic.js"></script>
 	<script src="vendor/wordpress.min.js"></script>
-	<script src="vendor/angular.min.js"></script>
+	<script src="vendor/angular.min.1.1.4.js"></script>
 	<script src="vendor/marked.js"></script>
 	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 	<script src="scripts/platen.js"></script>
 	<link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700,300italic,400italic,500italic,700italic' rel='stylesheet' type='text/css'>	
 	<title>platen</title>
 </head>
-<body data-ng-app="platen">
+<body data-ng-app="platen" data-ng-csp>
 	<div data-ng-controller="MainController">
-		<a href="#" data-ng-click="getPosts()">posts</a>
-		<a href="#" data-ng-click="getPost(123)">post 123</a>
+		<button data-ng-click="getPosts()">posts</button>
+		<button data-ng-click="getPost(123)">post 123</button>
+
+
+		<a href="#/posts">posts</a>
+
+		<a href="views/pages/edit.html">test</a>
 	</div>
 </body>
 </html>	

@@ -1,4 +1,4 @@
-/*! platen 2013-04-08 */
+/*! platen 2013-04-09 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -6,7 +6,6 @@ angular.module("platen.directives", []);
 angular.module("platen.services", []);
 
 angular.module("platen", [ "platen.directives", "platen.services" ]).config([ "$routeProvider", function(t) {
-    t.when("bad");
     t.when("/posts", {
         templateUrl: "views/pages/posts.html",
         controller: PostsController
@@ -82,12 +81,12 @@ EditorController.$inject = [ "$scope", "$timeout", "$filter" ];
 
 var MainController = function(t, e) {
     t.getPosts = function() {
-        console.log("in posts");
         e.path("posts/");
+        console.log(e);
     };
     t.getPost = function(t) {
-        console.log("in post " + t);
         e.path("posts/" + t);
+        console.log(e);
     };
 };
 
