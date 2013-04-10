@@ -1,11 +1,11 @@
-/*! platen 2013-04-09 */
+/*! platen 2013-04-10 */
 "use strict";
 
 angular.module("platen.directives", []);
 
 angular.module("platen.services", []);
 
-angular.module("platen", [ "platen.directives", "platen.services" ]).config([ "$routeProvider", function(t) {
+var platen = angular.module("platen", [ "platen.directives", "platen.services" ]).config([ "$routeProvider", function(t) {
     t.when("/posts", {
         templateUrl: "views/pages/posts.html",
         controller: PostsController
@@ -14,8 +14,12 @@ angular.module("platen", [ "platen.directives", "platen.services" ]).config([ "$
         templateUrl: "views/pages/edit.html",
         controller: EditorController
     });
+    t.when("/login", {
+        templateUrl: "views/pages/login.html",
+        controller: LoginController
+    });
     t.otherwise({
-        redirectTo: "/posts"
+        redirectTo: "/login"
     });
 } ]);
 
@@ -37,37 +41,35 @@ document.addEventListener("DOMContentLoaded", function(t) {
     }, onError);
 });
 
-"use strict";
-
 var EditorController = function(t, e, r) {
-    var n = 6e3;
+    var o = 6e3;
     t.post = {};
     t.post.id = new Date().getTime();
     t.status = {};
     t.post.title = "UNTITLED";
     t.autoSave = function() {
         i(t.post);
-        o = e(t.autoSave, n);
+        n = e(t.autoSave, o);
     };
-    var o = e(t.autoSave, n);
+    var n = e(t.autoSave, o);
     var i = function(e) {
         if (!fs) {
             return;
         }
         fs.root.getDirectory(FOLDERNAME, {
             create: true
-        }, function(n) {
-            n.getFile(e.id, {
+        }, function(o) {
+            o.getFile(e.id, {
                 create: true,
                 exclusive: false
-            }, function(n) {
-                n.createWriter(function(n) {
-                    var o = new Blob([ e.toString() ]);
-                    n.onerror = onError;
-                    n.onwriteend = function(e) {
+            }, function(o) {
+                o.createWriter(function(o) {
+                    var n = new Blob([ e.toString() ]);
+                    o.onerror = onError;
+                    o.onwriteend = function(e) {
                         t.status.autoSaveTime = r("date")(new Date(), "shortTime");
                     };
-                    n.write(o);
+                    o.write(n);
                 }, onError);
             }, onError);
         }, onError);
@@ -77,26 +79,14 @@ var EditorController = function(t, e, r) {
 
 EditorController.$inject = [ "$scope", "$timeout", "$filter" ];
 
-"use strict";
-
-var MainController = function(t, e) {
-    t.getPosts = function() {
-        e.path("posts/");
-        console.log(e);
-    };
-    t.getPost = function(t) {
-        e.path("posts/" + t);
-        console.log(e);
-    };
+var LoginController = function(t) {
+    t.login = {};
 };
 
-MainController.$inject = [ "$scope", "$location" ];
-
-"use strict";
+LoginController.$inject = [ "$scope" ];
 
 var PostsController = function(t) {
     t.posts = {};
-    t.posts.count = 10;
 };
 
 PostsController.$inject = [ "$scope" ];
@@ -130,10 +120,3 @@ angular.module("platen.directives").directive("statusPanel", function() {
         templateUrl: "views/partials/status-panel.html"
     };
 });
-
-"use strict";
-
-var PostsController = function(t) {
-    t.posts = {};
-    t.posts.count = 14;
-};

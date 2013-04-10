@@ -1,0 +1,21 @@
+@base-color: #f3f3f3;
+@text-color: darken(@base-color, 60%);
+@line-color: darken(@base-color, 10%);
+@sans-font: 'Ubuntu', sans-serif;
+@pad-unit: 20px;
+@base-font-size: 16px;
+@base-line-height: 25px;
+@emphasis-color: #cc0000;
+
+
+.btn {
+    border-radius: 5px;
+    border: 0px;
+    color: white;
+    padding: @pad-unit * 0.2;
+    font-weight: 600;
+    line-height: @base-font-size * 1.8;
+    background-color: @emphasis-color;
+    position: relative;
+    top: -5px;
+}

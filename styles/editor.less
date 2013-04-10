@@ -1,0 +1,96 @@
+#post-container {
+    height: 100%;
+}
+
+.preview-panel {
+    background-color: darken(@base-color, 40%);
+    float: right;
+    width: 4%;
+    height: 97%;
+
+    color: white;
+    padding: @pad-unit * 0.5;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+
+.config-panel {
+    background-color: darken(@base-color, 60%);
+    color: white;
+    padding: @pad-unit * 0.5;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+.edit-panel {
+    padding: @pad-unit;
+    height: 90%;
+    margin: auto;
+    max-width: 960px;
+    width: 80%;
+}
+
+.collapser {
+    display: block;
+    border-radius: 50%;
+    border: 2px solid white;
+    width: @pad-unit * 1.5;
+    height: @pad-unit * 1.5;
+    text-align: center;
+}
+
+#post-title {
+    width: 80%;
+    background-color: @base-color;
+    border: 1px dotted @line-color;
+    font-size: @base-font-size * 1.4;
+    font-weight: 600;
+    margin-bottom: @pad-unit;
+    margin-right: 1%;
+    padding: @pad-unit * 0.6;
+}
+
+#post-content {
+    width: 93%;
+    height: 70%;
+    background-color: @base-color;
+    border: 1px dotted @line-color;
+    padding: @pad-unit * 0.6;
+    font-size: @base-font-size * 1.1;
+    line-height: @base-line-height;
+    resize: none;
+    outline: none;
+}
+
+#publish-button {
+    width: 10%;
+}
+
+#post-container {
+    height: 100%;
+}
+
+.collapse {
+  position: relative;
+  height: 0;
+  overflow: hidden;
+  -webkit-transition: height 0.35s ease;
+     -moz-transition: height 0.35s ease;
+       -o-transition: height 0.35s ease;
+          transition: height 0.35s ease;
+}
+
+.collapse.in {
+  height: auto;
+}
+
+#status-panel {
+    display: block;
+    font-size: @base-font-size * 0.8;
+    border: 1px red;
+    margin-top: @pad-unit;
+    color: lighten(@text-color, 20%);
+}

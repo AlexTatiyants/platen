@@ -1,5 +1,3 @@
-'use strict';
-
 var EditorController = function($scope, $timeout, $filter) {
   var AUTOSAVE_INTERVAL = 6000;
 
@@ -28,7 +26,7 @@ var EditorController = function($scope, $timeout, $filter) {
 
     fs.root.getDirectory(FOLDERNAME, {create: true}, function(dirEntry) {
       dirEntry.getFile(post.id, {create: true, exclusive: false}, function(fileEntry) {
-        
+
         fileEntry.createWriter(function(fileWriter) {
 
           var blob = new Blob([post.toString()]);
