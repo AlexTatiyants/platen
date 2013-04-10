@@ -2,17 +2,18 @@
     border: 1px solid @line-color;
     border-radius: @pad-unit * 0.3;
     margin: auto;
-    width: 40%;
+    width: 60%;
     margin-top: @pad-unit * 3;
     padding: @pad-unit;
     overflow: hidden;
 
     button {
         margin: auto;
-        padding-left: @pad-init;
-        padding-right: @pad-init;
+        padding-left: @pad-unit;
+        padding-right: @pad-unit;
+        display: block;
+        width: 60%;
     }
-
 }
 
 .control-group {
@@ -21,7 +22,11 @@
 
     input {
         float: right;
-        border: 2px solid @line-color;
+        border: 1px solid @line-color;
+        line-height: @base-line-height;
+        font-size: @base-font-size * 1.2;
+        padding: @pad-unit * 0.3;
+        background-color: lighten(@base-color,4%);
     }
 
     label {

@@ -5,20 +5,20 @@ angular.module("platen.directives", []);
 
 angular.module("platen.services", []);
 
-var platen = angular.module("platen", [ "platen.directives", "platen.services" ]).config([ "$routeProvider", function(t) {
-    t.when("/posts", {
+var platen = angular.module("platen", [ "platen.directives", "platen.services" ]).config([ "$routeProvider", function(e) {
+    e.when("/posts", {
         templateUrl: "views/pages/posts.html",
         controller: PostsController
     });
-    t.when("/posts/:postId", {
+    e.when("/posts/:postId", {
         templateUrl: "views/pages/edit.html",
         controller: EditorController
     });
-    t.when("/login", {
+    e.when("/login", {
         templateUrl: "views/pages/login.html",
         controller: LoginController
     });
-    t.otherwise({
+    e.otherwise({
         redirectTo: "/login"
     });
 } ]);
@@ -27,49 +27,49 @@ var fs = null;
 
 var FOLDERNAME = "platen";
 
-function onError(t) {
-    console.log(t);
+function onError(e) {
+    console.log(e);
 }
 
 var fs = null;
 
 var FOLDERNAME = "test";
 
-document.addEventListener("DOMContentLoaded", function(t) {
-    window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(t) {
-        fs = t;
+document.addEventListener("DOMContentLoaded", function(e) {
+    window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(e) {
+        fs = e;
     }, onError);
 });
 
-var EditorController = function(t, e, r) {
-    var o = 6e3;
-    t.post = {};
-    t.post.id = new Date().getTime();
-    t.status = {};
-    t.post.title = "UNTITLED";
-    t.autoSave = function() {
-        i(t.post);
-        n = e(t.autoSave, o);
+var EditorController = function(e, t, r) {
+    var n = 6e3;
+    e.post = {};
+    e.post.id = new Date().getTime();
+    e.status = {};
+    e.post.title = "UNTITLED";
+    e.autoSave = function() {
+        i(e.post);
+        o = t(e.autoSave, n);
     };
-    var n = e(t.autoSave, o);
-    var i = function(e) {
+    var o = t(e.autoSave, n);
+    var i = function(t) {
         if (!fs) {
             return;
         }
         fs.root.getDirectory(FOLDERNAME, {
             create: true
-        }, function(o) {
-            o.getFile(e.id, {
+        }, function(n) {
+            n.getFile(t.id, {
                 create: true,
                 exclusive: false
-            }, function(o) {
-                o.createWriter(function(o) {
-                    var n = new Blob([ e.toString() ]);
-                    o.onerror = onError;
-                    o.onwriteend = function(e) {
-                        t.status.autoSaveTime = r("date")(new Date(), "shortTime");
+            }, function(n) {
+                n.createWriter(function(n) {
+                    var o = new Blob([ t.toString() ]);
+                    n.onerror = onError;
+                    n.onwriteend = function(t) {
+                        e.status.autoSaveTime = r("date")(new Date(), "shortTime");
                     };
-                    o.write(n);
+                    n.write(o);
                 }, onError);
             }, onError);
         }, onError);
@@ -79,14 +79,14 @@ var EditorController = function(t, e, r) {
 
 EditorController.$inject = [ "$scope", "$timeout", "$filter" ];
 
-var LoginController = function(t) {
-    t.login = {};
+var LoginController = function(e) {
+    e.login = {};
 };
 
 LoginController.$inject = [ "$scope" ];
 
-var PostsController = function(t) {
-    t.posts = {};
+var PostsController = function(e) {
+    e.posts = {};
 };
 
 PostsController.$inject = [ "$scope" ];
