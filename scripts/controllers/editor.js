@@ -1,10 +1,9 @@
-var EditorController = function($scope, $timeout, $filter) {
+var EditorController = function($scope, $timeout, $filter, fileManager) {
   var AUTOSAVE_INTERVAL = 6000;
 
   $scope.post = {};
   $scope.status = {};
 
-  $scope.post.id = new Date().getTime();
   $scope.post.title = 'UNTITLED';
 
   // $scope.autoSave = function() {
@@ -20,33 +19,17 @@ var EditorController = function($scope, $timeout, $filter) {
   // }
 
   $scope.writeFile = function() {
-
-    if (!fs) {
-      return;
+    if (!$scope.post.id) {
+      $scope.post.id = new Date().getTime();
     }
 
-    fs.root.getDirectory(POSTS_FOLDER_PATH, {
-      create: true
-    }, function(dirEntry) {
-      dirEntry.getFile($scope.post.id, { create: true, exclusive: false }, function(fileEntry) {
-
-        fileEntry.createWriter(function(fileWriter) {
-
-          $scope.post.savedAt = new Date();
-          var contents = JSON.stringify($scope.post);
-          var blob = new Blob([contents], {type:'text/javascript'});
-
-          fileWriter.onerror = onError;
-          fileWriter.onwriteend = function(e) {
-            $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
-          };
-          fileWriter.write(blob);
-        }, onError);
-      }, onError);
-    }, onError);
+    console.log($scope.post);
+    fileManager.writeFile($scope.post.id, JSON.stringify($scope.post), function(e) {
+      $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
+    });
   };
 
   $('#post-title').focus();
 };
 
-EditorController.$inject = ['$scope', '$timeout', '$filter'];
+EditorController.$inject = ['$scope', '$timeout', '$filter', 'fileManager'];

@@ -1,41 +1,17 @@
-var PostsController = function($scope) {
-    $scope.posts = [];
+var PostsController = function($scope, $q, fileManager) {
+  $scope.posts = [];
 
-    $scope.removePost = function(post) {
-    };
+  $scope.loaded = false;
 
-    $scope.loadPosts = function() {
-        fs.root.getDirectory(POSTS_FOLDER_PATH, {}, function(dirEntry) {
-            var dirReader = dirEntry.createReader();
-            dirReader.readEntries(function(entries) {
-                for (var i = 0; i < entries.length; i++) {
-                    var entry = entries[i];
-                    if (entry.isFile) {
-
-                        console.log('File', entry);
-
-
-                        fs.root.getFile(entry.fullPath, {}, function(fileEntry) {
-                            fileEntry.file(function(file) {
-                                var reader = new FileReader();
-                                reader.onloadend = function(e) {
-                                    var post = JSON.parse(this.result);
-
-                                    $scope.posts.push(post);
-
-                                    console.log(post);
-                                };
-                                reader.readAsText(file);
-                            }, onError);
-                        }, onError);
-
-
-                    }
-                }
-
-            }, onError);
-        }, onError);
-    };
+  if (!$scope.loaded) {
+    console.log("loading posts");
+    fileManager.readFiles(function(e) {
+      var post = JSON.parse(this.result);
+      $scope.posts.push(post);
+      $scope.loaded = true;
+      $scope.$apply();
+    });
+  };
 };
 
-PostsController.$inject = ['$scope'];
+PostsController.$inject = ['$scope', '$q', 'fileManager'];
