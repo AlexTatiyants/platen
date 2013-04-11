@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('platen.directives').directive('editPanel', function() {
     return {
         restrict: 'E',

@@ -20,22 +20,18 @@ var platen = angular.module('platen', ['platen.directives', 'platen.services']).
 		controller: LoginController
 	});
 
-	$routeProvider.otherwise({redirectTo: '/login'});
+	$routeProvider.otherwise({redirectTo: '/posts'});
 }]);
 
 
 //TODO: convert to angular service
 var fs = null;
-var FOLDERNAME = 'platen';
+var POSTS_FOLDER_PATH = 'posts';
+
 
 function onError(e) {
 	console.log(e);
 }
-
-var fs = null;
-var FOLDERNAME = 'test';
-
-
 
 document.addEventListener('DOMContentLoaded', function(e) {
 	window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(localFs) {

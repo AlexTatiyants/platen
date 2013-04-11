@@ -1,4 +1,4 @@
-/*! platen 2013-04-10 */
+/*! platen 2013-04-11 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -19,21 +19,17 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services" ]
         controller: LoginController
     });
     e.otherwise({
-        redirectTo: "/login"
+        redirectTo: "/posts"
     });
 } ]);
 
 var fs = null;
 
-var FOLDERNAME = "platen";
+var POSTS_FOLDER_PATH = "posts";
 
 function onError(e) {
     console.log(e);
 }
-
-var fs = null;
-
-var FOLDERNAME = "test";
 
 document.addEventListener("DOMContentLoaded", function(e) {
     window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(e) {
@@ -42,34 +38,33 @@ document.addEventListener("DOMContentLoaded", function(e) {
 });
 
 var EditorController = function(e, t, r) {
-    var n = 6e3;
+    var o = 6e3;
     e.post = {};
-    e.post.id = new Date().getTime();
     e.status = {};
+    e.post.id = new Date().getTime();
     e.post.title = "UNTITLED";
-    e.autoSave = function() {
-        i(e.post);
-        o = t(e.autoSave, n);
-    };
-    var o = t(e.autoSave, n);
-    var i = function(t) {
+    e.writeFile = function() {
         if (!fs) {
             return;
         }
-        fs.root.getDirectory(FOLDERNAME, {
+        fs.root.getDirectory(POSTS_FOLDER_PATH, {
             create: true
-        }, function(n) {
-            n.getFile(t.id, {
+        }, function(t) {
+            t.getFile(e.post.id, {
                 create: true,
                 exclusive: false
-            }, function(n) {
-                n.createWriter(function(n) {
-                    var o = new Blob([ t.toString() ]);
-                    n.onerror = onError;
-                    n.onwriteend = function(t) {
+            }, function(t) {
+                t.createWriter(function(t) {
+                    e.post.savedAt = new Date();
+                    var o = JSON.stringify(e.post);
+                    var n = new Blob([ o ], {
+                        type: "text/javascript"
+                    });
+                    t.onerror = onError;
+                    t.onwriteend = function(t) {
                         e.status.autoSaveTime = r("date")(new Date(), "shortTime");
                     };
-                    n.write(o);
+                    t.write(n);
                 }, onError);
             }, onError);
         }, onError);
@@ -86,12 +81,35 @@ var LoginController = function(e) {
 LoginController.$inject = [ "$scope" ];
 
 var PostsController = function(e) {
-    e.posts = {};
+    e.posts = [];
+    e.removePost = function(e) {};
+    e.loadPosts = function() {
+        fs.root.getDirectory(POSTS_FOLDER_PATH, {}, function(t) {
+            var r = t.createReader();
+            r.readEntries(function(t) {
+                for (var r = 0; r < t.length; r++) {
+                    var o = t[r];
+                    if (o.isFile) {
+                        console.log("File", o);
+                        fs.root.getFile(o.fullPath, {}, function(t) {
+                            t.file(function(t) {
+                                var r = new FileReader();
+                                r.onloadend = function(t) {
+                                    var r = JSON.parse(this.result);
+                                    e.posts.push(r);
+                                    console.log(r);
+                                };
+                                r.readAsText(t);
+                            }, onError);
+                        }, onError);
+                    }
+                }
+            }, onError);
+        }, onError);
+    };
 };
 
 PostsController.$inject = [ "$scope" ];
-
-"use strict";
 
 angular.module("platen.directives").directive("editPanel", function() {
     return {

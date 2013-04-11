@@ -2,34 +2,39 @@ var EditorController = function($scope, $timeout, $filter) {
   var AUTOSAVE_INTERVAL = 6000;
 
   $scope.post = {};
+  $scope.status = {};
 
   $scope.post.id = new Date().getTime();
-  $scope.status = {};
-  $scope.post.title='UNTITLED';
+  $scope.post.title = 'UNTITLED';
 
-  $scope.autoSave = function(){
-    writeFile($scope.post);
-    t = $timeout($scope.autoSave,AUTOSAVE_INTERVAL);
-  }
-  var t = $timeout($scope.autoSave,AUTOSAVE_INTERVAL);
+  // $scope.autoSave = function() {
+  //   writeFile($scope.post);
+  //   t = $timeout($scope.autoSave, AUTOSAVE_INTERVAL);
+  // }
+  // var t = $timeout($scope.autoSave, AUTOSAVE_INTERVAL);
 
 
-	// $scope.update = function () {
-	// 	$scope.post.htmlContent = marked($scope.post.rawContent);
-	// 	console.log($scope.post);
-	// }
+  // $scope.update = function () {
+  // 	$scope.post.htmlContent = marked($scope.post.rawContent);
+  // 	console.log($scope.post);
+  // }
 
-  var writeFile = function(post) {
+  $scope.writeFile = function() {
+
     if (!fs) {
       return;
     }
 
-    fs.root.getDirectory(FOLDERNAME, {create: true}, function(dirEntry) {
-      dirEntry.getFile(post.id, {create: true, exclusive: false}, function(fileEntry) {
+    fs.root.getDirectory(POSTS_FOLDER_PATH, {
+      create: true
+    }, function(dirEntry) {
+      dirEntry.getFile($scope.post.id, { create: true, exclusive: false }, function(fileEntry) {
 
         fileEntry.createWriter(function(fileWriter) {
 
-          var blob = new Blob([post.toString()]);
+          $scope.post.savedAt = new Date();
+          var contents = JSON.stringify($scope.post);
+          var blob = new Blob([contents], {type:'text/javascript'});
 
           fileWriter.onerror = onError;
           fileWriter.onwriteend = function(e) {
