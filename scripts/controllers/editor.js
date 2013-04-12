@@ -11,7 +11,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
 
   var createPost = function() {
     $scope.post.id = new Date().getTime();
-    $scope.post.path = getFilePath($scope.post);
+    $scope.post.path = getFilePath($scope.post.id);
     $scope.post.createdDate = new Date();
   };
 
@@ -23,7 +23,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   };
 
   var initializePost = function() {
-    if ($routeParams.postId === 0) {
+    if ($routeParams.postId === "0") {
       createPost();
     } else {
       loadPost($routeParams.postId);

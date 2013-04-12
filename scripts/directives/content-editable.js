@@ -19,7 +19,12 @@ angular.module('platen.directives').directive('contenteditable', function() {
       // Write data to the model
 
       function read() {
-        ngModel.$setViewValue(element.html());
+        var text = element.html()
+        .replace(/<br>/gi, "\n")
+        .replace(/<(?:.|\n)*?>/gm, '')
+        .replace(/&lt;/gi, '<')
+        .replace(/&gt;/gi, '>');
+        ngModel.$setViewValue(text);
       }
     }
   };

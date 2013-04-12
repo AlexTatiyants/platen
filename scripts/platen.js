@@ -27,7 +27,7 @@ var EditorController = function(e, t, r, n, i, o) {
     };
     var s = function() {
         e.post.id = new Date().getTime();
-        e.post.path = a(e.post);
+        e.post.path = a(e.post.id);
         e.post.createdDate = new Date();
     };
     var c = function(t) {
@@ -37,7 +37,7 @@ var EditorController = function(e, t, r, n, i, o) {
         });
     };
     var u = function() {
-        if (t.postId === 0) {
+        if (t.postId === "0") {
             s();
         } else {
             c(t.postId);
@@ -91,6 +91,7 @@ var PostsController = function(e, t, r, n, i) {
         n.clearDirectory(i.POST_DIRECTORY_PATH, function() {
             console.log("all files deleted from " + i.POST_DIRECTORY_PATH);
         });
+        e.posts = [];
     };
 };
 
@@ -138,7 +139,8 @@ angular.module("platen.directives").directive("contenteditable", function() {
             });
             i();
             function i() {
-                n.$setViewValue(t.html());
+                var e = t.html().replace(/<br>/gi, "\n").replace(/<(?:.|\n)*?>/gm, "").replace(/&lt;/gi, "<").replace(/&gt;/gi, ">");
+                n.$setViewValue(e);
             }
         }
     };

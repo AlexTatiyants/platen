@@ -26,6 +26,7 @@ var PostsController = function($scope, $q, $location, fileManager, resources) {
     fileManager.clearDirectory(resources.POST_DIRECTORY_PATH, function() {
       console.log("all files deleted from " + resources.POST_DIRECTORY_PATH);
     });
+    $scope.posts = [];
   };
 };
 
