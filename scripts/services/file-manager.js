@@ -60,15 +60,27 @@ angular.module('platen.services').factory('fileManager', function() {
       }
     },
 
-    writeFile: function(filePath, fileName, fileBody, onSuccess) {
+    writeFile: function(filePath, fileName, fileBody, onSuccessCallback) {
       handleFile(filePath, true, function(fileEntry) {
         fileEntry.createWriter(function(fileWriter) {
-          var blob = new Blob([fileBody], {
-            type: 'text/javascript'
-          });
+          var blob = new Blob([fileBody], {type: 'text/javascript'});
           fileWriter.onerror = onError;
-          fileWriter.onwriteend = onSuccess(fileEntry);
+          fileWriter.onwriteend = onSuccessCallback(fileEntry);
           fileWriter.write(blob);
+        }, onError);
+      });
+    },
+
+    readFile: function(filePath, getResultCallback) {
+      handleFile(filePath, false, function(fileEntry) {
+        fileEntry.file(function(file) {
+          var reader = new FileReader();
+
+          reader.onload = function(e) {
+            getResultCallback(e.target.result);
+          };
+
+          reader.readAsText(file);
         }, onError);
       });
     },

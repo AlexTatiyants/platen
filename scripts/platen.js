@@ -17,25 +17,43 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services" ]
     });
 } ]);
 
-var EditorController = function(e, t, r, n, i) {
-    var o = 6e3;
+var EditorController = function(e, t, r, n, i, o) {
+    var l = 12e3;
     e.post = {};
     e.status = {};
     e.post.title = "UNTITLED";
-    e.writeFile = function() {
-        if (!e.post.id) {
-            e.post.id = new Date().getTime();
-            e.post.path = "/" + i.POST_DIRECTORY_PATH + "/" + e.post.id;
-            e.post.createdDate = new Date();
+    var a = function(e) {
+        return "/" + o.POST_DIRECTORY_PATH + "/" + e;
+    };
+    var s = function() {
+        e.post.id = new Date().getTime();
+        e.post.path = a(e.post);
+        e.post.createdDate = new Date();
+    };
+    var c = function(t) {
+        var r = i.readFile(a(t), function(t) {
+            e.post = JSON.parse(t);
+            e.$apply();
+        });
+    };
+    var u = function() {
+        if (t.postId === 0) {
+            s();
+        } else {
+            c(t.postId);
         }
-        n.writeFile(e.post.path, e.post.id, JSON.stringify(e.post), function(t) {
-            e.status.autoSaveTime = r("date")(new Date(), "shortTime");
+    };
+    u();
+    e.writeFile = function() {
+        console.log("saving ", e.post);
+        i.writeFile(e.post.path, e.post.id, JSON.stringify(e.post), function(t) {
+            e.status.autoSaveTime = n("date")(new Date(), "shortTime");
         });
     };
     $("#post-title").focus();
 };
 
-EditorController.$inject = [ "$scope", "$timeout", "$filter", "fileManager", "resources" ];
+EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "resources" ];
 
 var LoginController = function(e) {
     e.login = {};
@@ -49,11 +67,11 @@ var MainController = function(e, t) {
 
 MainController.$inject = [ "$scope", "fileManager" ];
 
-var PostsController = function(e, t, r, n) {
+var PostsController = function(e, t, r, n, i) {
     e.posts = [];
     e.loaded = false;
     if (!e.loaded) {
-        r.readFilesInDirectory(n.POST_DIRECTORY_PATH, function(t) {
+        n.readFilesInDirectory(i.POST_DIRECTORY_PATH, function(t) {
             var r = JSON.parse(this.result);
             e.posts.push(r);
             e.loaded = true;
@@ -61,19 +79,22 @@ var PostsController = function(e, t, r, n) {
         });
     }
     e.deletePost = function(t) {
-        r.removeFile(t.path, function() {
+        n.removeFile(t.path, function() {
             e.posts.splice(t);
             e.$apply();
         });
     };
+    e.editPost = function(e) {
+        r.path("posts/" + e.id);
+    };
     e.deleteAll = function() {
-        r.clearDirectory(n.POST_DIRECTORY_PATH, function() {
-            console.log("all files deleted from " + n.POST_DIRECTORY_PATH);
+        n.clearDirectory(i.POST_DIRECTORY_PATH, function() {
+            console.log("all files deleted from " + i.POST_DIRECTORY_PATH);
         });
     };
 };
 
-PostsController.$inject = [ "$scope", "$q", "fileManager", "resources" ];
+PostsController.$inject = [ "$scope", "$q", "$location", "fileManager", "resources" ];
 
 angular.module("platen.directives").directive("editPanel", function() {
     return {
@@ -188,6 +209,17 @@ angular.module("platen.services").factory("fileManager", function() {
                     r.onerror = t;
                     r.onwriteend = o(e);
                     r.write(n);
+                }, t);
+            });
+        },
+        readFile: function(e, n) {
+            r(e, false, function(e) {
+                e.file(function(e) {
+                    var t = new FileReader();
+                    t.onload = function(e) {
+                        n(e.target.result);
+                    };
+                    t.readAsText(e);
                 }, t);
             });
         },

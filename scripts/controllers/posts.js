@@ -1,4 +1,4 @@
-var PostsController = function($scope, $q, fileManager, resources) {
+var PostsController = function($scope, $q, $location, fileManager, resources) {
   $scope.posts = [];
   $scope.loaded = false;
 
@@ -18,6 +18,10 @@ var PostsController = function($scope, $q, fileManager, resources) {
     });
   };
 
+  $scope.editPost = function(post) {
+    $location.path('posts/' + post.id);
+  };
+
   $scope.deleteAll = function() {
     fileManager.clearDirectory(resources.POST_DIRECTORY_PATH, function() {
       console.log("all files deleted from " + resources.POST_DIRECTORY_PATH);
@@ -25,4 +29,4 @@ var PostsController = function($scope, $q, fileManager, resources) {
   };
 };
 
-PostsController.$inject = ['$scope', '$q', 'fileManager', 'resources'];
+PostsController.$inject = ['$scope', '$q', '$location', 'fileManager', 'resources'];
