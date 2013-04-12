@@ -25,7 +25,7 @@ var EditorController = function($scope, $timeout, $filter, fileManager, resource
       $scope.post.createdDate = new Date();
     }
 
-    fileManager.writeFile(resources.POST_DIRECTORY_PATH, $scope.post.id, JSON.stringify($scope.post), function(fileEntry) {
+    fileManager.writeFile($scope.post.path, $scope.post.id, JSON.stringify($scope.post), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
     });
   };
