@@ -2,6 +2,9 @@ var fileManagerFactory = function($q) {
   var POSTS_FOLDER_PATH = 'posts';
   var fs = null;
 
+  var createConfig = {create: true};
+  var noCreateConfig = {create: false};
+
   var onError = function(e) {
     console.log(e);
   };
@@ -9,28 +12,22 @@ var fileManagerFactory = function($q) {
   var obtainFs = function() {
     var deferred = $q.defer();
 
-    console.log("deferred before resolve", deferred);
-
     window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(localFs) {
       fs = localFs;
-      console.log("got fs, resolving deferred", deferred);
       deferred.resolve();
     });
 
     return deferred.promise;
   };
 
-  var foo = function(onSuccess) {
-    console.log("in foo with fs ", fs);
-    fs.root.getDirectory(POSTS_FOLDER_PATH, {}, function(dirEntry) {
+  var loadFiles = function(directoryPath, onSuccess) {
+    fs.root.getDirectory(directoryPath, {}, function(dirEntry) {
 
       var dirReader = dirEntry.createReader();
 
       dirReader.readEntries(function(entries) {
         for (var i = 0; i < entries.length; i++) {
-
           var entry = entries[i];
-
           if (entry.isFile) {
             fs.root.getFile(entry.fullPath, {}, function(fileEntry) {
               fileEntry.file(function(file) {
@@ -38,11 +35,6 @@ var fileManagerFactory = function($q) {
                 reader.onloadend = onSuccess;
                 reader.readAsText(file);
               }, onError);
-
-              // fileEntry.remove(function() {
-              //   console.log('File removed.');
-              // }, onError);
-
             }, onError);
           }
         }
@@ -50,45 +42,43 @@ var fileManagerFactory = function($q) {
     }, onError)
   };
 
-
   return {
     initialize: function() {
-      console.log("init fileManager");
       obtainFs();
     },
 
-    readFiles: function(onSuccess) {
+    readFiles: function(directoryPath, onSuccess) {
       if (!fs) {
         var promise = obtainFs();
-        promise.then(foo(onSuccess));
+        promise.then(loadFiles(directoryPath, onSuccess));
       } else {
-        foo(onSuccess);
+        loadFiles(directoryPath, onSuccess);
       };
     },
 
-    writeFile: function(fileName, fileBody, onSuccess) {
+    writeFile: function(filePath, fileName, fileBody, onSuccess) {
       if (!fs) {
         return;
       };
 
-      fs.root.getDirectory(POSTS_FOLDER_PATH, {
-        create: true
-      }, function(dirEntry) {
-        dirEntry.getFile(fileName, {
-          create: true,
-          exclusive: false
-        }, function(fileEntry) {
+      fs.root.getDirectory(filePath, createConfig, function(dirEntry) {
+        dirEntry.getFile(fileName, createConfig, function(fileEntry) {
 
           fileEntry.createWriter(function(fileWriter) {
             var blob = new Blob([fileBody], {
               type: 'text/javascript'
             });
-
             fileWriter.onerror = onError;
-            fileWriter.onwriteend = onSuccess;
+            fileWriter.onwriteend = onSuccess(fileEntry);
             fileWriter.write(blob);
           }, onError);
         }, onError);
+      }, onError);
+    },
+
+    removeFile: function(filePath, onSuccess) {
+      fs.root.getFile(filePath, noCreateConfig, function(fileEntry) {
+        fileEntry.remove(onSuccess, onError);
       }, onError);
     }
   };

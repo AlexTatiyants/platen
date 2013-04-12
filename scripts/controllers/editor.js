@@ -1,4 +1,4 @@
-var EditorController = function($scope, $timeout, $filter, fileManager) {
+var EditorController = function($scope, $timeout, $filter, fileManager, resources) {
   var AUTOSAVE_INTERVAL = 6000;
 
   $scope.post = {};
@@ -21,10 +21,11 @@ var EditorController = function($scope, $timeout, $filter, fileManager) {
   $scope.writeFile = function() {
     if (!$scope.post.id) {
       $scope.post.id = new Date().getTime();
+      $scope.post.path = "/" + resources.POST_DIRECTORY_PATH + '/' + $scope.post.id;
+      $scope.post.createdDate = new Date();
     }
 
-    console.log($scope.post);
-    fileManager.writeFile($scope.post.id, JSON.stringify($scope.post), function(e) {
+    fileManager.writeFile(resources.POST_DIRECTORY_PATH, $scope.post.id, JSON.stringify($scope.post), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
     });
   };
@@ -32,4 +33,4 @@ var EditorController = function($scope, $timeout, $filter, fileManager) {
   $('#post-title').focus();
 };
 
-EditorController.$inject = ['$scope', '$timeout', '$filter', 'fileManager'];
+EditorController.$inject = ['$scope', '$timeout', '$filter', 'fileManager', 'resources'];

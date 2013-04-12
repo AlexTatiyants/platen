@@ -1,9 +1,11 @@
 <div data-ng-controller="PostsController">
-    <h2>posts loaded? <span data-ng-bind="loaded"></span></h2>
+    <h2>Posts</h2>
 
-    <ul>
-        <li data-ng-repeat="post in posts">
-            <span data-ng-bind="post.title"></span>
+    <ul class="posts">
+        <li class="post-summary" data-ng-repeat="post in posts">
+            <h3 data-ng-bind="post.title"></h3>
+            <em data-ng-bind="post.path"></em>
+            <button data-ng-click="deletePost(post)">x</button>
         </li>
     </ul>
 </div>

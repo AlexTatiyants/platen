@@ -17,24 +17,25 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services" ]
     });
 } ]);
 
-var EditorController = function(e, t, r, i) {
-    var n = 6e3;
+var EditorController = function(e, t, r, i, n) {
+    var o = 6e3;
     e.post = {};
     e.status = {};
     e.post.title = "UNTITLED";
     e.writeFile = function() {
         if (!e.post.id) {
             e.post.id = new Date().getTime();
+            e.post.path = "/" + n.POST_DIRECTORY_PATH + "/" + e.post.id;
+            e.post.createdDate = new Date();
         }
-        console.log(e.post);
-        i.writeFile(e.post.id, JSON.stringify(e.post), function(t) {
+        i.writeFile(n.POST_DIRECTORY_PATH, e.post.id, JSON.stringify(e.post), function(t) {
             e.status.autoSaveTime = r("date")(new Date(), "shortTime");
         });
     };
     $("#post-title").focus();
 };
 
-EditorController.$inject = [ "$scope", "$timeout", "$filter", "fileManager" ];
+EditorController.$inject = [ "$scope", "$timeout", "$filter", "fileManager", "resources" ];
 
 var LoginController = function(e) {
     e.login = {};
@@ -48,21 +49,25 @@ var MainController = function(e, t) {
 
 MainController.$inject = [ "$scope", "fileManager" ];
 
-var PostsController = function(e, t, r) {
+var PostsController = function(e, t, r, i) {
     e.posts = [];
     e.loaded = false;
     if (!e.loaded) {
-        console.log("loading posts");
-        r.readFiles(function(t) {
+        r.readFiles(i.POST_DIRECTORY_PATH, function(t) {
             var r = JSON.parse(this.result);
             e.posts.push(r);
             e.loaded = true;
             e.$apply();
         });
     }
+    e.deletePost = function(t) {
+        r.removeFile(t.path, function() {
+            e.posts.splice(t);
+        });
+    };
 };
 
-PostsController.$inject = [ "$scope", "$q", "fileManager" ];
+PostsController.$inject = [ "$scope", "$q", "fileManager", "resources" ];
 
 angular.module("platen.directives").directive("editPanel", function() {
     return {
@@ -115,73 +120,75 @@ angular.module("platen.directives").directive("contenteditable", function() {
 var fileManagerFactory = function(e) {
     var t = "posts";
     var r = null;
-    var i = function(e) {
+    var i = {
+        create: true
+    };
+    var n = {
+        create: false
+    };
+    var o = function(e) {
         console.log(e);
     };
-    var n = function() {
+    var l = function() {
         var t = e.defer();
-        console.log("deferred before resolve", t);
         window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(e) {
             r = e;
-            console.log("got fs, resolving deferred", t);
             t.resolve();
         });
         return t.promise;
     };
-    var o = function(e) {
-        console.log("in foo with fs ", r);
-        r.root.getDirectory(t, {}, function(t) {
-            var n = t.createReader();
-            n.readEntries(function(t) {
-                for (var n = 0; n < t.length; n++) {
-                    var o = t[n];
-                    if (o.isFile) {
-                        r.root.getFile(o.fullPath, {}, function(t) {
-                            t.file(function(t) {
+    var a = function(e, t) {
+        r.root.getDirectory(e, {}, function(e) {
+            var i = e.createReader();
+            i.readEntries(function(e) {
+                for (var i = 0; i < e.length; i++) {
+                    var n = e[i];
+                    if (n.isFile) {
+                        r.root.getFile(n.fullPath, {}, function(e) {
+                            e.file(function(e) {
                                 var r = new FileReader();
-                                r.onloadend = e;
-                                r.readAsText(t);
-                            }, i);
-                        }, i);
+                                r.onloadend = t;
+                                r.readAsText(e);
+                            }, o);
+                        }, o);
                     }
                 }
-            }, i);
-        }, i);
+            }, o);
+        }, o);
     };
     return {
         initialize: function() {
-            console.log("init fileManager");
-            n();
+            l();
         },
-        readFiles: function(e) {
+        readFiles: function(e, t) {
             if (!r) {
-                var t = n();
-                t.then(o(e));
+                var i = l();
+                i.then(a(e, t));
             } else {
-                o(e);
+                a(e, t);
             }
         },
-        writeFile: function(e, n, o) {
+        writeFile: function(e, t, n, l) {
             if (!r) {
                 return;
             }
-            r.root.getDirectory(t, {
-                create: true
-            }, function(t) {
-                t.getFile(e, {
-                    create: true,
-                    exclusive: false
-                }, function(e) {
-                    e.createWriter(function(e) {
-                        var t = new Blob([ n ], {
+            r.root.getDirectory(e, i, function(e) {
+                e.getFile(t, i, function(e) {
+                    e.createWriter(function(t) {
+                        var r = new Blob([ n ], {
                             type: "text/javascript"
                         });
-                        e.onerror = i;
-                        e.onwriteend = o;
-                        e.write(t);
-                    }, i);
-                }, i);
-            }, i);
+                        t.onerror = o;
+                        t.onwriteend = l(e);
+                        t.write(r);
+                    }, o);
+                }, o);
+            }, o);
+        },
+        removeFile: function(e, t) {
+            r.root.getFile(e, n, function(e) {
+                e.remove(t, o);
+            }, o);
         }
     };
 };
@@ -189,3 +196,7 @@ var fileManagerFactory = function(e) {
 fileManagerFactory.$inject = [ "$q" ];
 
 angular.module("platen.services").factory("fileManager", fileManagerFactory);
+
+angular.module("platen.services").value("resources", {
+    POST_DIRECTORY_PATH: "posts"
+});
