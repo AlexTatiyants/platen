@@ -1,4 +1,4 @@
-var fileManagerFactory = function($q, $scope) {
+var fileManagerFactory = function($q) {
   var POSTS_FOLDER_PATH = 'posts';
   var fs = null;
 
@@ -11,13 +11,10 @@ var fileManagerFactory = function($q, $scope) {
 
     console.log("deferred before resolve", deferred);
 
-    $scope.$apply(function() {
-      window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(localFs) {
-        fs = localFs;
-        console.log("got fs, resolving deferred", deferred);
-        deferred.resolve();
-      });
-
+    window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(localFs) {
+      fs = localFs;
+      console.log("got fs, resolving deferred", deferred);
+      deferred.resolve();
     });
 
     return deferred.promise;
@@ -55,6 +52,11 @@ var fileManagerFactory = function($q, $scope) {
 
 
   return {
+    initialize: function() {
+      console.log("init fileManager");
+      obtainFs();
+    },
+
     readFiles: function(onSuccess) {
       if (!fs) {
         var promise = obtainFs();
@@ -92,6 +94,6 @@ var fileManagerFactory = function($q, $scope) {
   };
 };
 
-fileManagerFactory.$inject = ['$q', '$scope'];
+fileManagerFactory.$inject = ['$q'];
 
 angular.module('platen.services').factory('fileManager', fileManagerFactory);

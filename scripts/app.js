@@ -19,6 +19,6 @@ var platen = angular.module('platen', ['platen.directives', 'platen.services']).
 	// });
 
 	$routeProvider.otherwise({
-		redirectTo: '/'
+		redirectTo: '/posts'
 	});
 }]);

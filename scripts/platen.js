@@ -13,12 +13,12 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services" ]
         templateUrl: "views/pages/edit.html"
     });
     e.otherwise({
-        redirectTo: "/"
+        redirectTo: "/posts"
     });
 } ]);
 
-var EditorController = function(e, t, r, n) {
-    var o = 6e3;
+var EditorController = function(e, t, r, i) {
+    var n = 6e3;
     e.post = {};
     e.status = {};
     e.post.title = "UNTITLED";
@@ -27,7 +27,7 @@ var EditorController = function(e, t, r, n) {
             e.post.id = new Date().getTime();
         }
         console.log(e.post);
-        n.writeFile(e.post.id, JSON.stringify(e.post), function(t) {
+        i.writeFile(e.post.id, JSON.stringify(e.post), function(t) {
             e.status.autoSaveTime = r("date")(new Date(), "shortTime");
         });
     };
@@ -41,6 +41,12 @@ var LoginController = function(e) {
 };
 
 LoginController.$inject = [ "$scope" ];
+
+var MainController = function(e, t) {
+    t.initialize();
+};
+
+MainController.$inject = [ "$scope", "fileManager" ];
 
 var PostsController = function(e, t, r) {
     e.posts = [];
@@ -90,94 +96,96 @@ angular.module("platen.directives").directive("contenteditable", function() {
     return {
         restrict: "A",
         require: "?ngModel",
-        link: function(e, t, r, n) {
-            if (!n) return;
-            n.$render = function() {
-                t.html(n.$viewValue || "");
+        link: function(e, t, r, i) {
+            if (!i) return;
+            i.$render = function() {
+                t.html(i.$viewValue || "");
             };
             t.bind("blur keyup change", function() {
-                e.$apply(o);
+                e.$apply(n);
             });
-            o();
-            function o() {
-                n.$setViewValue(t.html());
+            n();
+            function n() {
+                i.$setViewValue(t.html());
             }
         }
     };
 });
 
-var fileManagerFactory = function(e, t) {
-    var r = "posts";
-    var n = null;
-    var o = function(e) {
+var fileManagerFactory = function(e) {
+    var t = "posts";
+    var r = null;
+    var i = function(e) {
         console.log(e);
     };
-    var i = function() {
-        var r = e.defer();
-        console.log("deferred before resolve", r);
-        t.$apply(function() {
-            window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(e) {
-                n = e;
-                console.log("got fs, resolving deferred", r);
-                r.resolve();
-            });
+    var n = function() {
+        var t = e.defer();
+        console.log("deferred before resolve", t);
+        window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(e) {
+            r = e;
+            console.log("got fs, resolving deferred", t);
+            t.resolve();
         });
-        return r.promise;
+        return t.promise;
     };
-    var l = function(e) {
-        console.log("in foo with fs ", n);
-        n.root.getDirectory(r, {}, function(t) {
-            var r = t.createReader();
-            r.readEntries(function(t) {
-                for (var r = 0; r < t.length; r++) {
-                    var i = t[r];
-                    if (i.isFile) {
-                        n.root.getFile(i.fullPath, {}, function(t) {
+    var o = function(e) {
+        console.log("in foo with fs ", r);
+        r.root.getDirectory(t, {}, function(t) {
+            var n = t.createReader();
+            n.readEntries(function(t) {
+                for (var n = 0; n < t.length; n++) {
+                    var o = t[n];
+                    if (o.isFile) {
+                        r.root.getFile(o.fullPath, {}, function(t) {
                             t.file(function(t) {
                                 var r = new FileReader();
                                 r.onloadend = e;
                                 r.readAsText(t);
-                            }, o);
-                        }, o);
+                            }, i);
+                        }, i);
                     }
                 }
-            }, o);
-        }, o);
+            }, i);
+        }, i);
     };
     return {
+        initialize: function() {
+            console.log("init fileManager");
+            n();
+        },
         readFiles: function(e) {
-            if (!n) {
-                var t = i();
-                t.then(l(e));
+            if (!r) {
+                var t = n();
+                t.then(o(e));
             } else {
-                l(e);
+                o(e);
             }
         },
-        writeFile: function(e, t, i) {
-            if (!n) {
+        writeFile: function(e, n, o) {
+            if (!r) {
                 return;
             }
-            n.root.getDirectory(r, {
+            r.root.getDirectory(t, {
                 create: true
-            }, function(r) {
-                r.getFile(e, {
+            }, function(t) {
+                t.getFile(e, {
                     create: true,
                     exclusive: false
                 }, function(e) {
                     e.createWriter(function(e) {
-                        var r = new Blob([ t ], {
+                        var t = new Blob([ n ], {
                             type: "text/javascript"
                         });
-                        e.onerror = o;
-                        e.onwriteend = i;
-                        e.write(r);
-                    }, o);
-                }, o);
-            }, o);
+                        e.onerror = i;
+                        e.onwriteend = o;
+                        e.write(t);
+                    }, i);
+                }, i);
+            }, i);
         }
     };
 };
 
-fileManagerFactory.$inject = [ "$q", "$scope" ];
+fileManagerFactory.$inject = [ "$q" ];
 
 angular.module("platen.services").factory("fileManager", fileManagerFactory);
