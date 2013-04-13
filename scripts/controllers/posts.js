@@ -28,6 +28,7 @@ var PostsController = function($scope, $q, $location, fileManager, resources) {
     });
     $scope.posts = [];
   };
+
 };
 
 PostsController.$inject = ['$scope', '$q', '$location', 'fileManager', 'resources'];

@@ -4,6 +4,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   $scope.post = {};
   $scope.status = {};
   $scope.post.title = 'UNTITLED';
+  $scope.previewOn = false;
 
   var getFilePath = function(postId) {
     return "/" + resources.POST_DIRECTORY_PATH + '/' + postId;
@@ -39,12 +40,6 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   // }
   // var t = $timeout($scope.autoSave, AUTOSAVE_INTERVAL);
 
-
-  // $scope.update = function () {
-  // 	$scope.post.htmlContent = marked($scope.post.rawContent);
-  // 	console.log($scope.post);
-  // }
-
   $scope.writeFile = function() {
     var postToSave = JSON.parse(JSON.stringify($scope.post));
     postToSave.content = htmlizer.deHTMLizeText(postToSave.content);
@@ -52,6 +47,13 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
     });
   };
+
+  $scope.togglePreview = function() {
+    if (!$scope.previewOn) {
+      $scope.post.htmlPreview = marked(htmlizer.deHTMLizeText($scope.post.content));
+    };
+    $scope.previewOn = !$scope.previewOn;
+  }
 
   $('#post-title').focus();
 };

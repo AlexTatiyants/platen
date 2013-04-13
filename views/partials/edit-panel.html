@@ -3,7 +3,9 @@
     <button id="publish-button" class="btn" data-ng-click="writeFile()">publish</button>
 
     <div id="post-container">
-    	<div contenteditable="true" id="post-content"  data-ng-model="post.content"></div>
+    	<div contenteditable="true" id="post-content" data-ng-show="!previewOn" data-ng-model="post.content"></div>
+      <div id="post-content-preview" data-ng-show="previewOn" data-ng-bind-html-unsafe="post.htmlPreview"></div>
+      <button data-ng-click="togglePreview()">preview</button>
 		<status-panel></status-panel>
     </div>
 </section>
