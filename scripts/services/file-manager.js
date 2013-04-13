@@ -1,15 +1,40 @@
 angular.module('platen.services').factory('fileManager', function() {
   var fs;
 
-  var onError = function(e) {
-    console.log(e);
+  var onError = function(e, step) {
+    var msg = '';
+
+    switch (e.code) {
+      case FileError.QUOTA_EXCEEDED_ERR:
+        msg = 'QUOTA_EXCEEDED_ERR';
+        break;
+      case FileError.NOT_FOUND_ERR:
+        msg = 'NOT_FOUND_ERR';
+        break;
+      case FileError.SECURITY_ERR:
+        msg = 'SECURITY_ERR';
+        break;
+      case FileError.INVALID_MODIFICATION_ERR:
+        msg = 'INVALID_MODIFICATION_ERR';
+        break;
+      case FileError.INVALID_STATE_ERR:
+        msg = 'INVALID_STATE_ERR';
+        break;
+      default:
+        msg = 'Unknown Error';
+        break;
+    };
+
+    console.log('Error: ' + msg, step);
   };
 
   var handleFile = function(filePath, shouldCreate, action) {
     if (fs) {
       fs.root.getFile(filePath, {
         create: shouldCreate
-      }, action, onError);
+      }, action, function(e) {
+        onError(e, "in handleFile(), while getting file path " + filePath);
+      });
     }
   };
 
@@ -22,7 +47,9 @@ angular.module('platen.services').factory('fileManager', function() {
 
     readFilesInDirectory: function(directoryPath, onSuccess) {
       if (fs) {
-        fs.root.getDirectory(directoryPath, {}, function(dirEntry) {
+        fs.root.getDirectory(directoryPath, {
+          create: true
+        }, function(dirEntry) {
           var dirReader = dirEntry.createReader();
           dirReader.readEntries(function(entries) {
             _.each(entries, function(entry) {
@@ -32,12 +59,18 @@ angular.module('platen.services').factory('fileManager', function() {
                     var reader = new FileReader();
                     reader.onloadend = onSuccess;
                     reader.readAsText(file);
-                  }, onError);
+                  }, function(e) {
+                    onError(e, "in readFilesInDirectory, while getting file " + entry.fullPath);
+                  });
                 });
               }
             })
-          }, onError);
-        }, onError);
+          }, function(e) {
+            onError(e, "in readFilesInDirectory, while reading entries from " + directoryPath);
+          });
+        }, function(e) {
+          onError(e, "in readFilesInDirectory, while getting directory " + directoryPath);
+        });
       }
     },
 
@@ -50,24 +83,34 @@ angular.module('platen.services').factory('fileManager', function() {
               if (entry.isFile) {
                 handleFile(entry.fullPath, false, function(fileEntry) {
                   fileEntry.remove(function() {
-                    console.log("removed " + entry.fullPath);
-                  }, onError);
+                    console.log("removed file " + entry.fullPath);
+                  }, function(e) {
+                    onError(e, "while removing file " + entry.fullPath);
+                  });
                 });
               }
             })
-          }, onError);
-        }, onError);
+          }, function(e) {
+            onError(e, "in clearDirectory, while reading entries for " + directoryPath);
+          });
+        }, function(e) {
+          onError(e, "in clearDirectory(), while getting directory " + directoryPath);
+        });
       }
     },
 
     writeFile: function(filePath, fileName, fileBody, onSuccessCallback) {
       handleFile(filePath, true, function(fileEntry) {
         fileEntry.createWriter(function(fileWriter) {
-          var blob = new Blob([fileBody], {type: 'text/javascript'});
+          var blob = new Blob([fileBody], {
+            type: 'text/javascript'
+          });
           fileWriter.onerror = onError;
           fileWriter.onwriteend = onSuccessCallback(fileEntry);
           fileWriter.write(blob);
-        }, onError);
+        }, function(e) {
+          onError(e, "in writeFile(), while creating fileWriter for " + filePath + "/" + fileName);
+        });
       });
     },
 
@@ -75,19 +118,21 @@ angular.module('platen.services').factory('fileManager', function() {
       handleFile(filePath, false, function(fileEntry) {
         fileEntry.file(function(file) {
           var reader = new FileReader();
-
           reader.onload = function(e) {
             getResultCallback(e.target.result);
           };
-
           reader.readAsText(file);
-        }, onError);
+        }, function(e) {
+          onError(e, "in readingFile(), while reading file " + filePath);
+        });
       });
     },
 
     removeFile: function(filePath, onSuccess) {
       handleFile(filePath, false, function(fileEntry) {
-        fileEntry.remove(onSuccess, onError);
+        fileEntry.remove(onSuccess, function(e) {
+          onError(e, "in removeFile(), while reading file " + filePath);
+        });
       });
     }
   };

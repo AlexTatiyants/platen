@@ -1,4 +1,4 @@
-var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, resources) {
+var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, htmlizer,resources) {
   var AUTOSAVE_INTERVAL = 12000;
 
   $scope.post = {};
@@ -16,8 +16,9 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   };
 
   var loadPost = function(postId) {
-    var postJson = fileManager.readFile(getFilePath(postId), function(postJson) {
+    fileManager.readFile(getFilePath(postId), function(postJson) {
       $scope.post = JSON.parse(postJson);
+      $scope.post.content = htmlizer.HTMLizeText($scope.post.content);
       $scope.$apply();
     });
   };
@@ -44,10 +45,10 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   // 	console.log($scope.post);
   // }
 
-
   $scope.writeFile = function() {
-    console.log("saving ", $scope.post);
-    fileManager.writeFile($scope.post.path, $scope.post.id, JSON.stringify($scope.post), function(fileEntry) {
+    var postToSave = JSON.parse(JSON.stringify($scope.post));
+    postToSave.content = htmlizer.deHTMLizeText(postToSave.content);
+    fileManager.writeFile($scope.post.path, $scope.post.id, JSON.stringify(postToSave), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
     });
   };
@@ -55,4 +56,4 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   $('#post-title').focus();
 };
 
-EditorController.$inject = ['$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'resources'];
+EditorController.$inject = ['$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'htmlizer', 'resources'];
