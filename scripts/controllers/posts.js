@@ -4,7 +4,10 @@ var PostsController = function($scope, $q, $location, fileManager, resources) {
 
   if (!$scope.loaded) {
     fileManager.readFilesInDirectory(resources.POST_DIRECTORY_PATH, function(e) {
+
+      console.log(this.result);
       var post = JSON.parse(this.result);
+
       $scope.posts.push(post);
       $scope.loaded = true;
       $scope.$apply();
