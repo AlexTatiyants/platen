@@ -5,17 +5,10 @@ angular.module('platen.directives').directive('editPanel', function() {
     }
 });
 
-angular.module('platen.directives').directive('previewPanel', function() {
+angular.module('platen.directives').directive('metadataPanel', function() {
     return {
         restrict: 'E',
-        templateUrl: 'views/partials/preview-panel.html'
-    }
-});
-
-angular.module('platen.directives').directive('configPanel', function() {
-    return {
-        restrict: 'E',
-        templateUrl: 'views/partials/config-panel.html'
+        templateUrl: 'views/partials/metadata-panel.html'
     }
 });
 
@@ -25,3 +18,11 @@ angular.module('platen.directives').directive('statusPanel', function() {
         templateUrl: 'views/partials/status-panel.html'
     }
 });
+
+angular.module('platen.directives').directive('config-menu', function() {
+    return {
+        restrict: 'E',
+        templateUrl: 'views/partials/config-menu.html'
+    }
+});
+

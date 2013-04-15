@@ -5,6 +5,9 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   $scope.status = {};
   $scope.post.title = 'UNTITLED';
   $scope.previewOn = false;
+  $scope.status.autoSaveTime = "unsaved";
+  $scope.showMetadata = false;
+
 
   var getFilePath = function(postId) {
     return "/" + resources.POST_DIRECTORY_PATH + '/' + postId;
@@ -47,6 +50,10 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
       $scope.post.htmlPreview = marked($scope.post.content);
     };
     $scope.previewOn = !$scope.previewOn;
+  };
+
+  $scope.toggleMetadataPanel = function() {
+   $scope.showMetadata = !$scope.showMetadata;
   };
 
   $scope.$on('postContentChanged', function(event,args) {

@@ -1,4 +1,4 @@
-/*! platen 2013-04-14 */
+/*! platen 2013-04-15 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -18,30 +18,32 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services" ]
 } ]);
 
 var EditorController = function(e, t, i, n, r, o) {
-    var l = 12e3;
+    var a = 12e3;
     e.post = {};
     e.status = {};
     e.post.title = "UNTITLED";
     e.previewOn = false;
-    var a = function(e) {
+    e.status.autoSaveTime = "unsaved";
+    e.showMetadata = false;
+    var l = function(e) {
         return "/" + o.POST_DIRECTORY_PATH + "/" + e;
     };
-    var c = function() {
+    var s = function() {
         e.post.id = new Date().getTime();
-        e.post.path = a(e.post.id);
+        e.post.path = l(e.post.id);
         e.post.createdDate = new Date();
     };
-    var s = function(t) {
-        r.readFile(a(t), function(t) {
+    var c = function(t) {
+        r.readFile(l(t), function(t) {
             e.post = JSON.parse(t);
             e.$apply();
         });
     };
     var u = function() {
         if (t.postId === "0") {
-            c();
+            s();
         } else {
-            s(t.postId);
+            c(t.postId);
         }
     };
     u();
@@ -57,6 +59,9 @@ var EditorController = function(e, t, i, n, r, o) {
             e.post.htmlPreview = marked(e.post.content);
         }
         e.previewOn = !e.previewOn;
+    };
+    e.toggleMetadataPanel = function() {
+        e.showMetadata = !e.showMetadata;
     };
     e.$on("postContentChanged", function(e, t) {
         f();
@@ -115,17 +120,10 @@ angular.module("platen.directives").directive("editPanel", function() {
     };
 });
 
-angular.module("platen.directives").directive("previewPanel", function() {
+angular.module("platen.directives").directive("metadataPanel", function() {
     return {
         restrict: "E",
-        templateUrl: "views/partials/preview-panel.html"
-    };
-});
-
-angular.module("platen.directives").directive("configPanel", function() {
-    return {
-        restrict: "E",
-        templateUrl: "views/partials/config-panel.html"
+        templateUrl: "views/partials/metadata-panel.html"
     };
 });
 
@@ -133,6 +131,13 @@ angular.module("platen.directives").directive("statusPanel", function() {
     return {
         restrict: "E",
         templateUrl: "views/partials/status-panel.html"
+    };
+});
+
+angular.module("platen.directives").directive("config-menu", function() {
+    return {
+        restrict: "E",
+        templateUrl: "views/partials/config-menu.html"
     };
 });
 

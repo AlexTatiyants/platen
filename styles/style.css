@@ -1,1 +1,224 @@
-.btn{border-radius:5px;border:0;color:white;padding:4px;font-weight:600;line-height:28.8px;background-color:#c00}#post-container{height:100%}.preview-panel{background-color:#8d8d8d;float:right;width:4%;height:97%;color:white;padding:10px;position:absolute;right:0;top:0}.config-panel{background-color:#5a5a5a;color:white;padding:10px;position:absolute;bottom:0;left:0;width:100%}.edit-panel{padding:20px;height:90%;margin:auto;max-width:960px;width:80%}.collapser{display:block;border-radius:50%;border:2px solid white;width:30px;height:30px;text-align:center}#post-title{width:80%;background-color:#f3f3f3;border:1px dotted #dadada;font-size:22.4px;font-weight:600;margin-bottom:20px;margin-right:1%;padding:12px}.post-content-common{width:93%;height:70%;border-radius:4px;padding:12px;font-size:17.6px;line-height:25px;resize:none;outline:0;overflow-y:auto}#post-content{width:93%;height:70%;border-radius:4px;padding:12px;font-size:17.6px;line-height:25px;resize:none;outline:0;overflow-y:auto;background-color:#f3f3f3;border:1px dotted #c0c0c0;white-space:pre}#post-content-preview{width:93%;height:70%;border-radius:4px;padding:12px;font-size:17.6px;line-height:25px;resize:none;outline:0;overflow-y:auto;background-color:#dadada;border:1px dotted #dadada}#publish-button{width:10%;position:relative;top:-5px}#post-container{height:100%}.collapse{position:relative;height:0;overflow:hidden;-webkit-transition:height .35s ease;-moz-transition:height .35s ease;-o-transition:height .35s ease;transition:height .35s ease}.collapse.in{height:auto}#status-panel{display:block;font-size:12.8px;border:1px red;margin-top:20px;color:#8d8d8d}#login-panel{border:1px solid #dadada;border-radius:6px;margin:auto;width:60%;margin-top:60px;padding:20px;overflow:hidden}#login-panel button{margin:auto;padding-left:20px;padding-right:20px;display:block;width:60%}.control-group{overflow:hidden;margin-bottom:20px}.control-group input{float:right;border:1px solid #dadada;line-height:25px;font-size:19.2px;padding:6px;background-color:#fdfdfd}.control-group label{float:left;margin-left:12px}html{height:100%}body{background-color:#f3f3f3;font-weight:400;width:100%;height:100%;overflow:hidden}body,input,textarea,button{font-family:'Ubuntu',sans-serif;color:#5a5a5a}.main-container{height:100%}
+.btn {
+  border-radius: 5px;
+  border: 0px;
+  color: white;
+  padding: 4px;
+  font-weight: 600;
+  line-height: 28.8px;
+  background-color: #cc0000;
+}
+#post-container {
+  height: 100%;
+}
+.metadata-panel {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+}
+.metadata-container {
+  color: white;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+  border: 1px solid #d9d9d9;
+  background-color: #e6e6e6;
+  position: relative;
+  margin: auto;
+  width: 80%;
+}
+.edit-panel {
+  padding: 20px;
+  height: 90%;
+  margin: auto;
+  max-width: 960px;
+  width: 80%;
+}
+.metadata-collapser {
+  display: block;
+  border-radius: 4px;
+  text-align: center;
+  width: 95%;
+  margin: auto;
+  cursor: pointer;
+  height: 10px;
+  background-color: #cccccc;
+}
+.post-common {
+  width: 93%;
+  max-width: 900px;
+  border-radius: 4px;
+  border: 1px dotted #e6e6e6;
+  padding: 12px;
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+}
+.post-content-common {
+  width: 93%;
+  max-width: 900px;
+  border-radius: 4px;
+  border: 1px dotted #e6e6e6;
+  padding: 12px;
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  height: 70%;
+  font-family: 'inconsolata';
+  font-size: 17.6px;
+  line-height: 25px;
+}
+#post-title {
+  width: 93%;
+  max-width: 900px;
+  border-radius: 4px;
+  border: 1px dotted #e6e6e6;
+  padding: 12px;
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  font-family: 'goudy';
+  margin-bottom: 10px;
+}
+#post-content {
+  width: 93%;
+  max-width: 900px;
+  border-radius: 4px;
+  border: 1px dotted #e6e6e6;
+  padding: 12px;
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  height: 70%;
+  font-family: 'inconsolata';
+  font-size: 17.6px;
+  line-height: 25px;
+  white-space: pre;
+}
+#post-content-preview {
+  width: 93%;
+  max-width: 900px;
+  border-radius: 4px;
+  border: 1px dotted #e6e6e6;
+  padding: 12px;
+  resize: none;
+  outline: none;
+  overflow-y: auto;
+  height: 70%;
+  font-family: 'inconsolata';
+  font-size: 17.6px;
+  line-height: 25px;
+  border: 1px dotted #cccccc;
+}
+#post-container {
+  height: 100%;
+}
+#status-panel {
+  display: block;
+  float: right;
+  font-size: 12.8px;
+  margin-top: 14px;
+  margin-right: 20px;
+  color: #999999;
+  text-align: right;
+  width: 30%;
+}
+#login-panel {
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  margin: auto;
+  width: 60%;
+  margin-top: 60px;
+  padding: 20px;
+  overflow: hidden;
+}
+#login-panel button {
+  margin: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  display: block;
+  width: 60%;
+}
+.control-group {
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.control-group input {
+  float: right;
+  border: 1px solid #e6e6e6;
+  line-height: 25px;
+  font-size: 19.2px;
+  padding: 6px;
+  background-color: #ffffff;
+}
+.control-group label {
+  float: left;
+  margin-left: 12px;
+}
+@font-face {
+  font-family: 'icons';
+  src: url('/fonts/icons.ttf');
+}
+a [class^="icon-"],
+a [class*=" icon-"] {
+  display: inline-block;
+  text-decoration: none;
+  color: #e6e6e6;
+  padding: 10px;
+  font-size: 20.8px;
+}
+a [class^="icon-"]:hover,
+a [class*=" icon-"]:hover {
+  color: #666666;
+}
+[class^="icon-"],
+[class*=" icon-"] {
+  font-family: 'icons';
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  display: block;
+}
+.icon-posts-list:before {
+  content: '\f00b';
+}
+.icon-sync-post:before {
+  content: '\e000';
+}
+.icon-new-post:before {
+  content: '\e001';
+}
+.icon-edit-post:before {
+  content: '\f044';
+}
+.icon-delete-post:before {
+  content: '\f014';
+}
+.icon-settings:before {
+  content: '\f085';
+}
+.icon-preview-on:before {
+  content: '\f06e';
+}
+.icon-preview-off:before {
+  content: '\f070';
+}
+html {
+  height: 100%;
+}
+body {
+  background-color: #ffffff;
+  font-weight: 400;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+body,
+input,
+textarea,
+button {
+  font-family: 'Ubuntu', sans-serif;
+  color: #666666;
+}
+.main-container {
+  height: 100%;
+}

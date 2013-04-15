@@ -28,7 +28,7 @@
         tasks: ['less']
       }
     },
-    less: {   
+    less: {
       development: {
         files: {
           "styles/style.css": "styles/style.less"
@@ -36,7 +36,7 @@
       },
       production: {
         options: {
-          yuicompress: true
+          yuicompress: false
         },
         files: {
           "styles/style.css": "styles/style.less"

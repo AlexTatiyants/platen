@@ -1,0 +1,39 @@
+@font-face {
+    font-family: 'icons';
+    src: url('/fonts/icons.ttf');
+}
+
+a {
+  [class^="icon-"],
+  [class*=" icon-"] {
+    display: inline-block;
+    text-decoration: none;
+    color: lighten(@text-color, 50%);
+    padding: @pad-unit * 0.5;
+    font-size: @base-font-size * 1.3;
+
+    &:hover {
+      color: @text-color;
+    }
+  }
+}
+
+
+[class^="icon-"],
+[class*=" icon-"] {
+  font-family: 'icons';
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  display: block;
+}
+
+.icon-posts-list:before {content:'\f00b';};
+.icon-sync-post:before {content:'\e000';};
+.icon-new-post:before {content: '\e001';};
+.icon-edit-post:before {content:'\f044';};
+.icon-delete-post:before {content:'\f014';};
+.icon-settings:before {content:'\f085';};
+.icon-preview-on:before {content:'\f06e';};
+.icon-preview-off:before {content:'\f070';};
