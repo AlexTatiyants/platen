@@ -33,13 +33,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
 
   initializePost();
 
-  // $scope.autoSave = function() {
-  //   $scope.writeFile($scope.post);
-  //   t = $timeout($scope.autoSave, AUTOSAVE_INTERVAL);
-  // }
-  // var t = $timeout($scope.autoSave, AUTOSAVE_INTERVAL);
-
-  $scope.writeFile = function() {
+  var savePost = function() {
     var postToSave = JSON.parse(JSON.stringify($scope.post));
     postToSave.htmlPreview = "";
 
@@ -53,7 +47,11 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
       $scope.post.htmlPreview = marked($scope.post.content);
     };
     $scope.previewOn = !$scope.previewOn;
-  }
+  };
+
+  $scope.$on('postContentChanged', function(event,args) {
+    savePost();
+  });
 
   $('#post-title').focus();
 };

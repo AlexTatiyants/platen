@@ -1,4 +1,4 @@
-/*! platen 2013-04-13 */
+/*! platen 2013-04-14 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -45,7 +45,7 @@ var EditorController = function(e, t, i, n, r, o) {
         }
     };
     u();
-    e.writeFile = function() {
+    var f = function() {
         var t = JSON.parse(JSON.stringify(e.post));
         t.htmlPreview = "";
         r.writeFile(e.post.path, e.post.id, JSON.stringify(t), function(t) {
@@ -58,6 +58,9 @@ var EditorController = function(e, t, i, n, r, o) {
         }
         e.previewOn = !e.previewOn;
     };
+    e.$on("postContentChanged", function(e, t) {
+        f();
+    });
     $("#post-title").focus();
 };
 
@@ -80,7 +83,6 @@ var PostsController = function(e, t, i, n, r) {
     e.loaded = false;
     if (!e.loaded) {
         n.readFilesInDirectory(r.POST_DIRECTORY_PATH, function(t) {
-            console.log(this.result);
             var i = JSON.parse(this.result);
             e.posts.push(i);
             e.loaded = true;
@@ -149,6 +151,9 @@ angular.module("platen.directives").directive("contenteditable", function() {
             var r = function() {
                 n.$setViewValue(t.html());
             };
+            t.bind("blur paste", function() {
+                e.$emit("postContentChanged");
+            });
             r();
         }
     };

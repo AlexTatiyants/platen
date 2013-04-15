@@ -17,6 +17,10 @@ angular.module('platen.directives').directive('contenteditable', function() {
         ngModel.$setViewValue(element.html());
       };
 
+      element.bind('blur paste', function() {
+        scope.$emit('postContentChanged');
+      })
+
       read();
     }
   };
