@@ -12,6 +12,9 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services" ]
     e.when("/posts/:postId", {
         templateUrl: "views/pages/edit.html"
     });
+    e.when("/logs", {
+        templateUrl: "views/pages/logs.html"
+    });
     e.otherwise({
         redirectTo: "/posts"
     });
@@ -77,21 +80,29 @@ var LoginController = function(e) {
 
 LoginController.$inject = [ "$scope" ];
 
+var LogsController = function(e, t) {
+    e.logs = t.getLogs();
+    console.log(e.logs);
+};
+
+LogsController.$inject = [ "$scope", "logger" ];
+
 var MainController = function(e, t) {
     t.initialize();
 };
 
 MainController.$inject = [ "$scope", "fileManager" ];
 
-var PostsController = function(e, t, i, n, r) {
+var PostsController = function(e, t, i, n, r, o) {
     e.posts = [];
     e.loaded = false;
     if (!e.loaded) {
-        n.readFilesInDirectory(r.POST_DIRECTORY_PATH, function(t) {
+        n.readFilesInDirectory(o.POST_DIRECTORY_PATH, function(t) {
             var i = JSON.parse(this.result);
             e.posts.push(i);
             e.loaded = true;
             e.$apply();
+            r.log("read post " + i.title, "PostsController");
         });
     }
     e.deletePost = function(t) {
@@ -104,14 +115,14 @@ var PostsController = function(e, t, i, n, r) {
         i.path("posts/" + e.id);
     };
     e.deleteAll = function() {
-        n.clearDirectory(r.POST_DIRECTORY_PATH, function() {
-            console.log("all files deleted from " + r.POST_DIRECTORY_PATH);
+        n.clearDirectory(o.POST_DIRECTORY_PATH, function() {
+            console.log("all files deleted from " + o.POST_DIRECTORY_PATH);
         });
         e.posts = [];
     };
 };
 
-PostsController.$inject = [ "$scope", "$q", "$location", "fileManager", "resources" ];
+PostsController.$inject = [ "$scope", "$q", "$location", "fileManager", "logger", "resources" ];
 
 angular.module("platen.directives").directive("editPanel", function() {
     return {
@@ -295,6 +306,31 @@ angular.module("platen.services").factory("fileManager", function() {
                     t(i, "in removeFile(), while reading file " + e);
                 });
             });
+        }
+    };
+});
+
+angular.module("platen.services").factory("logger", function() {
+    var e = 2;
+    var t = 0;
+    var i = [];
+    return {
+        log: function(n, r) {
+            if (i.length > e) {
+                console.log("removing log item");
+                var o = i[t];
+                if (++t * 2 >= i.length) {
+                    i = i.slice(t);
+                    t = 0;
+                }
+            }
+            i.push({
+                message: n,
+                location: r
+            });
+        },
+        getLogs: function() {
+            return i;
         }
     };
 });

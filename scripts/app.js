@@ -13,10 +13,9 @@ var platen = angular.module('platen', ['platen.directives', 'platen.services']).
 		templateUrl: 'views/pages/edit.html'
 	});
 
-	// $routeProvider.when('/login', {
-	// 	templateUrl: 'views/pages/login.html',
-	// 	controller: LoginController
-	// });
+	$routeProvider.when('/logs', {
+		templateUrl: 'views/pages/logs.html'
+	});
 
 	$routeProvider.otherwise({
 		redirectTo: '/posts'

@@ -1,3 +1,31 @@
+@font-face {
+  font-family: 'economica';
+  src: url('/fonts/Economica-Bold.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'goudy';
+  src: url('/fonts/GoudyBookletter1911.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'inconsolata';
+  src: url('/fonts/Inconsolata-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'merriweather';
+  src: url('/fonts/MerriweatherSans-Light.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
 .btn {
   border-radius: 5px;
   border: 0px;
@@ -62,9 +90,9 @@
   outline: none;
   overflow-y: auto;
   height: 70%;
-  font-family: 'inconsolata';
+  font-family: 'goudy';
   font-size: 17.6px;
-  line-height: 25px;
+  line-height: 30px;
 }
 #post-title {
   width: 93%;
@@ -75,8 +103,12 @@
   resize: none;
   outline: none;
   overflow-y: auto;
-  font-family: 'goudy';
+  font-family: 'economica';
   margin-bottom: 10px;
+  font-weight: 300;
+  font-size: 32px;
+  overflow: hidden;
+  white-space: nowrap;
 }
 #post-content {
   width: 93%;
@@ -88,10 +120,11 @@
   outline: none;
   overflow-y: auto;
   height: 70%;
-  font-family: 'inconsolata';
+  font-family: 'goudy';
   font-size: 17.6px;
-  line-height: 25px;
+  line-height: 30px;
   white-space: pre;
+  font-weight: 300;
 }
 #post-content-preview {
   width: 93%;
@@ -103,9 +136,9 @@
   outline: none;
   overflow-y: auto;
   height: 70%;
-  font-family: 'inconsolata';
+  font-family: 'goudy';
   font-size: 17.6px;
-  line-height: 25px;
+  line-height: 30px;
   border: 1px dotted #cccccc;
 }
 #post-container {
@@ -201,6 +234,9 @@ a [class*=" icon-"]:hover {
 }
 .icon-preview-off:before {
   content: '\f070';
+}
+.icon-logs:before {
+  content: '\E007';
 }
 html {
   height: 100%;

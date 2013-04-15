@@ -1,5 +1,5 @@
 var MainController = function($scope, fileManager) {
-    fileManager.initialize();
+  fileManager.initialize();
 };
 
 MainController.$inject = ['$scope', 'fileManager'];

@@ -1,4 +1,4 @@
-var PostsController = function($scope, $q, $location, fileManager, resources) {
+var PostsController = function($scope, $q, $location, fileManager, logger, resources) {
   $scope.posts = [];
   $scope.loaded = false;
 
@@ -8,6 +8,7 @@ var PostsController = function($scope, $q, $location, fileManager, resources) {
       $scope.posts.push(post);
       $scope.loaded = true;
       $scope.$apply();
+      logger.log("read post " + post.title, "PostsController");
     });
   };
 
@@ -31,4 +32,4 @@ var PostsController = function($scope, $q, $location, fileManager, resources) {
 
 };
 
-PostsController.$inject = ['$scope', '$q', '$location', 'fileManager', 'resources'];
+PostsController.$inject = ['$scope', '$q', '$location', 'fileManager', 'logger', 'resources'];
