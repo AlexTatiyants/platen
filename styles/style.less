@@ -1,8 +1,7 @@
 @import 'fonts.less';
 @import 'common.less';
+@import 'lists.less';
 @import 'editor.less';
-@import 'posts.less';
-@import 'login.less';
 @import 'icons.less';
 
 html {
@@ -11,10 +10,12 @@ html {
 
 body {
 	background-color: @base-color;
-	font-weight: 400;
+	font-weight: 300;
 	width: 100%;
+  overflow-x: hidden;
 	height: 100%;
-	overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 body, input, textarea, button {
@@ -23,5 +24,25 @@ body, input, textarea, button {
 }
 
 .main-container {
-  height: 100%;
+  height: 99%;
+  padding: 0;
+  margin: 0;
+}
+
+nav {
+  height: 5%;
+  overflow: hidden;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    li {
+      list-style: none;
+      float: left;
+    }
+  }
+}
+
+#main-panel {
+  height: 90%;
 }

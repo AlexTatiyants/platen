@@ -8,7 +8,7 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
       $scope.posts.push(post);
       $scope.loaded = true;
       $scope.$apply();
-      logger.log("read post " + post.title, "PostsController");
+      logger.log("read post '" + post.title + "'", "PostsController");
     });
   };
 
@@ -16,6 +16,7 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
     fileManager.removeFile(post.path, function() {
       $scope.posts.splice(post);
       $scope.$apply();
+      logger.log("deleted post '" + post.title + "'", "PostsController");
     });
   };
 
@@ -25,9 +26,9 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
 
   $scope.deleteAll = function() {
     fileManager.clearDirectory(resources.POST_DIRECTORY_PATH, function() {
-      console.log("all files deleted from " + resources.POST_DIRECTORY_PATH);
+      logger.log("deleted all posts", "PostsController");
+      $scope.posts = [];
     });
-    $scope.posts = [];
   };
 
 };

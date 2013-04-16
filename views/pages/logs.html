@@ -1,6 +1,13 @@
-<ul data-ng-controller="LogsController">
-  <li data-ng-repeat="log in logs">
-    <div data-ng-bind="log.message"></div>
-    <div data-ng-bind="log.location"></div>
-  </li>
-</ul>
+<div class="list-container" data-ng-controller="LogsController">
+  <h2>Logs</h2>
+  <ul>
+    <li class="list-item" data-ng-repeat="log in logs">
+      <h3 data-ng-bind="log.message"></h3>
+
+      <span class="item-date">on
+        <span data-ng-bind="log.date | date:'short'"></span>
+      </span> in
+      <span data-ng-bind="log.location"></span>
+    </li>
+  </ul>
+</div>

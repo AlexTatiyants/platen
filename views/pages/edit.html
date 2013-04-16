@@ -1,4 +1,30 @@
-<section id="post-container" data-ng-controller="EditorController">
-    <edit-panel></edit-panel>
-    <metadata-panel></metadata-panel>
+<section id="editor" data-ng-controller="EditorController">
+  
+  <section id="edit-panel">
+    <div id="post-title" contenteditable="true" data-ng-model="post.title"></div>
+    <div id="post-container">
+      <div contenteditable="true" id="post-content" data-ng-show="!previewOn" data-ng-model="post.content"></div>
+      <div id="post-content-preview" data-ng-show="previewOn" data-ng-bind-html-unsafe="post.htmlPreview"></div>
+      <button data-ng-click="togglePreview()">preview</button>
+
+      <span id="status-panel">
+        <span>last saved <strong><span data-ng-bind="status.autoSaveTime"></span></strong></span>
+      </span>
+
+    </div>
+  </section>
+
+  <aside id="metadata-panel">
+    <div id="metadata-container">
+      <div id="metadata-collapser" data-ng-click="toggleMetadataPanel()"></div>
+      <section id="#post-metadata" data-ng-show="showMetadata" data-ng-animate>
+        <label>exceprt</label>
+        <textarea id="post-excerpt"></textarea>
+        <label>tags</label>
+        <button class="round-button">+</button>
+        <input type="text" id="tag-list"></input>
+      </section>
+    </div>
+  </aside>
+
 </section>

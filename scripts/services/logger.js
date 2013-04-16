@@ -1,6 +1,6 @@
 angular.module('platen.services').factory('logger', function() {
 
-  var MAX_QUEUE_SIZE = 2;
+  var MAX_QUEUE_SIZE = 100;
   var offset = 0;
   var log = [];
 
@@ -18,7 +18,8 @@ angular.module('platen.services').factory('logger', function() {
 
       log.push({
         message: message,
-        location: location
+        location: location,
+        date: new Date()
       });
     },
 

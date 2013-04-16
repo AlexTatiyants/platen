@@ -1,13 +1,13 @@
-<div  class="posts-container" data-ng-controller="PostsController">
+<div class="list-container" data-ng-controller="PostsController">
     <h2>Posts</h2>
 
     <ul>
-        <li class="post-summary" data-ng-repeat="post in posts">
+        <li class="list-item" data-ng-repeat="post in posts">
             <span class="icon icon-delete-post" data-ng-click="deletePost(post)"></span>
             <span class="icon icon-edit-post" data-ng-click="editPost(post)"></span>
             <h3 data-ng-bind="post.title"></h3>
 
-            <span class="created-on">created on
+            <span class="item-date">created on
                 <span data-ng-bind="post.createdDate | date:'short'"></span>
             </span>
         </li>

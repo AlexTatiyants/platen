@@ -1,19 +1,20 @@
-.posts-container {
+.list-container {
   margin: auto;
   width: 80%;
+
   ul {
     padding: 0;
     width: 90%;
   }
 }
 
-.post-summary {
+.list-item {
   border: 1px solid @line-color;
   padding: @pad-unit;
   border-radius: @pad-unit * 0.3;
   list-style: none;
   width: 100%;
-  margin: 0;
+  margin: 0 0 @pad-unit * 0.3 0;
 
   h3 {
     font-size: @base-font-size * 1.5;
@@ -26,7 +27,7 @@
     float: right;
     margin-left: @pad-unit;
   }
-  .created-on {
+  .item-date {
     font-size: @base-font-size;
     color: lighten(@text-color, 30%);
     padding-top: @pad-unit * 0.5;

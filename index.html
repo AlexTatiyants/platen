@@ -16,13 +16,16 @@
 
 <body data-ng-app="platen">
 	<div data-ng-controller="MainController" class="main-container">
-
-		<a href="#"><i class="icon-settings"></i></a>
-		<a href="#/posts"><i class="icon-posts-list"></i></a>
-		<a href="#/posts/0"><i class="icon-new-post"></i></a>
-		<a href="#"><i class="icon-sync-post"></i></a>
-		<a href="#/logs"><i class="icon-logs"></i></a>
-		<data-ng-view/>
+		<nav>
+			<ul>
+				<li><a href="#"><i class="icon-settings"></i></a></li>
+				<li><a href="#/posts"><i class="icon-posts-list"></i></a></li>
+				<li><a href="#/posts/0"><i class="icon-new-post"></i></a></li>
+				<li><a href="#"><i class="icon-sync-post"></i></a></li>
+				<li><a href="#/logs"><i class="icon-logs"></i></a></li>
+			</ul>
+		</nav>
+		<section data-ng-view id="main-panel"></section>
 	</div>
 </body>
 </html>

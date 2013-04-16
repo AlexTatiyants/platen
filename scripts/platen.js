@@ -20,7 +20,7 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services" ]
     });
 } ]);
 
-var EditorController = function(e, t, i, n, r, o) {
+var EditorController = function(e, t, i, n, r, o, l) {
     var a = 12e3;
     e.post = {};
     e.status = {};
@@ -28,33 +28,36 @@ var EditorController = function(e, t, i, n, r, o) {
     e.previewOn = false;
     e.status.autoSaveTime = "unsaved";
     e.showMetadata = false;
-    var l = function(e) {
-        return "/" + o.POST_DIRECTORY_PATH + "/" + e;
+    var s = function(e) {
+        return "/" + l.POST_DIRECTORY_PATH + "/" + e;
     };
-    var s = function() {
+    var c = function() {
         e.post.id = new Date().getTime();
-        e.post.path = l(e.post.id);
+        e.post.path = s(e.post.id);
         e.post.createdDate = new Date();
+        o.log("created post '" + e.post.title + "'", "EditorController");
     };
-    var c = function(t) {
-        r.readFile(l(t), function(t) {
+    var u = function(t) {
+        r.readFile(s(t), function(t) {
             e.post = JSON.parse(t);
             e.$apply();
+            o.log("loaded post '" + e.post.title + "'", "EditorController");
         });
     };
-    var u = function() {
+    var f = function() {
         if (t.postId === "0") {
-            s();
+            c();
         } else {
-            c(t.postId);
+            u(t.postId);
         }
     };
-    u();
-    var f = function() {
+    f();
+    var d = function() {
         var t = JSON.parse(JSON.stringify(e.post));
         t.htmlPreview = "";
         r.writeFile(e.post.path, e.post.id, JSON.stringify(t), function(t) {
             e.status.autoSaveTime = n("date")(new Date(), "shortTime");
+            o.log("saved post '" + e.post.title + "' on " + e.status.autoSaveTime, "EditorController");
         });
     };
     e.togglePreview = function() {
@@ -67,12 +70,12 @@ var EditorController = function(e, t, i, n, r, o) {
         e.showMetadata = !e.showMetadata;
     };
     e.$on("postContentChanged", function(e, t) {
-        f();
+        d();
     });
     $("#post-title").focus();
 };
 
-EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "resources" ];
+EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "logger", "resources" ];
 
 var LoginController = function(e) {
     e.login = {};
@@ -82,7 +85,6 @@ LoginController.$inject = [ "$scope" ];
 
 var LogsController = function(e, t) {
     e.logs = t.getLogs();
-    console.log(e.logs);
 };
 
 LogsController.$inject = [ "$scope", "logger" ];
@@ -102,13 +104,14 @@ var PostsController = function(e, t, i, n, r, o) {
             e.posts.push(i);
             e.loaded = true;
             e.$apply();
-            r.log("read post " + i.title, "PostsController");
+            r.log("read post '" + i.title + "'", "PostsController");
         });
     }
     e.deletePost = function(t) {
         n.removeFile(t.path, function() {
             e.posts.splice(t);
             e.$apply();
+            r.log("deleted post '" + t.title + "'", "PostsController");
         });
     };
     e.editPost = function(e) {
@@ -116,41 +119,13 @@ var PostsController = function(e, t, i, n, r, o) {
     };
     e.deleteAll = function() {
         n.clearDirectory(o.POST_DIRECTORY_PATH, function() {
-            console.log("all files deleted from " + o.POST_DIRECTORY_PATH);
+            r.log("deleted all posts", "PostsController");
+            e.posts = [];
         });
-        e.posts = [];
     };
 };
 
 PostsController.$inject = [ "$scope", "$q", "$location", "fileManager", "logger", "resources" ];
-
-angular.module("platen.directives").directive("editPanel", function() {
-    return {
-        restrict: "E",
-        templateUrl: "views/partials/edit-panel.html"
-    };
-});
-
-angular.module("platen.directives").directive("metadataPanel", function() {
-    return {
-        restrict: "E",
-        templateUrl: "views/partials/metadata-panel.html"
-    };
-});
-
-angular.module("platen.directives").directive("statusPanel", function() {
-    return {
-        restrict: "E",
-        templateUrl: "views/partials/status-panel.html"
-    };
-});
-
-angular.module("platen.directives").directive("config-menu", function() {
-    return {
-        restrict: "E",
-        templateUrl: "views/partials/config-menu.html"
-    };
-});
 
 angular.module("platen.directives").directive("contenteditable", function() {
     return {
@@ -311,7 +286,7 @@ angular.module("platen.services").factory("fileManager", function() {
 });
 
 angular.module("platen.services").factory("logger", function() {
-    var e = 2;
+    var e = 100;
     var t = 0;
     var i = [];
     return {
@@ -326,7 +301,8 @@ angular.module("platen.services").factory("logger", function() {
             }
             i.push({
                 message: n,
-                location: r
+                location: r,
+                date: new Date()
             });
         },
         getLogs: function() {
