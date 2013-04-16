@@ -1,5 +1,5 @@
 <section id="editor" data-ng-controller="EditorController">
-  
+
   <section id="edit-panel">
     <div id="post-title" contenteditable="true" data-ng-model="post.title"></div>
     <div id="post-container">
@@ -18,11 +18,25 @@
     <div id="metadata-container">
       <div id="metadata-collapser" data-ng-click="toggleMetadataPanel()"></div>
       <section id="#post-metadata" data-ng-show="showMetadata" data-ng-animate>
-        <label>exceprt</label>
-        <textarea id="post-excerpt"></textarea>
-        <label>tags</label>
-        <button class="round-button">+</button>
-        <input type="text" id="tag-list"></input>
+
+        <div class="field-group-excerpt">
+          <label>exceprt</label>
+          <textarea id="post-excerpt"></textarea>
+        </div>
+
+        <div class="field-group-tags">
+          <label>tags</label>
+          <button class="round-button">+</button>
+          <input type="text" id="tag-list"></input>
+        </div>
+
+        <div class="field-group-categories">
+          <label>categories</label>
+          <button class="round-button">+</button>
+          <input type="text" id="category-list"></input>
+        </div>
+
+
       </section>
     </div>
   </aside>

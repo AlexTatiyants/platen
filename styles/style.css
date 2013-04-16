@@ -60,6 +60,7 @@
   font-size: 22.4px;
   float: right;
   margin-left: 20px;
+  cursor: pointer;
 }
 .list-item .item-date {
   font-size: 16px;
@@ -70,39 +71,14 @@
   height: 100%;
 }
 #post-container {
-  height: 100%;
-}
-#metadata-panel {
-  position: absolute;
-  bottom: 0px;
-  width: 100%;
-}
-#metadata-container {
-  color: white;
-  padding: 10px;
-  border-radius: 10px 10px 0 0;
-  border: 1px solid #d9d9d9;
-  background-color: #e6e6e6;
-  position: relative;
-  margin: auto;
-  width: 80%;
+  height: 90%;
 }
 #edit-panel {
-  padding: 20px;
-  height: 90%;
+  padding: 1%;
+  height: 100%;
   margin: auto;
   max-width: 960px;
   width: 80%;
-}
-#metadata-collapser {
-  display: block;
-  border-radius: 4px;
-  text-align: center;
-  width: 95%;
-  margin: auto;
-  cursor: pointer;
-  height: 10px;
-  background-color: #cccccc;
 }
 .post-common {
   width: 93%;
@@ -123,7 +99,7 @@
   resize: none;
   outline: none;
   overflow-y: auto;
-  height: 70%;
+  height: 90%;
   font-family: 'goudy';
   font-size: 17.6px;
   line-height: 30px;
@@ -153,7 +129,7 @@
   resize: none;
   outline: none;
   overflow-y: auto;
-  height: 70%;
+  height: 90%;
   font-family: 'goudy';
   font-size: 17.6px;
   line-height: 30px;
@@ -169,14 +145,11 @@
   resize: none;
   outline: none;
   overflow-y: auto;
-  height: 70%;
+  height: 90%;
   font-family: 'goudy';
   font-size: 17.6px;
   line-height: 30px;
   border: 1px dotted #cccccc;
-}
-#post-container {
-  height: 100%;
 }
 #status-panel {
   display: block;
@@ -187,6 +160,36 @@
   color: #999999;
   text-align: right;
   width: 30%;
+}
+#metadata-panel {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+}
+#metadata-container {
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+  border: 1px solid #d9d9d9;
+  background-color: #e6e6e6;
+  position: relative;
+  margin: auto;
+  width: 80%;
+}
+#metadata-collapser {
+  display: block;
+  border-radius: 4px;
+  text-align: center;
+  width: 95%;
+  margin: auto;
+  cursor: pointer;
+  height: 10px;
+  background-color: #cccccc;
+}
+#post-metadata label {
+  float: left;
+}
+#post-metadata .field-group-excerpt {
+  width: 90%;
 }
 @font-face {
   font-family: 'icons';
@@ -261,13 +264,14 @@ button {
   color: #666666;
 }
 .main-container {
-  height: 99%;
+  height: 100%;
   padding: 0;
   margin: 0;
 }
 nav {
   height: 5%;
   overflow: hidden;
+  padding: 1%;
 }
 nav ul {
   margin: 0;
@@ -278,5 +282,5 @@ nav ul li {
   float: left;
 }
 #main-panel {
-  height: 90%;
+  height: 88%;
 }

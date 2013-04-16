@@ -24,7 +24,8 @@ var EditorController = function(e, t, i, n, r, o, l) {
     var a = 12e3;
     e.post = {};
     e.status = {};
-    e.post.title = "UNTITLED";
+    e.post.title = "";
+    e.post.content = "";
     e.previewOn = false;
     e.status.autoSaveTime = "unsaved";
     e.showMetadata = false;
@@ -35,7 +36,6 @@ var EditorController = function(e, t, i, n, r, o, l) {
         e.post.id = new Date().getTime();
         e.post.path = s(e.post.id);
         e.post.createdDate = new Date();
-        o.log("created post '" + e.post.title + "'", "EditorController");
     };
     var u = function(t) {
         r.readFile(s(t), function(t) {
@@ -53,6 +53,7 @@ var EditorController = function(e, t, i, n, r, o, l) {
     };
     f();
     var d = function() {
+        if (e.post.title.trim() === "" && e.post.content.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
         t.htmlPreview = "";
         r.writeFile(e.post.path, e.post.id, JSON.stringify(t), function(t) {

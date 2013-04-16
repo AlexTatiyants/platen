@@ -1,5 +1,6 @@
 <div class="list-container" data-ng-controller="PostsController">
     <h2>Posts</h2>
+    <button data-ng-click="deleteAll()">clear all posts</button>
 
     <ul>
         <li class="list-item" data-ng-repeat="post in posts">
@@ -13,5 +14,4 @@
         </li>
     </ul>
 
-    <button data-ng-click="deleteAll()">clear all posts</button>
 </div>

@@ -3,7 +3,9 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
 
   $scope.post = {};
   $scope.status = {};
-  $scope.post.title = 'UNTITLED';
+  $scope.post.title = '';
+  $scope.post.content = '';
+    
   $scope.previewOn = false;
   $scope.status.autoSaveTime = "unsaved";
   $scope.showMetadata = false;
@@ -16,7 +18,6 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     $scope.post.id = new Date().getTime();
     $scope.post.path = getFilePath($scope.post.id);
     $scope.post.createdDate = new Date();
-    logger.log("created post '" + $scope.post.title + "'", "EditorController");
   };
 
   var loadPost = function(postId) {
@@ -38,6 +39,8 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   initializePost();
 
   var savePost = function() {
+    if ($scope.post.title.trim() === '' && $scope.post.content.trim() === '') return;
+
     var postToSave = JSON.parse(JSON.stringify($scope.post));
     postToSave.htmlPreview = "";
 
@@ -55,10 +58,10 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   };
 
   $scope.toggleMetadataPanel = function() {
-   $scope.showMetadata = !$scope.showMetadata;
+    $scope.showMetadata = !$scope.showMetadata;
   };
 
-  $scope.$on('postContentChanged', function(event,args) {
+  $scope.$on('postContentChanged', function(event, args) {
     savePost();
   });
 
