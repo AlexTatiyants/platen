@@ -85,7 +85,7 @@
 }
 #edit-panel {
   padding: 1%;
-  height: 100%;
+  height: 94%;
   margin: auto;
   max-width: 960px;
   width: 80%;
@@ -186,6 +186,7 @@
   margin: auto;
   width: 80%;
   overflow: hidden;
+  box-shadow: 2px 2px 2px #666666;
 }
 #metadata-collapser {
   display: block;
@@ -214,9 +215,8 @@
 }
 .field-group .input {
   border: 1px solid #999999;
-  background-color: #b3b3b3;
   border-radius: 4px;
-  color: #4d4d4d;
+  color: #b3b3b3;
   padding: 4px;
   font-size: 12.8px;
 }

@@ -45,12 +45,25 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   initializePost();
   $('#post-title').focus();
 
+
+  var convertToText = function(el) {
+    return el
+    .replace(/<br>/gi, "\n")
+    .replace(/<(?:.|\n)*?>/gm, '')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>');
+  };
+
+
   var savePost = function() {
     if ($scope.post.title.trim() === '' && $scope.post.content.trim() === '') return;
+
+    console.log(convertToText($scope.post.content));
 
     var postToSave = JSON.parse(JSON.stringify($scope.post));
     postToSave.htmlPreview = "";
     postToSave.lastUpdatedDate = new Date();
+    postToSave.content = convertToText($scope.post.content);
 
     fileManager.writeFile($scope.post.path, $scope.post.id, JSON.stringify(postToSave), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
