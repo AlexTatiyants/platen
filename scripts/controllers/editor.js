@@ -1,14 +1,12 @@
 var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, logger, resources) {
   var AUTOSAVE_INTERVAL = 12000;
 
-  $scope.post = {};
   $scope.status = {};
-  $scope.post.title = '';
-  $scope.post.content = '';
-    
   $scope.previewOn = false;
   $scope.status.autoSaveTime = "unsaved";
-  $scope.showMetadata = false;
+  $scope.showMetadata = true;
+
+  $scope.post = {};
 
   var getFilePath = function(postId) {
     return "/" + resources.POST_DIRECTORY_PATH + '/' + postId;
@@ -18,6 +16,14 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     $scope.post.id = new Date().getTime();
     $scope.post.path = getFilePath($scope.post.id);
     $scope.post.createdDate = new Date();
+    $scope.post.lastUpdatedDate = '';
+    $scope.post.title = '';
+    $scope.post.content = '';
+    $scope.post.htmlPreview = '';
+    $scope.post.excerpt = '';
+    $scope.post.tags = '';
+    $scope.post.categories = '';
+    $scope.post.status = '';
   };
 
   var loadPost = function(postId) {
@@ -37,12 +43,14 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   };
 
   initializePost();
+  $('#post-title').focus();
 
   var savePost = function() {
     if ($scope.post.title.trim() === '' && $scope.post.content.trim() === '') return;
 
     var postToSave = JSON.parse(JSON.stringify($scope.post));
     postToSave.htmlPreview = "";
+    postToSave.lastUpdatedDate = new Date();
 
     fileManager.writeFile($scope.post.path, $scope.post.id, JSON.stringify(postToSave), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
@@ -59,13 +67,20 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
 
   $scope.toggleMetadataPanel = function() {
     $scope.showMetadata = !$scope.showMetadata;
+
+    if ($scope.showMetadata && $scope.post.excerpt === '') {
+      $scope.updateExcerpt();
+    }
+  };
+
+  $scope.updateExcerpt = function() {
+    console.log($scope.post);
   };
 
   $scope.$on('postContentChanged', function(event, args) {
     savePost();
   });
 
-  $('#post-title').focus();
 };
 
 EditorController.$inject = ['$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'logger', 'resources'];

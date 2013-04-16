@@ -35,6 +35,16 @@
   line-height: 28.8px;
   background-color: #cc0000;
 }
+.pull-right {
+  float: right;
+}
+.full {
+  width: 95%;
+}
+.half {
+  width: 45%;
+  margin-right: 5%;
+}
 .list-container {
   margin: auto;
   width: 80%;
@@ -45,14 +55,14 @@
 }
 .list-item {
   border: 1px solid #e6e6e6;
-  padding: 20px;
+  padding: 14px;
   border-radius: 6px;
   list-style: none;
   width: 100%;
   margin: 0 0 6px 0;
 }
 .list-item h3 {
-  font-size: 24px;
+  font-size: 22.4px;
   font-weight: 300;
   margin: 0 0 10px 0;
 }
@@ -63,8 +73,8 @@
   cursor: pointer;
 }
 .list-item .item-date {
-  font-size: 16px;
-  color: #b3b3b3;
+  font-size: 12.8px;
+  color: #cccccc;
   padding-top: 10px;
 }
 #editor {
@@ -99,7 +109,7 @@
   resize: none;
   outline: none;
   overflow-y: auto;
-  height: 90%;
+  height: 85%;
   font-family: 'goudy';
   font-size: 17.6px;
   line-height: 30px;
@@ -129,7 +139,7 @@
   resize: none;
   outline: none;
   overflow-y: auto;
-  height: 90%;
+  height: 85%;
   font-family: 'goudy';
   font-size: 17.6px;
   line-height: 30px;
@@ -145,7 +155,7 @@
   resize: none;
   outline: none;
   overflow-y: auto;
-  height: 90%;
+  height: 85%;
   font-family: 'goudy';
   font-size: 17.6px;
   line-height: 30px;
@@ -155,7 +165,7 @@
   display: block;
   float: right;
   font-size: 12.8px;
-  margin-top: 14px;
+  margin-top: 8px;
   margin-right: 20px;
   color: #999999;
   text-align: right;
@@ -167,13 +177,15 @@
   width: 100%;
 }
 #metadata-container {
-  padding: 10px;
+  padding: 6px;
   border-radius: 10px 10px 0 0;
-  border: 1px solid #d9d9d9;
-  background-color: #e6e6e6;
+  background-color: #4d4d4d;
+  color: #b3b3b3;
+  border: 1px solid #404040;
   position: relative;
   margin: auto;
   width: 80%;
+  overflow: hidden;
 }
 #metadata-collapser {
   display: block;
@@ -182,14 +194,37 @@
   width: 95%;
   margin: auto;
   cursor: pointer;
-  height: 10px;
-  background-color: #cccccc;
+  height: 8px;
+  background-color: #262626;
 }
-#post-metadata label {
-  float: left;
-}
-#post-metadata .field-group-excerpt {
+#post-metadata {
+  overflow: hidden;
+  margin: auto;
   width: 90%;
+}
+.field-group {
+  float: left;
+  display: block;
+  margin-bottom: 10px;
+}
+.field-group label {
+  display: block;
+  font-size: 12.8px;
+  margin: 4px;
+}
+.field-group .input {
+  border: 1px solid #999999;
+  background-color: #b3b3b3;
+  border-radius: 4px;
+  color: #4d4d4d;
+  padding: 4px;
+  font-size: 12.8px;
+}
+.field-group .icon-reload {
+  float: right;
+  position: relative;
+  top: -20px;
+  left: 20px;
 }
 @font-face {
   font-family: 'icons';
@@ -202,7 +237,6 @@ a [class*=" icon-"] {
   color: #e6e6e6;
   padding: 10px;
   font-size: 20.8px;
-  cursor: pointer;
 }
 a [class^="icon-"]:hover,
 a [class*=" icon-"]:hover {
@@ -216,6 +250,7 @@ a [class*=" icon-"]:hover {
   text-decoration: inherit;
   -webkit-font-smoothing: antialiased;
   display: block;
+  cursor: pointer;
 }
 .icon-posts-list:before {
   content: '\f00b';
@@ -243,6 +278,9 @@ a [class*=" icon-"]:hover {
 }
 .icon-logs:before {
   content: '\E007';
+}
+.icon-reload:before {
+  content: '\E006';
 }
 html {
   height: 100%;

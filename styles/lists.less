@@ -10,14 +10,14 @@
 
 .list-item {
   border: 1px solid @line-color;
-  padding: @pad-unit;
+  padding: @pad-unit * 0.7;
   border-radius: @pad-unit * 0.3;
   list-style: none;
   width: 100%;
   margin: 0 0 @pad-unit * 0.3 0;
 
   h3 {
-    font-size: @base-font-size * 1.5;
+    font-size: @base-font-size * 1.4;
     font-weight: 300;
     margin: 0 0 @pad-unit * 0.5 0;
   }
@@ -29,8 +29,8 @@
     cursor: pointer;
   }
   .item-date {
-    font-size: @base-font-size;
-    color: lighten(@text-color, 30%);
+    font-size: @base-font-size * 0.8;
+    color: lighten(@text-color, 40%);
     padding-top: @pad-unit * 0.5;
   }
 }

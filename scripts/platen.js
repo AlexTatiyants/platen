@@ -1,4 +1,4 @@
-/*! platen 2013-04-15 */
+/*! platen 2013-04-16 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -20,15 +20,13 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services" ]
     });
 } ]);
 
-var EditorController = function(e, t, i, n, r, o, l) {
+var EditorController = function(e, t, o, n, i, r, l) {
     var a = 12e3;
-    e.post = {};
     e.status = {};
-    e.post.title = "";
-    e.post.content = "";
     e.previewOn = false;
     e.status.autoSaveTime = "unsaved";
-    e.showMetadata = false;
+    e.showMetadata = true;
+    e.post = {};
     var s = function(e) {
         return "/" + l.POST_DIRECTORY_PATH + "/" + e;
     };
@@ -36,12 +34,20 @@ var EditorController = function(e, t, i, n, r, o, l) {
         e.post.id = new Date().getTime();
         e.post.path = s(e.post.id);
         e.post.createdDate = new Date();
+        e.post.lastUpdatedDate = "";
+        e.post.title = "";
+        e.post.content = "";
+        e.post.htmlPreview = "";
+        e.post.excerpt = "";
+        e.post.tags = "";
+        e.post.categories = "";
+        e.post.status = "";
     };
     var u = function(t) {
-        r.readFile(s(t), function(t) {
+        i.readFile(s(t), function(t) {
             e.post = JSON.parse(t);
             e.$apply();
-            o.log("loaded post '" + e.post.title + "'", "EditorController");
+            r.log("loaded post '" + e.post.title + "'", "EditorController");
         });
     };
     var f = function() {
@@ -52,13 +58,15 @@ var EditorController = function(e, t, i, n, r, o, l) {
         }
     };
     f();
-    var d = function() {
+    $("#post-title").focus();
+    var p = function() {
         if (e.post.title.trim() === "" && e.post.content.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
         t.htmlPreview = "";
-        r.writeFile(e.post.path, e.post.id, JSON.stringify(t), function(t) {
+        t.lastUpdatedDate = new Date();
+        i.writeFile(e.post.path, e.post.id, JSON.stringify(t), function(t) {
             e.status.autoSaveTime = n("date")(new Date(), "shortTime");
-            o.log("saved post '" + e.post.title + "' on " + e.status.autoSaveTime, "EditorController");
+            r.log("saved post '" + e.post.title + "' on " + e.status.autoSaveTime, "EditorController");
         });
     };
     e.togglePreview = function() {
@@ -69,11 +77,16 @@ var EditorController = function(e, t, i, n, r, o, l) {
     };
     e.toggleMetadataPanel = function() {
         e.showMetadata = !e.showMetadata;
+        if (e.showMetadata && e.post.excerpt === "") {
+            e.updateExcerpt();
+        }
+    };
+    e.updateExcerpt = function() {
+        console.log(e.post);
     };
     e.$on("postContentChanged", function(e, t) {
-        d();
+        p();
     });
-    $("#post-title").focus();
 };
 
 EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "logger", "resources" ];
@@ -96,31 +109,31 @@ var MainController = function(e, t) {
 
 MainController.$inject = [ "$scope", "fileManager" ];
 
-var PostsController = function(e, t, i, n, r, o) {
+var PostsController = function(e, t, o, n, i, r) {
     e.posts = [];
     e.loaded = false;
     if (!e.loaded) {
-        n.readFilesInDirectory(o.POST_DIRECTORY_PATH, function(t) {
-            var i = JSON.parse(this.result);
-            e.posts.push(i);
+        n.readFilesInDirectory(r.POST_DIRECTORY_PATH, function(t) {
+            var o = JSON.parse(this.result);
+            e.posts.push(o);
             e.loaded = true;
             e.$apply();
-            r.log("read post '" + i.title + "'", "PostsController");
+            i.log("read post '" + o.title + "'", "PostsController");
         });
     }
     e.deletePost = function(t) {
         n.removeFile(t.path, function() {
             e.posts.splice(t);
             e.$apply();
-            r.log("deleted post '" + t.title + "'", "PostsController");
+            i.log("deleted post '" + t.title + "'", "PostsController");
         });
     };
     e.editPost = function(e) {
-        i.path("posts/" + e.id);
+        o.path("posts/" + e.id);
     };
     e.deleteAll = function() {
-        n.clearDirectory(o.POST_DIRECTORY_PATH, function() {
-            r.log("deleted all posts", "PostsController");
+        n.clearDirectory(r.POST_DIRECTORY_PATH, function() {
+            i.log("deleted all posts", "PostsController");
             e.posts = [];
         });
     };
@@ -132,21 +145,21 @@ angular.module("platen.directives").directive("contenteditable", function() {
     return {
         restrict: "A",
         require: "?ngModel",
-        link: function(e, t, i, n) {
+        link: function(e, t, o, n) {
             if (!n) return;
             n.$render = function() {
                 t.html(n.$viewValue || "");
             };
             t.bind("blur keyup change", function() {
-                e.$apply(r);
+                e.$apply(i);
             });
-            var r = function() {
+            var i = function() {
                 n.$setViewValue(t.html());
             };
             t.bind("blur paste", function() {
                 e.$emit("postContentChanged");
             });
-            r();
+            i();
         }
     };
 });
@@ -154,40 +167,40 @@ angular.module("platen.directives").directive("contenteditable", function() {
 angular.module("platen.services").factory("fileManager", function() {
     var e;
     var t = function(e, t) {
-        var i = "";
+        var o = "";
         switch (e.code) {
           case FileError.QUOTA_EXCEEDED_ERR:
-            i = "QUOTA_EXCEEDED_ERR";
+            o = "QUOTA_EXCEEDED_ERR";
             break;
 
           case FileError.NOT_FOUND_ERR:
-            i = "NOT_FOUND_ERR";
+            o = "NOT_FOUND_ERR";
             break;
 
           case FileError.SECURITY_ERR:
-            i = "SECURITY_ERR";
+            o = "SECURITY_ERR";
             break;
 
           case FileError.INVALID_MODIFICATION_ERR:
-            i = "INVALID_MODIFICATION_ERR";
+            o = "INVALID_MODIFICATION_ERR";
             break;
 
           case FileError.INVALID_STATE_ERR:
-            i = "INVALID_STATE_ERR";
+            o = "INVALID_STATE_ERR";
             break;
 
           default:
-            i = "Unknown Error";
+            o = "Unknown Error";
             break;
         }
-        console.log("Error: " + i, t);
+        console.log("Error: " + o, t);
     };
-    var i = function(i, n, r) {
+    var o = function(o, n, i) {
         if (e) {
-            e.root.getFile(i, {
+            e.root.getFile(o, {
                 create: n
-            }, r, function(e) {
-                t(e, "in handleFile(), while getting file path " + i);
+            }, i, function(e) {
+                t(e, "in handleFile(), while getting file path " + o);
             });
         }
     };
@@ -197,22 +210,22 @@ angular.module("platen.services").factory("fileManager", function() {
                 e = t;
             });
         },
-        readFilesInDirectory: function(n, r) {
+        readFilesInDirectory: function(n, i) {
             if (e) {
                 e.root.getDirectory(n, {
                     create: true
                 }, function(e) {
-                    var o = e.createReader();
-                    o.readEntries(function(e) {
+                    var r = e.createReader();
+                    r.readEntries(function(e) {
                         _.each(e, function(e) {
                             if (e.isFile) {
-                                i(e.fullPath, false, function(i) {
-                                    i.file(function(e) {
+                                o(e.fullPath, false, function(o) {
+                                    o.file(function(e) {
                                         var t = new FileReader();
-                                        t.onloadend = r;
+                                        t.onloadend = i;
                                         t.readAsText(e);
-                                    }, function(i) {
-                                        t(i, "in readFilesInDirectory, while getting file " + e.fullPath);
+                                    }, function(o) {
+                                        t(o, "in readFilesInDirectory, while getting file " + e.fullPath);
                                     });
                                 });
                             }
@@ -228,15 +241,15 @@ angular.module("platen.services").factory("fileManager", function() {
         clearDirectory: function(n) {
             if (e) {
                 e.root.getDirectory(n, {}, function(e) {
-                    var r = e.createReader();
-                    r.readEntries(function(e) {
+                    var i = e.createReader();
+                    i.readEntries(function(e) {
                         _.each(e, function(e) {
                             if (e.isFile) {
-                                i(e.fullPath, false, function(i) {
-                                    i.remove(function() {
+                                o(e.fullPath, false, function(o) {
+                                    o.remove(function() {
                                         console.log("removed file " + e.fullPath);
-                                    }, function(i) {
-                                        t(i, "while removing file " + e.fullPath);
+                                    }, function(o) {
+                                        t(o, "while removing file " + e.fullPath);
                                     });
                                 });
                             }
@@ -249,37 +262,37 @@ angular.module("platen.services").factory("fileManager", function() {
                 });
             }
         },
-        writeFile: function(e, n, r, o) {
-            i(e, true, function(i) {
-                i.createWriter(function(e) {
-                    var n = new Blob([ r ], {
+        writeFile: function(e, n, i, r) {
+            o(e, true, function(o) {
+                o.createWriter(function(e) {
+                    var n = new Blob([ i ], {
                         type: "text/javascript"
                     });
                     e.onerror = t;
-                    e.onwriteend = o(i);
+                    e.onwriteend = r(o);
                     e.write(n);
-                }, function(i) {
-                    t(i, "in writeFile(), while creating fileWriter for " + e + "/" + n);
+                }, function(o) {
+                    t(o, "in writeFile(), while creating fileWriter for " + e + "/" + n);
                 });
             });
         },
         readFile: function(e, n) {
-            i(e, false, function(i) {
-                i.file(function(e) {
+            o(e, false, function(o) {
+                o.file(function(e) {
                     var t = new FileReader();
                     t.onload = function(e) {
                         n(e.target.result);
                     };
                     t.readAsText(e);
-                }, function(i) {
-                    t(i, "in readingFile(), while reading file " + e);
+                }, function(o) {
+                    t(o, "in readingFile(), while reading file " + e);
                 });
             });
         },
         removeFile: function(e, n) {
-            i(e, false, function(i) {
-                i.remove(n, function(i) {
-                    t(i, "in removeFile(), while reading file " + e);
+            o(e, false, function(o) {
+                o.remove(n, function(o) {
+                    t(o, "in removeFile(), while reading file " + e);
                 });
             });
         }
@@ -289,25 +302,25 @@ angular.module("platen.services").factory("fileManager", function() {
 angular.module("platen.services").factory("logger", function() {
     var e = 100;
     var t = 0;
-    var i = [];
+    var o = [];
     return {
-        log: function(n, r) {
-            if (i.length > e) {
+        log: function(n, i) {
+            if (o.length > e) {
                 console.log("removing log item");
-                var o = i[t];
-                if (++t * 2 >= i.length) {
-                    i = i.slice(t);
+                var r = o[t];
+                if (++t * 2 >= o.length) {
+                    o = o.slice(t);
                     t = 0;
                 }
             }
-            i.push({
+            o.push({
                 message: n,
-                location: r,
+                location: i,
                 date: new Date()
             });
         },
         getLogs: function() {
-            return i;
+            return o;
         }
     };
 });
