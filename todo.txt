@@ -1,0 +1,18 @@
+Posts
+- add confirmation before deleting posts
+
+Editor
+- add keyboard shortcut for preview
+- add status (draft, published) to metadata
+
+Config
+- add config panel
+- add themes
+- add font selection
+
+WP integration
+- add credentials modal
+- add save post
+- add tags retrieval
+- add categories retrieval
+- add keyboard shortcut for sync
