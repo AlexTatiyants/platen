@@ -84,6 +84,26 @@ var EditorController = function(e, t, n, o, r, i, a) {
     e.updateExcerpt = function() {
         console.log(e.post);
     };
+    e.sync = function() {
+        var t = {
+            url: "http://localhost/wordpress/xmlrpc.php",
+            username: "admin",
+            password: "admin"
+        };
+        var n = new WordPress(t.url, t.username, t.password);
+        var o = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        var r = {
+            post_type: "post",
+            post_status: "publish",
+            post_title: e.post.title,
+            post_author: 1,
+            post_excerpt: e.post.excerpt,
+            post_content: o,
+            post_format: ""
+        };
+        var i = n.newPost(1, r);
+        console.log(i);
+    };
     e.$on("postContentChanged", function(e, t) {
         p();
     });
@@ -351,4 +371,20 @@ angular.module("platen.services").factory("logger", function() {
 
 angular.module("platen.services").value("resources", {
     POST_DIRECTORY_PATH: "posts"
+});
+
+angular.module("platen.services").factory("wordpress", function() {
+    var e = "";
+    var t;
+    var n = {
+        url: "http://localhost/wordpress/xmlrpc.php",
+        username: "admin",
+        password: "admin"
+    };
+    var o = new WordPress(n.url, n.username, n.password);
+    return {
+        isloggedIn: function() {},
+        setCredentials: function(e, t, n) {},
+        savePost: function(e) {}
+    };
 });

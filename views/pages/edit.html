@@ -6,6 +6,7 @@
       <article contenteditable="true" markdownenabled="true" id="post-content" data-ng-show="!previewOn" data-ng-model="post.content"></article>
       <div id="post-content-preview" data-ng-show="previewOn" data-ng-bind-html-unsafe="post.contentHtml"></div>
       <button data-ng-click="togglePreview()">preview</button>
+      <button data-ng-click="sync()">sync</button>
 
       <span id="status-panel">
         <span>last saved <strong><span data-ng-bind="status.autoSaveTime"></span></strong></span>

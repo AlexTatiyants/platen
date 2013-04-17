@@ -1,4 +1,4 @@
-var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, logger, resources) {
+var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, logger, wordpress, resources) {
   var AUTOSAVE_INTERVAL = 12000;
 
   $scope.status = {};
@@ -77,10 +77,15 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     console.log($scope.post);
   };
 
+  $scope.sync = function() {
+    $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    wordpress.savePost($scope.post);
+  };
+
   $scope.$on('postContentChanged', function(event, args) {
     savePost();
   });
 
 };
 
-EditorController.$inject = ['$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'logger', 'resources'];
+EditorController.$inject = ['$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'logger', 'wordpress', 'resources'];
