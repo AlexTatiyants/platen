@@ -1,4 +1,4 @@
-/*! platen 2013-04-16 */
+/*! platen 2013-04-17 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -59,7 +59,7 @@ var EditorController = function(e, t, n, o, r, i, a) {
     };
     f();
     $("#post-title").focus();
-    var d = function() {
+    var p = function() {
         if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
         t.contentHtml = "";
@@ -85,7 +85,7 @@ var EditorController = function(e, t, n, o, r, i, a) {
         console.log(e.post);
     };
     e.$on("postContentChanged", function(e, t) {
-        d();
+        p();
     });
 };
 
@@ -110,12 +110,12 @@ var MainController = function(e, t) {
 MainController.$inject = [ "$scope", "fileManager" ];
 
 var PostsController = function(e, t, n, o, r, i) {
-    e.posts = [];
+    e.posts = {};
     e.loaded = false;
     if (!e.loaded) {
         o.readFilesInDirectory(i.POST_DIRECTORY_PATH, function(t) {
             var n = JSON.parse(this.result);
-            e.posts.push(n);
+            e.posts[n.id] = n;
             e.loaded = true;
             e.$apply();
             r.log("read post '" + n.title + "'", "PostsController");
@@ -123,7 +123,7 @@ var PostsController = function(e, t, n, o, r, i) {
     }
     e.deletePost = function(t) {
         o.removeFile(t.path, function() {
-            e.posts.splice(t);
+            delete e.posts[t.id];
             e.$apply();
             r.log("deleted post '" + t.title + "'", "PostsController");
         });
@@ -134,7 +134,7 @@ var PostsController = function(e, t, n, o, r, i) {
     e.deleteAll = function() {
         o.clearDirectory(i.POST_DIRECTORY_PATH, function() {
             r.log("deleted all posts", "PostsController");
-            e.posts = [];
+            e.posts = {};
         });
     };
 };

@@ -1,11 +1,12 @@
 var PostsController = function($scope, $q, $location, fileManager, logger, resources) {
-  $scope.posts = [];
+  $scope.posts = {};
   $scope.loaded = false;
 
   if (!$scope.loaded) {
     fileManager.readFilesInDirectory(resources.POST_DIRECTORY_PATH, function(e) {
       var post = JSON.parse(this.result);
-      $scope.posts.push(post);
+
+      $scope.posts[post.id] = post;
       $scope.loaded = true;
       $scope.$apply();
       logger.log("read post '" + post.title + "'", "PostsController");
@@ -13,8 +14,9 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
   };
 
   $scope.deletePost = function(post) {
+    // console.log(post.path);
     fileManager.removeFile(post.path, function() {
-      $scope.posts.splice(post);
+      delete $scope.posts[post.id];
       $scope.$apply();
       logger.log("deleted post '" + post.title + "'", "PostsController");
     });
@@ -27,7 +29,7 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
   $scope.deleteAll = function() {
     fileManager.clearDirectory(resources.POST_DIRECTORY_PATH, function() {
       logger.log("deleted all posts", "PostsController");
-      $scope.posts = [];
+      $scope.posts = {};
     });
   };
 
