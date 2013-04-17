@@ -1,4 +1,4 @@
-angular.module('platen.directives').directive('editable', function() {
+angular.module('platen.directives').directive('markdownenabled', function() {
   return {
     restrict: 'A',
     require: '?ngModel',
@@ -14,7 +14,8 @@ angular.module('platen.directives').directive('editable', function() {
       });
 
       var read = function() {
-        ngModel.$setViewValue(element.context.innerText);
+        scope.post.contentMarkdown = element.context.innerText;
+        ngModel.$setViewValue(element.html());
       };
 
       element.bind('blur paste', function() {

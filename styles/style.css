@@ -110,9 +110,9 @@
   outline: none;
   overflow-y: auto;
   height: 85%;
-  font-family: 'goudy';
-  font-size: 17.6px;
-  line-height: 30px;
+  font-family: 'inconsolata';
+  font-size: 16px;
+  line-height: 25px;
 }
 #post-title {
   width: 93%;
@@ -140,10 +140,9 @@
   outline: none;
   overflow-y: auto;
   height: 85%;
-  font-family: 'goudy';
-  font-size: 17.6px;
-  line-height: 30px;
-  white-space: pre;
+  font-family: 'inconsolata';
+  font-size: 16px;
+  line-height: 25px;
   font-weight: 300;
 }
 #post-content-preview {
@@ -156,9 +155,9 @@
   outline: none;
   overflow-y: auto;
   height: 85%;
-  font-family: 'goudy';
-  font-size: 17.6px;
-  line-height: 30px;
+  font-family: 'inconsolata';
+  font-size: 16px;
+  line-height: 25px;
   border: 1px dotted #cccccc;
 }
 #status-panel {
