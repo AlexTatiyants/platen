@@ -78,6 +78,11 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   };
 
   $scope.sync = function() {
+    if (!wordpress.areCredentialsSet) {
+      // get credentials;
+      
+    }
+
     $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
     wordpress.savePost($scope.post);
   };

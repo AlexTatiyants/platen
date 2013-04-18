@@ -9,6 +9,7 @@
 	<script src="vendor/angular.min.1.1.4.js"></script>
 	<script src="vendor/marked.js"></script>
 	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="vendor/angular-strap.min.js"></script>
 	<script src="vendor/underscore.1.4.4.min.js"></script>
 	<script src="scripts/platen.js"></script>
 	<title>platen</title>
@@ -18,7 +19,7 @@
 	<div data-ng-controller="MainController" class="main-container">
 		<nav>
 			<ul>
-				<li><a href="#"><i class="icon-settings"></i></a></li>
+				<li><a data-ng-click="viaService()"><i  class="icon-settings"></i></a></li>
 				<li><a href="#/posts"><i class="icon-posts-list"></i></a></li>
 				<li><a href="#/posts/0"><i class="icon-new-post"></i></a></li>
 				<li><a href="#"><i class="icon-sync-post"></i></a></li>
@@ -26,6 +27,7 @@
 				<li class="pull-right"><a href="#/help"><i class="icon-preview-on"></i></a></li>
 			</ul>
 		</nav>
+
 		<section data-ng-view id="main-panel"></section>
 	</div>
 </body>

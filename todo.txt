@@ -12,7 +12,7 @@ Config
 
 WP integration
 - add credentials modal
-- add save post
 - add tags retrieval
 - add categories retrieval
 - add keyboard shortcut for sync
+- add setting author

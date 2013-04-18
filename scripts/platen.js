@@ -5,7 +5,7 @@ angular.module("platen.directives", []);
 
 angular.module("platen.services", []);
 
-var platen = angular.module("platen", [ "platen.directives", "platen.services" ]).config([ "$routeProvider", function(e) {
+var platen = angular.module("platen", [ "platen.directives", "platen.services", "$strap.directives" ]).config([ "$routeProvider", function(e) {
     e.when("/posts", {
         templateUrl: "views/pages/posts.html"
     });
@@ -20,19 +20,19 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services" ]
     });
 } ]);
 
-var EditorController = function(e, t, n, o, r, i, a) {
-    var l = 12e3;
+var EditorController = function(e, t, n, o, r, i, a, l) {
+    var s = 12e3;
     e.status = {};
     e.previewOn = false;
     e.status.autoSaveTime = "unsaved";
     e.showMetadata = false;
     e.post = {};
-    var s = function(e) {
-        return "/" + a.POST_DIRECTORY_PATH + "/" + e;
+    var c = function(e) {
+        return "/" + l.POST_DIRECTORY_PATH + "/" + e;
     };
-    var c = function() {
+    var u = function() {
         e.post.id = new Date().getTime();
-        e.post.path = s(e.post.id);
+        e.post.path = c(e.post.id);
         e.post.createdDate = new Date();
         e.post.lastUpdatedDate = "";
         e.post.title = "";
@@ -43,21 +43,21 @@ var EditorController = function(e, t, n, o, r, i, a) {
         e.post.categories = "";
         e.post.status = "";
     };
-    var u = function(t) {
-        r.readFile(s(t), function(t) {
+    var f = function(t) {
+        r.readFile(c(t), function(t) {
             e.post = JSON.parse(t);
             e.$apply();
             i.log("loaded post '" + e.post.title + "'", "EditorController");
         });
     };
-    var f = function() {
+    var d = function() {
         if (t.postId === "0") {
-            c();
+            u();
         } else {
-            u(t.postId);
+            f(t.postId);
         }
     };
-    f();
+    d();
     $("#post-title").focus();
     var p = function() {
         if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
@@ -85,31 +85,16 @@ var EditorController = function(e, t, n, o, r, i, a) {
         console.log(e.post);
     };
     e.sync = function() {
-        var t = {
-            url: "http://localhost/wordpress/xmlrpc.php",
-            username: "admin",
-            password: "admin"
-        };
-        var n = new WordPress(t.url, t.username, t.password);
-        var o = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        var r = {
-            post_type: "post",
-            post_status: "publish",
-            post_title: e.post.title,
-            post_author: 1,
-            post_excerpt: e.post.excerpt,
-            post_content: o,
-            post_format: ""
-        };
-        var i = n.newPost(1, r);
-        console.log(i);
+        if (!a.areCredentialsSet) {}
+        e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        a.savePost(e.post);
     };
     e.$on("postContentChanged", function(e, t) {
         p();
     });
 };
 
-EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "logger", "resources" ];
+EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "logger", "wordpress", "resources" ];
 
 var LoginController = function(e) {
     e.login = {};
@@ -123,11 +108,30 @@ var LogsController = function(e, t) {
 
 LogsController.$inject = [ "$scope", "logger" ];
 
-var MainController = function(e, t) {
+var MainController = function(e, t, n) {
     t.initialize();
+    e.modal = {
+        content: "Hello Modal",
+        saved: false
+    };
+    e.viaService = function() {
+        var e = n({
+            template: "views/pages/modal.html",
+            show: true,
+            backdrop: "static"
+        });
+    };
+    e.parentController = function(e) {
+        console.warn(arguments);
+        e();
+    };
+    e.dismiss = function() {
+        console.log("dismissing");
+        dismiss();
+    };
 };
 
-MainController.$inject = [ "$scope", "fileManager" ];
+MainController.$inject = [ "$scope", "fileManager", "$modal" ];
 
 var PostsController = function(e, t, n, o, r, i) {
     e.posts = {};
@@ -374,17 +378,48 @@ angular.module("platen.services").value("resources", {
 });
 
 angular.module("platen.services").factory("wordpress", function() {
-    var e = "";
-    var t;
-    var n = {
-        url: "http://localhost/wordpress/xmlrpc.php",
-        username: "admin",
-        password: "admin"
+    var e = "post";
+    var t = 1;
+    var n = 1;
+    var o = "";
+    var r = "";
+    var i = "";
+    var a = null;
+    var l = function() {
+        if (!a) {
+            a = new WordPress(o, r, i);
+        }
     };
-    var o = new WordPress(n.url, n.username, n.password);
     return {
-        isloggedIn: function() {},
-        setCredentials: function(e, t, n) {},
-        savePost: function(e) {}
+        setCredentials: function(e, t, n) {
+            o = e;
+            r = t;
+            i = n;
+        },
+        areCredentialsSet: function() {
+            if (o === "" || r === "" || i === "") {
+                return false;
+            }
+            return true;
+        },
+        savePost: function(o) {
+            if (!a) return;
+            var r;
+            var i = {
+                post_type: e,
+                post_status: o.status,
+                post_title: o.title,
+                post_author: n,
+                post_excerpt: o.excerpt,
+                post_content: o.content,
+                post_format: ""
+            };
+            if (o.wordPressId) {
+                r = a.editPost(t, o.wordPressId, content);
+            } else {
+                r = a.newPost(t, i);
+                o.wordPressId = r;
+            }
+        }
     };
 });

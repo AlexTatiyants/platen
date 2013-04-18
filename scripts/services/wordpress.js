@@ -1,4 +1,7 @@
 angular.module('platen.services').factory('wordpress', function() {
+  var POST_TYPE = 'post';
+  var DEFAULT_BLOG_ID = 1;
+  var DEFAULT_AUTHOR_ID = 1;
   var url = '';
   var username = '';
   var password = '';
@@ -18,31 +21,33 @@ angular.module('platen.services').factory('wordpress', function() {
       password = pwd;
     },
 
-    credentialsSet: function() {
+    areCredentialsSet: function() {
       if (url === '' || username === '' || password === '') {
         return false;
       }
       return true;
-    }
+    },
 
     savePost: function(post) {
+      if (!wp) return;
+
       var result;
 
       var data = {
-        post_type: 'post',
+        post_type: POST_TYPE,
         post_status: post.status,
         post_title: post.title,
-        post_author: 1,
+        post_author: DEFAULT_AUTHOR_ID,
         post_excerpt: post.excerpt,
         post_content: post.content,
         post_format: ''
       };
 
       if (post.wordPressId) {
-        result = wp.editPost(1, post.wordPressId, content);
+        result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, content);
 
       } else {
-        result = wp.newPost(1, data);
+        result = wp.newPost(DEFAULT_BLOG_ID, data);
         post.wordPressId = result;
       }
     }
