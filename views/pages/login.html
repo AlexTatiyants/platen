@@ -1,19 +1,20 @@
 <div id="login-panel">
-
+    <h2>Login</h2>
     <div class="control-group">
         <label>blog url</label>
-        <input type="text" data-ng-data-bind="login.blogUrl"/>
+        <input type="text" data-ng-model="login.url"/>
     </div>
 
     <div class="control-group">
         <label>user name</label>
-        <input type="text" data-ng-data-bind="login.userName"/>
+        <input type="text" data-ng-model="login.username"/>
     </div>
 
     <div class="control-group">
         <label>password</label>
-        <input type="text" data-ng-data-bind="login.password"/>
+        <input type="text" data-ng-model="login.password"/>
     </div>
 
-    <button class="btn">login</button>
+    <button type="button" class="btn" ng-click="submit()">login</button>
+
 </div>

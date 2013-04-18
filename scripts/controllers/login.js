@@ -1,5 +1,9 @@
-var LoginController = function($scope) {
-    $scope.login = {};
+var LoginController = function($scope, dialog, wordpress) {
+  $scope.login = wordpress.login;
+
+  $scope.submit = function() {
+    dialog.close('ok');
+  };
 };
 
-LoginController.$inject = ['$scope'];
+LoginController.$inject = ['$scope', 'dialog', 'wordpress'];
