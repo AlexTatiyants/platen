@@ -21,6 +21,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     });
 
     d.open().then(function() {
+      console.log(l);
       wp = new WordPress(l.url, l.username, l.password);
       logger.log("logged into blog '" + l.url, "wordpress service");
       onSuccessCallback();

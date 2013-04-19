@@ -2,6 +2,8 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   var AUTOSAVE_INTERVAL = 12000;
   var STATUS_DRAFT = 'draft';
   var STATUS_PUBLISH = 'publish';
+  var POST_TITLE_ID = 'post-title';
+  var POST_CONTENT_ID = 'post-content';
 
   $scope.status = {};
   $scope.previewOn = false;
@@ -105,8 +107,10 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     });
   };
 
-  $scope.$on('postContentChanged', function(event, args) {
-    savePost();
+  $scope.$on('elementEdited', function(event, elementId) {
+    if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID) {
+      savePost();
+    }
   });
 
 };

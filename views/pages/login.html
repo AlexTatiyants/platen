@@ -1,20 +1,26 @@
 <div id="login-panel">
-    <h2>Login</h2>
-    <div class="control-group">
-        <label>blog url</label>
-        <input type="text" data-ng-model="login.url"/>
+    <header class="modal-header">
+        <h2>Login</h2>
+    </header>
+
+    <section class="modal-form">
+        <div class="field-group full">
+            <label>blog url</label>
+            <div id="login-url" contenteditable="true" editable="true" class="input" data-ng-model="login.url"/>
+        </div>
+
+        <div class="field-group full">
+            <label>user name</label>
+            <div id="login-username" contenteditable="true" editable="true"  class="input" data-ng-model="login.username"/>
+        </div>
+
+        <div class="field-group full">
+            <label>password</label>
+            <div id="login-password" contenteditable="true" editable="true" class="input" data-ng-model="login.password"/>
+        </div>
+    </section>
+
+    <footer class="modal-footer">
+        <button type="button" class="btn center" ng-click="submit()">login</button>
     </div>
-
-    <div class="control-group">
-        <label>user name</label>
-        <input type="text" data-ng-model="login.username"/>
-    </div>
-
-    <div class="control-group">
-        <label>password</label>
-        <input type="text" data-ng-model="login.password"/>
-    </div>
-
-    <button type="button" class="btn" ng-click="submit()">login</button>
-
 </div>

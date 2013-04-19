@@ -45,6 +45,17 @@
   width: 45%;
   margin-right: 5%;
 }
+.center {
+  margin: auto;
+}
+h2 {
+  font-weight: 300;
+  font-size: 22.4px;
+}
+.input-box {
+  border: 1px solid #e6e6e6;
+  border-radius: 2px;
+}
 .list-container {
   margin: auto;
   width: 80%;
@@ -290,12 +301,13 @@ a [class*=" icon-"]:hover {
   left: 0;
   z-index: 1040;
   background-color: #000000;
+  opacity: 0.8;
+  filter: alpha(opacity=80);
 }
-.modal-backdrop.fade {
+.modal-backdrop .fade {
   opacity: 0;
 }
-.modal-backdrop,
-.modal-backdrop.fade.in {
+.modal-backdrop .fade .in {
   opacity: 0.8;
   filter: alpha(opacity=80);
 }
@@ -310,22 +322,13 @@ a [class*=" icon-"]:hover {
   border: 1px solid #999;
   border: 1px solid rgba(0, 0, 0, 0.3);
   *border: 1px solid #999;
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
   border-radius: 6px;
   outline: none;
-  -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
   box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-  -webkit-background-clip: padding-box;
-  -moz-background-clip: padding-box;
   background-clip: padding-box;
 }
 .modal.fade {
   top: -25%;
-  -webkit-transition: opacity 0.3s linear, top 0.3s ease-out;
-  -moz-transition: opacity 0.3s linear, top 0.3s ease-out;
-  -o-transition: opacity 0.3s linear, top 0.3s ease-out;
   transition: opacity 0.3s linear, top 0.3s ease-out;
 }
 .modal.fade.in {
@@ -350,6 +353,8 @@ a [class*=" icon-"]:hover {
 }
 .modal-form {
   margin-bottom: 0;
+  overflow: hidden;
+  padding: 20px;
 }
 .modal-footer {
   padding: 14px 15px 15px;

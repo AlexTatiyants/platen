@@ -18,7 +18,7 @@ angular.module('platen.directives').directive('editable', function() {
       };
 
       element.bind('blur paste', function() {
-        scope.$emit('postContentChanged');
+        scope.$emit('elementEdited', element[0].id);
       })
 
       read();

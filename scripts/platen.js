@@ -23,21 +23,23 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services", 
     });
 } ]);
 
-var EditorController = function(e, t, o, n, r, i, a, l) {
+var EditorController = function(e, t, o, n, r, i, l, a) {
     var s = 12e3;
     var c = "draft";
     var u = "publish";
+    var p = "post-title";
+    var d = "post-content";
     e.status = {};
     e.previewOn = false;
     e.status.autoSaveTime = "unsaved";
     e.showMetadata = false;
     e.post = {};
-    var p = function(e) {
-        return "/" + l.POST_DIRECTORY_PATH + "/" + e;
+    var f = function(e) {
+        return "/" + a.POST_DIRECTORY_PATH + "/" + e;
     };
-    var d = function() {
+    var g = function() {
         e.post.id = new Date().getTime();
-        e.post.path = p(e.post.id);
+        e.post.path = f(e.post.id);
         e.post.status = c;
         e.post.title = "";
         e.post.content = "";
@@ -50,23 +52,23 @@ var EditorController = function(e, t, o, n, r, i, a, l) {
         e.post.tags = "";
         e.post.categories = "";
     };
-    var f = function(t) {
-        r.readFile(p(t), function(t) {
+    var v = function(t) {
+        r.readFile(f(t), function(t) {
             e.post = JSON.parse(t);
             e.$apply();
             i.log("loaded post '" + e.post.title + "'", "EditorController");
         });
     };
-    var g = function() {
+    var w = function() {
         if (t.postId === "0") {
-            d();
+            g();
         } else {
-            f(t.postId);
+            v(t.postId);
         }
     };
-    g();
+    w();
     $("#post-title").focus();
-    var v = function() {
+    var m = function() {
         if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
         t.content = "";
@@ -94,15 +96,17 @@ var EditorController = function(e, t, o, n, r, i, a, l) {
     };
     e.sync = function() {
         e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        a.savePost(e.post, function(t) {
+        l.savePost(e.post, function(t) {
             e.post.wordPressId = t;
-            v();
+            m();
         }, function(e) {
             alert("OOPS" + e);
         });
     };
-    e.$on("postContentChanged", function(e, t) {
-        v();
+    e.$on("elementEdited", function(e, t) {
+        if (t === p || t === d) {
+            m();
+        }
     });
 };
 
@@ -110,6 +114,7 @@ EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "f
 
 var LoginController = function(e, t, o) {
     e.login = o.login;
+    console.log(e.login);
     e.submit = function() {
         t.close("ok");
     };
@@ -177,7 +182,7 @@ angular.module("platen.directives").directive("editable", function() {
                 n.$setViewValue(t.context.innerText);
             };
             t.bind("blur paste", function() {
-                e.$emit("postContentChanged");
+                e.$emit("elementEdited", t[0].id);
             });
             r();
         }
@@ -382,8 +387,8 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         username: "admin",
         password: "admin"
     };
-    var a = null;
-    var l = function(o) {
+    var l = null;
+    var a = function(o) {
         var n = e.dialog({
             backdrop: true,
             keyboard: true,
@@ -392,12 +397,13 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             templateUrl: "views/pages/login.html"
         });
         n.open().then(function() {
-            a = new WordPress(i.url, i.username, i.password);
+            console.log(i);
+            l = new WordPress(i.url, i.username, i.password);
             t.log("logged into blog '" + i.url, "wordpress service");
             o();
         });
     };
-    var s = function(e, l, s) {
+    var s = function(e, a, s) {
         var u;
         var p = {
             post_type: o,
@@ -409,23 +415,23 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             post_format: ""
         };
         if (e.wordPressId) {
-            u = a.editPost(n, e.wordPressId, p);
+            u = l.editPost(n, e.wordPressId, p);
             c(u, e, function() {
                 t.log("updated post '" + e.title + "' in blog '" + i.url + "'", "wordpress service");
             }, s);
         } else {
-            u = a.newPost(n, p);
+            u = l.newPost(n, p);
             c(u, e, function() {
-                l(u.concat());
+                a(u.concat());
                 t.log("created post '" + e.title + "' in blog '" + i.url + "'", "wordpress service");
             }, s);
         }
     };
     var c = function(e, o, n, r) {
         if (e.faultCode) {
-            var a = e.faultString.concat();
-            t.log("error for post '" + o.title + "' in blog '" + i.url + "': " + a, "wordpress service");
-            r(a);
+            var l = e.faultString.concat();
+            t.log("error for post '" + o.title + "' in blog '" + i.url + "': " + l, "wordpress service");
+            r(l);
         } else {
             n();
         }
@@ -433,11 +439,11 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
     return {
         login: i,
         getPost: function(e) {
-            if (!a) l();
+            if (!l) a();
         },
         savePost: function(e, t, o) {
-            if (!a) {
-                l(function() {
+            if (!l) {
+                a(function() {
                     s(e, t, o);
                 });
             } else {
