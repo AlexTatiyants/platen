@@ -21,11 +21,48 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     });
 
     d.open().then(function() {
-      debugger;
       wp = new WordPress(l.url, l.username, l.password);
-      logger.log("logged into blog '" + l.url, "in wordpress service");
-      onSuccessCallback;
+      logger.log("logged into blog '" + l.url, "wordpress service");
+      onSuccessCallback();
     })
+  };
+
+  var save = function(post, onSuccessCallback, onErrorCallback) {
+    var result;
+
+    var data = {
+      post_type: POST_TYPE,
+      post_status: post.status,
+      post_title: post.title,
+      post_author: DEFAULT_AUTHOR_ID,
+      post_excerpt: post.excerpt,
+      post_content: post.content,
+      post_format: ''
+    };
+
+    if (post.wordPressId) {
+      result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
+      processResponse(result, post, function() {
+        logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
+      }, onErrorCallback);
+
+    } else {
+      result = wp.newPost(DEFAULT_BLOG_ID, data);
+      processResponse(result, post, function() {
+        onSuccessCallback(result.concat());
+        logger.log("created post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
+      }, onErrorCallback);
+    }
+  };
+
+  var processResponse = function(result, post, onSuccessCallback, onErrorCallback) {
+    if (result.faultCode) {
+      var err = result.faultString.concat()
+      logger.log("error for post '" + post.title + "' in blog '" + l.url + "': " + err, "wordpress service");
+      onErrorCallback(err);
+    } else {
+      onSuccessCallback();
+    }
   };
 
   return {
@@ -35,30 +72,13 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       if (!wp) initializeConnection();
     },
 
-    savePost: function(post) {
+    savePost: function(post, onSuccessCallback, onErrorCallback) {
       if (!wp) {
         initializeConnection(function() {
-          var result;
-
-          var data = {
-            post_type: POST_TYPE,
-            post_status: post.status,
-            post_title: post.title,
-            post_author: DEFAULT_AUTHOR_ID,
-            post_excerpt: post.excerpt,
-            post_content: post.content,
-            post_format: ''
-          };
-
-          if (post.wordPressId) {
-            result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, content);
-            logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "in wordpress service");
-          } else {
-            result = wp.newPost(DEFAULT_BLOG_ID, data);
-            post.wordPressId = result;
-            logger.log("created post '" + post.title + "' in blog '" + l.url + "'", "in wordpress service");
-          }
+          save(post, onSuccessCallback, onErrorCallback);
         });
+      } else {
+        save(post, onSuccessCallback, onErrorCallback);
       }
     }
   }

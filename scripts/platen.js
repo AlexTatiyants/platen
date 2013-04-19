@@ -1,4 +1,4 @@
-/*! platen 2013-04-18 */
+/*! platen 2013-04-19 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -25,47 +25,52 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services", 
 
 var EditorController = function(e, t, o, n, r, i, a, l) {
     var s = 12e3;
+    var c = "draft";
+    var u = "publish";
     e.status = {};
     e.previewOn = false;
     e.status.autoSaveTime = "unsaved";
     e.showMetadata = false;
     e.post = {};
-    var c = function(e) {
+    var p = function(e) {
         return "/" + l.POST_DIRECTORY_PATH + "/" + e;
     };
-    var u = function() {
+    var d = function() {
         e.post.id = new Date().getTime();
-        e.post.path = c(e.post.id);
+        e.post.path = p(e.post.id);
+        e.post.status = c;
+        e.post.title = "";
+        e.post.content = "";
+        e.post.contentMarkdown = "";
+        e.post.contentMarkdownHtml = "";
+        e.post.contentHtmlPreview = "";
+        e.post.excerpt = "";
         e.post.createdDate = new Date();
         e.post.lastUpdatedDate = "";
-        e.post.title = "";
-        e.post.contentMarkdown = "";
-        e.post.contentHtml = "";
-        e.post.excerpt = "";
         e.post.tags = "";
         e.post.categories = "";
-        e.post.status = "";
     };
     var f = function(t) {
-        r.readFile(c(t), function(t) {
+        r.readFile(p(t), function(t) {
             e.post = JSON.parse(t);
             e.$apply();
             i.log("loaded post '" + e.post.title + "'", "EditorController");
         });
     };
-    var d = function() {
+    var g = function() {
         if (t.postId === "0") {
-            u();
+            d();
         } else {
             f(t.postId);
         }
     };
-    d();
+    g();
     $("#post-title").focus();
-    var p = function() {
+    var v = function() {
         if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
-        t.contentHtml = "";
+        t.content = "";
+        t.contentHtmlPreview = "";
         t.lastUpdatedDate = new Date();
         r.writeFile(e.post.path, e.post.id, JSON.stringify(t), function(t) {
             e.status.autoSaveTime = n("date")(new Date(), "shortTime");
@@ -74,7 +79,7 @@ var EditorController = function(e, t, o, n, r, i, a, l) {
     };
     e.togglePreview = function() {
         if (!e.previewOn) {
-            e.post.contentHtml = marked(e.post.contentMarkdown);
+            e.post.contentHtmlPreview = marked(e.post.contentMarkdown);
         }
         e.previewOn = !e.previewOn;
     };
@@ -88,12 +93,16 @@ var EditorController = function(e, t, o, n, r, i, a, l) {
         console.log(e.post);
     };
     e.sync = function() {
-        if (!a.areCredentialsSet) {}
         e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        a.savePost(e.post);
+        a.savePost(e.post, function(t) {
+            e.post.wordPressId = t;
+            v();
+        }, function(e) {
+            alert("OOPS" + e);
+        });
     };
     e.$on("postContentChanged", function(e, t) {
-        p();
+        v();
     });
 };
 
@@ -383,39 +392,56 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             templateUrl: "views/pages/login.html"
         });
         n.open().then(function() {
-            debugger;
             a = new WordPress(i.url, i.username, i.password);
-            t.log("logged into blog '" + i.url, "in wordpress service");
-            o;
+            t.log("logged into blog '" + i.url, "wordpress service");
+            o();
         });
+    };
+    var s = function(e, l, s) {
+        var u;
+        var p = {
+            post_type: o,
+            post_status: e.status,
+            post_title: e.title,
+            post_author: r,
+            post_excerpt: e.excerpt,
+            post_content: e.content,
+            post_format: ""
+        };
+        if (e.wordPressId) {
+            u = a.editPost(n, e.wordPressId, p);
+            c(u, e, function() {
+                t.log("updated post '" + e.title + "' in blog '" + i.url + "'", "wordpress service");
+            }, s);
+        } else {
+            u = a.newPost(n, p);
+            c(u, e, function() {
+                l(u.concat());
+                t.log("created post '" + e.title + "' in blog '" + i.url + "'", "wordpress service");
+            }, s);
+        }
+    };
+    var c = function(e, o, n, r) {
+        if (e.faultCode) {
+            var a = e.faultString.concat();
+            t.log("error for post '" + o.title + "' in blog '" + i.url + "': " + a, "wordpress service");
+            r(a);
+        } else {
+            n();
+        }
     };
     return {
         login: i,
         getPost: function(e) {
             if (!a) l();
         },
-        savePost: function(e) {
+        savePost: function(e, t, o) {
             if (!a) {
                 l(function() {
-                    var l;
-                    var s = {
-                        post_type: o,
-                        post_status: e.status,
-                        post_title: e.title,
-                        post_author: r,
-                        post_excerpt: e.excerpt,
-                        post_content: e.content,
-                        post_format: ""
-                    };
-                    if (e.wordPressId) {
-                        l = a.editPost(n, e.wordPressId, content);
-                        t.log("updated post '" + e.title + "' in blog '" + i.url + "'", "in wordpress service");
-                    } else {
-                        l = a.newPost(n, s);
-                        e.wordPressId = l;
-                        t.log("created post '" + e.title + "' in blog '" + i.url + "'", "in wordpress service");
-                    }
+                    s(e, t, o);
                 });
+            } else {
+                s(e, t, o);
             }
         }
     };

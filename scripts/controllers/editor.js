@@ -1,5 +1,7 @@
 var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, logger, wordpress, resources) {
   var AUTOSAVE_INTERVAL = 12000;
+  var STATUS_DRAFT = 'draft';
+  var STATUS_PUBLISH = 'publish';
 
   $scope.status = {};
   $scope.previewOn = false;
@@ -15,15 +17,26 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   var createPost = function() {
     $scope.post.id = new Date().getTime();
     $scope.post.path = getFilePath($scope.post.id);
+    $scope.post.status = STATUS_DRAFT;
+    $scope.post.title = '';
+
+    // there are 4 representations of the post:
+
+    // contentMarkdown - raw text written using markdown formatting (innerText property of the editor window)
+    // contentMarkdownHTML - markdown text, HTMLified by the browswer (innerHTML property of the editor window)
+    // contentHTMLPreview - markdown text converted to HTML (innerHTML content of the preview window)
+    // content - markdown text converted to HTML and encoded (i.e. content of the post for Wordpress)
+
+    $scope.post.content = '';
+    $scope.post.contentMarkdown = ''; // set by markdown service
+    $scope.post.contentMarkdownHtml = '';
+    $scope.post.contentHtmlPreview = '';
+
+    $scope.post.excerpt = '';
     $scope.post.createdDate = new Date();
     $scope.post.lastUpdatedDate = '';
-    $scope.post.title = '';
-    $scope.post.contentMarkdown = '';
-    $scope.post.contentHtml = '';
-    $scope.post.excerpt = '';
     $scope.post.tags = '';
     $scope.post.categories = '';
-    $scope.post.status = '';
   };
 
   var loadPost = function(postId) {
@@ -48,8 +61,12 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
 
   var savePost = function() {
     if ($scope.post.title.trim() === '' && $scope.post.contentMarkdown.trim() === '') return;
+
     var postToSave = JSON.parse(JSON.stringify($scope.post));
-    postToSave.contentHtml = "";
+
+    // since there are 4 different representations of the same content, we only need to save one of them
+    postToSave.content = '';
+    postToSave.contentHtmlPreview = '';
     postToSave.lastUpdatedDate = new Date();
 
     fileManager.writeFile($scope.post.path, $scope.post.id, JSON.stringify(postToSave), function(fileEntry) {
@@ -60,7 +77,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
 
   $scope.togglePreview = function() {
     if (!$scope.previewOn) {
-      $scope.post.contentHtml = marked($scope.post.contentMarkdown);
+      $scope.post.contentHtmlPreview = marked($scope.post.contentMarkdown);
     };
     $scope.previewOn = !$scope.previewOn;
   };
@@ -78,13 +95,14 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   };
 
   $scope.sync = function() {
-    if (!wordpress.areCredentialsSet) {
-      // get credentials;
-      
-    }
-
     $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    wordpress.savePost($scope.post);
+
+    wordpress.savePost($scope.post, function(result) {
+      $scope.post.wordPressId = result;
+      savePost();
+    }, function(errorMessage) {
+      alert("OOPS" + errorMessage);
+    });
   };
 
   $scope.$on('postContentChanged', function(event, args) {
