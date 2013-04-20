@@ -1,29 +1,19 @@
-var MainController = function($scope, fileManager) {
+var MainController = function($scope, $dialog, fileManager) {
   fileManager.initialize();
+  var d;
 
-  // $scope.modal = {
-  //   content: 'Hello Modal',
-  //   saved: false
-  // };
+  $scope.loginCredentials = function() {
+      d = $dialog.dialog({
+        backdrop: true,
+        keyboard: true,
+        backdropClick: true,
+        controller: 'LoginController',
+        templateUrl: 'views/pages/login.html'
+      });
 
-  // $scope.viaService = function() {
-  //   var modal = $modal({
-  //     template: 'views/pages/modal.html',
-  //     show: true,
-  //     backdrop: 'static'
-  //   });
-  // }
+      d.open();
+  };
 
-  // $scope.parentController = function(dismiss) {
-  //   console.warn(arguments);
-  //   // do something
-  //   dismiss();
-  // }
-
-  // $scope.dismiss = function() {
-  //   console.log("dismissing");
-  //   dismiss();
-  // }
 };
 
-MainController.$inject = ['$scope', 'fileManager'];
+MainController.$inject = ['$scope', '$dialog', 'fileManager'];

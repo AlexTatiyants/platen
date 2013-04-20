@@ -4,34 +4,53 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
   var DEFAULT_AUTHOR_ID = 1;
 
   var l = {
-    url: 'http://localhost:8888/',
-    username: 'admin',
-    password: 'admin'
+    url: localStorage['url'],
+    username: localStorage['username'],
+    password: localStorage['password'],
+    shouldStoreCredentials: false
   }
 
   var wp = null;
 
-  var initializeConnection = function(onSuccessCallback, onErrorCallback) {
-    var d = $dialog.dialog({
-      backdrop: true,
-      keyboard: true,
-      backdropClick: true,
-      controller: 'LoginController',
-      templateUrl: 'views/pages/login.html'
-    });
+  var initialize = function(onSuccessCallback, onErrorCallback) {
+    if (l.url.trim() === '' || l.username.trim() === '' || l.password.trim() === '') {
+      var d = $dialog.dialog({
+        backdrop: true,
+        keyboard: true,
+        backdropClick: true,
+        controller: 'LoginController',
+        templateUrl: 'views/pages/login.html'
+      });
 
-    d.open().then(function() {
-      var fullUrl = l.url.replace(/\/$/, "") + "/xmlrpc.php";
+      d.open().then(function() {
+        createConnection(onSuccessCallback, onErrorCallback);
+      });
+    } else {
+      createConnection(onSuccessCallback, onErrorCallback);
+    }
+  };
 
-      try {
-        wp = new WordPress(fullUrl, l.username, l.password);
-        logger.log("logged into blog '" + l.url + "'", "wordpress service");
-        onSuccessCallback();        
-      } catch(e) {
-        logger.log("unable to log into blog '" + l.url + "': " + e.message, "wordpress service");
-        onErrorCallback(e.message);          
+  var createConnection = function(onSuccessCallback, onErrorCallback) {
+    var fullUrl = l.url.replace(/\/$/, "") + "/xmlrpc.php";
+
+    try {
+      wp = new WordPress(fullUrl, l.username, l.password);
+      logger.log("logged into blog '" + l.url + "'", "wordpress service");
+
+      if (l.shouldStoreCredentials) {
+        localStorage['url'] = l.url;
+        localStorage['username'] = l.username;
+        localStorage['password'] = l.password;
+        logger.log("saved login credentials for blog + '" + l.url + "'", "wordpress service");
+
       }
-    })
+
+      onSuccessCallback();
+
+    } catch (e) {
+      logger.log("unable to log into blog '" + l.url + "': " + e.message, "wordpress service");
+      onErrorCallback(e.message);
+    }
   };
 
   var save = function(post, onSuccessCallback, onErrorCallback) {
@@ -75,13 +94,24 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
   return {
     login: l,
 
+    resetCredentials: function() {
+      localStorage['url'] = '';
+      localStorage['username'] = '';
+      localStorage['password'] = '';
+
+      l.url = '';
+      l.username = '';
+      l.password = '';
+      logger.log("reset credentials", "wordpress service");
+    },
+
     getPost: function(postId) {
-      if (!wp) initializeConnection();
+      if (!wp) initialize();
     },
 
     savePost: function(post, onSuccessCallback, onErrorCallback) {
       if (!wp) {
-        initializeConnection(function() {
+        initialize(function() {
           save(post, onSuccessCallback, onErrorCallback);
         }, onErrorCallback);
       } else {

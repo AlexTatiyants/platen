@@ -11,8 +11,8 @@ Config
 - add font selection
 
 WP integration
-- add credentials modal
 - add tags retrieval
 - add categories retrieval
 - add keyboard shortcut for sync
 - add setting author
+- add loading draft posts

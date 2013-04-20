@@ -6,21 +6,28 @@
     <section class="modal-form">
         <div class="field-group full">
             <label>blog url</label>
-            <div id="login-url" contenteditable="true" editable="true" class="input" data-ng-model="login.url"/>
+            <input id="login-url" type="text" class="input" data-ng-model="login.url"></input>
         </div>
 
         <div class="field-group full">
             <label>user name</label>
-            <div id="login-username" contenteditable="true" editable="true"  class="input" data-ng-model="login.username"/>
+            <input id="login-username" type="text" class="input" data-ng-model="login.username"></input>
         </div>
 
         <div class="field-group full">
             <label>password</label>
-            <div id="login-password" contenteditable="true" editable="true" class="input" data-ng-model="login.password"/>
+            <input id="login-password" type="text" class="input" data-ng-model="login.password"></input>
+        </div>
+
+        <div class="field-group full">
+            <label>store credentials?</label>
+            <input type="checkbox" data-ng-model="login.shouldStoreCredentials"></input>
         </div>
     </section>
 
     <footer class="modal-footer">
-        <button type="button" class="btn center" ng-click="submit()">login</button>
+        <button type="button" class="btn center" ng-click="submit()">ok</button>
+        <button type="button" class="btn center" ng-click="cancel()">cancel</button>
+        <button type="button" class="btn center" ng-click="resetCredentials()">reset</button>
     </div>
 </div>
