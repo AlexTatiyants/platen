@@ -4,14 +4,14 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
   var DEFAULT_AUTHOR_ID = 1;
 
   var l = {
-    url: 'http://localhost/wordpress/xmlrpc.php',
+    url: 'http://localhost:8888/',
     username: 'admin',
     password: 'admin'
   }
 
   var wp = null;
 
-  var initializeConnection = function(onSuccessCallback) {
+  var initializeConnection = function(onSuccessCallback, onErrorCallback) {
     var d = $dialog.dialog({
       backdrop: true,
       keyboard: true,
@@ -21,10 +21,16 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     });
 
     d.open().then(function() {
-      console.log(l);
-      wp = new WordPress(l.url, l.username, l.password);
-      logger.log("logged into blog '" + l.url, "wordpress service");
-      onSuccessCallback();
+      var fullUrl = l.url.replace(/\/$/, "") + "/xmlrpc.php";
+
+      try {
+        wp = new WordPress(fullUrl, l.username, l.password);
+        logger.log("logged into blog '" + l.url + "'", "wordpress service");
+        onSuccessCallback();        
+      } catch(e) {
+        logger.log("unable to log into blog '" + l.url + "': " + e.message, "wordpress service");
+        onErrorCallback(e.message);          
+      }
     })
   };
 
@@ -77,7 +83,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       if (!wp) {
         initializeConnection(function() {
           save(post, onSuccessCallback, onErrorCallback);
-        });
+        }, onErrorCallback);
       } else {
         save(post, onSuccessCallback, onErrorCallback);
       }
