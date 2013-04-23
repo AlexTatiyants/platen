@@ -4,6 +4,9 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   var STATUS_PUBLISH = 'publish';
   var POST_TITLE_ID = 'post-title';
   var POST_CONTENT_ID = 'post-content';
+  var POST_EXCERPT = 'post-excerpt';
+  var POST_TAGS = 'post-tags';
+  var POST_CATEGORIES = 'post-categories';
 
   $scope.status = {};
   $scope.previewOn = false;
@@ -91,11 +94,14 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     if ($scope.showMetadata && $scope.post.excerpt === '') {
       $scope.updateExcerpt();
     }
+    if ($scope.showMetadata) {
+        $('#post-excerpt').focus();
+    }
   };
 
   $scope.updateExcerpt = function() {
-    console.log($scope.post);
-
+    $scope.post.excerpt = $scope.post.contentMarkdown.match(/^(.*)$/m);
+    savePost();
   };
 
   $scope.read = function() {
@@ -114,7 +120,8 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   };
 
   $scope.$on('elementEdited', function(event, elementId) {
-    if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID) {
+    if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT
+        || elementId === POST_TAGS || elementId || POST_CATEGORIES) {
       savePost();
     }
   });

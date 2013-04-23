@@ -29,17 +29,20 @@ var EditorController = function(e, t, o, r, n, i, l, a) {
     var u = "publish";
     var d = "post-title";
     var p = "post-content";
+    var f = "post-excerpt";
+    var g = "post-tags";
+    var v = "post-categories";
     e.status = {};
     e.previewOn = false;
     e.status.autoSaveTime = "unsaved";
     e.showMetadata = false;
     e.post = {};
-    var f = function(e) {
+    var w = function(e) {
         return "/" + a.POST_DIRECTORY_PATH + "/" + e;
     };
-    var g = function() {
+    var m = function() {
         e.post.id = new Date().getTime();
-        e.post.path = f(e.post.id);
+        e.post.path = w(e.post.id);
         e.post.status = c;
         e.post.title = "";
         e.post.content = "";
@@ -52,23 +55,23 @@ var EditorController = function(e, t, o, r, n, i, l, a) {
         e.post.tags = "";
         e.post.categories = "";
     };
-    var v = function(t) {
-        n.readFile(f(t), function(t) {
+    var h = function(t) {
+        n.readFile(w(t), function(t) {
             e.post = JSON.parse(t);
             e.$apply();
             i.log("loaded post '" + e.post.title + "'", "EditorController");
         });
     };
-    var w = function() {
+    var E = function() {
         if (t.postId === "0") {
-            g();
+            m();
         } else {
-            v(t.postId);
+            h(t.postId);
         }
     };
-    w();
+    E();
     $("#post-title").focus();
-    var m = function() {
+    var P = function() {
         if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
         t.content = "";
@@ -90,25 +93,29 @@ var EditorController = function(e, t, o, r, n, i, l, a) {
         if (e.showMetadata && e.post.excerpt === "") {
             e.updateExcerpt();
         }
+        if (e.showMetadata) {
+            $("#post-excerpt").focus();
+        }
     };
     e.updateExcerpt = function() {
-        console.log(e.post);
+        e.post.excerpt = e.post.contentMarkdown.match(/^(.*)$/m);
+        P();
     };
     e.read = function() {
-        v(e.post.id);
+        h(e.post.id);
     };
     e.sync = function() {
         e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
         l.savePost(e.post, function(t) {
             e.post.wordPressId = t;
-            m();
+            P();
         }, function(e) {
             alert("OOPS" + e);
         });
     };
     e.$on("elementEdited", function(e, t) {
-        if (t === d || t === p) {
-            m();
+        if (t === d || t === p || t === f || t === g || t || v) {
+            P();
         }
     });
 };
@@ -407,9 +414,9 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
     var r = 1;
     var n = 1;
     var i = {
-        url: localStorage["url"],
-        username: localStorage["username"],
-        password: localStorage["password"],
+        url: localStorage["url"] || "",
+        username: localStorage["username"] || "",
+        password: localStorage["password"] || "",
         shouldStoreCredentials: false
     };
     var l = null;

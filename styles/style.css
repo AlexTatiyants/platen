@@ -230,12 +230,13 @@ h2 {
   color: #b3b3b3;
   padding: 4px;
   font-size: 12.8px;
+  width: 100%;
 }
 .field-group .icon-reload {
   float: right;
   position: relative;
   top: -20px;
-  left: 20px;
+  left: 30px;
 }
 @font-face {
   font-family: 'icons';

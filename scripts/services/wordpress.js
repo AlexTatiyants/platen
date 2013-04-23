@@ -4,9 +4,9 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
   var DEFAULT_AUTHOR_ID = 1;
 
   var l = {
-    url: localStorage['url'],
-    username: localStorage['username'],
-    password: localStorage['password'],
+    url: localStorage['url'] || '',
+    username: localStorage['username'] || '',
+    password: localStorage['password'] || '',
     shouldStoreCredentials: false
   }
 
