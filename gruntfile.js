@@ -24,14 +24,15 @@
         }
       },
       styles: {
-        files: ['styles/*.less'],
+        files: ['styles/**/*.less'],
         tasks: ['less']
       }
     },
     less: {
       development: {
         files: {
-          "styles/style.css": "styles/style.less"
+          "styles/themes/white-theme.css": "styles/themes/white-theme.less",
+          "styles/themes/dark-theme.css": "styles/themes/dark-theme.less"
         }
       },
       production: {
@@ -39,7 +40,8 @@
           yuicompress: false
         },
         files: {
-          "styles/style.css": "styles/style.less"
+          "styles/themes/white-theme.css": "styles/themes/white-theme.less",
+          "styles/themes/dark-theme.css": "styles/themes/dark-theme.less"
         }
       }
     }

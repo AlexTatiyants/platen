@@ -1,0 +1,90 @@
+@import 'fonts.less';
+@import 'lists.less';
+@import 'editor.less';
+@import 'icons.less';
+@import 'modal.less';
+
+@sans-font: 'Ubuntu', sans-serif;
+@pad-unit: 20px;
+@base-font-size: 16px;
+@base-line-height: 25px;
+
+html {
+  height: 100%;
+}
+
+body {
+  background-color: @base-color;
+  font-weight: 300;
+  width: 100%;
+  overflow-x: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body, input, textarea, button {
+  font-family: @sans-font;
+  color: @text-color;
+}
+
+.main-container {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+nav {
+  height: 5%;
+  overflow: hidden;
+  padding: 1%;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    li {
+      list-style: none;
+      float: left;
+    }
+  }
+}
+
+#main-panel {
+  height: 88%;
+}
+
+.btn {
+    border-radius: 5px;
+    border: 0px;
+    color: white;
+    padding: @pad-unit * 0.2;
+    font-weight: 600;
+    line-height: @base-font-size * 1.8;
+}
+
+.pull-right {
+  float: right;
+}
+
+.full {
+  width: 95%;
+}
+
+.half {
+  width: 45%;
+  margin-right: 5%;
+}
+
+.center {
+  margin: auto;
+}
+
+h2 {
+  font-weight: 300;
+  font-size: @base-font-size * 1.4;
+}
+
+.input-box {
+  border: 1px solid @line-color;
+  border-radius: @pad-unit * 0.1;
+}

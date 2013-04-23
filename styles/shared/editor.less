@@ -10,12 +10,12 @@
     padding: 1%;
     height: 94%;
     margin: auto;
-    max-width: 960px;
+    max-width: 700px;
     width: 80%;
 }
 
 .post-common {
-    width: 93%;
+    width: 100%;
     max-width: 900px;
     border-radius: @pad-unit * 0.2;
     border: 1px dotted @line-color;
@@ -46,13 +46,12 @@
 
 #post-content {
     .post-content-common;
-    // white-space: pre;
     font-weight: 300;
 }
 
 #post-content-preview {
     .post-content-common;
-    border: 1px dotted darken(@line-color, 10%);
+    border: 1px dotted @line-color-strong;
 }
 
 #status-panel {
@@ -61,11 +60,10 @@
     font-size: @base-font-size * 0.8;
     margin-top: @pad-unit * 0.4;
     margin-right: @pad-unit;
-    color: lighten(@text-color, 20%);
+    color: @text-color-weak;
     text-align: right;
     width: 30%;
 }
-
 
 #metadata-panel {
     position: absolute;
@@ -73,21 +71,19 @@
     width: 100%;
 }
 
-@metadata-bg-color: darken(@base-color, 70%);
-@metadata-color: #fff - @metadata-bg-color;
 
 #metadata-container {
     padding: @pad-unit * 0.3;
     border-radius: @pad-unit * 0.5 @pad-unit * 0.5 0 0;
-    background-color: @metadata-bg-color;
-    color: @metadata-color;
-    border: 1px solid darken(@metadata-bg-color, 5%);
+    background-color: @alt-base-color;
+    color: @alt-text-color;
+    border: 1px solid @alt-line-color;
 
     position: relative;
     margin: auto;
     width: 80%;
     overflow: hidden;
-    box-shadow: 2px 2px 2px @text-color;
+    box-shadow: 2px 2px 2px @shadow-color;
 }
 
 #metadata-collapser {
@@ -98,7 +94,7 @@
     margin: auto;
     cursor: pointer;
     height: @pad-unit * 0.4;
-    background-color: darken(@metadata-bg-color, 15%);
+    background-color: @alt-base-color-strong;
 }
 
 #post-metadata {
@@ -119,9 +115,9 @@
     }
 
     .input {
-        border: 1px solid darken(@metadata-color, 10%);
+        border: 1px solid @alt-line-color;
         border-radius: @pad-unit * 0.2;
-        color: @metadata-color;
+        color: @alt-text-color;
         padding: @pad-unit * 0.2;
         font-size: @base-font-size * 0.8;
         width: 100%;
@@ -132,5 +128,23 @@
         position: relative;
         top: @pad-unit * -1;
         left: @pad-unit * 1.5;
+    }
+}
+
+.edit-controls {
+    position: relative;
+    top: @pad-unit * -3;
+    font-size: @base-font-size * 1.8;
+    width: 100%;
+    float: right;
+}
+
+.edit-control {
+    margin: @pad-unit * 0.5;
+    float: right;
+    color: @text-color-weak;
+
+    &:hover {
+      color: @text-color;
     }
 }

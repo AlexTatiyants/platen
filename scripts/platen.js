@@ -23,7 +23,7 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services", 
     });
 } ]);
 
-var EditorController = function(e, t, o, r, n, i, l, a) {
+var EditorController = function(e, t, o, r, n, i, a, l) {
     var s = 12e3;
     var c = "draft";
     var u = "publish";
@@ -38,7 +38,7 @@ var EditorController = function(e, t, o, r, n, i, l, a) {
     e.showMetadata = false;
     e.post = {};
     var w = function(e) {
-        return "/" + a.POST_DIRECTORY_PATH + "/" + e;
+        return "/" + l.POST_DIRECTORY_PATH + "/" + e;
     };
     var m = function() {
         e.post.id = new Date().getTime();
@@ -106,7 +106,7 @@ var EditorController = function(e, t, o, r, n, i, l, a) {
     };
     e.sync = function() {
         e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        l.savePost(e.post, function(t) {
+        a.savePost(e.post, function(t) {
             e.post.wordPressId = t;
             T();
         }, function(e) {
@@ -114,7 +114,7 @@ var EditorController = function(e, t, o, r, n, i, l, a) {
         });
     };
     e.getTags = function() {
-        l.getTags(function(e) {
+        a.getTags(function(e) {
             console.log(e);
         }, function(e) {
             alert("OOPS " + e);
@@ -421,8 +421,8 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
     var r = "post_tag";
     var n = "category";
     var i = 1;
-    var l = 1;
-    var a = {
+    var a = 1;
+    var l = {
         url: localStorage["url"] || "",
         username: localStorage["username"] || "",
         password: localStorage["password"] || "",
@@ -430,7 +430,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
     };
     var s = null;
     var c = function(t, o) {
-        if (a.url.trim() === "" || a.username.trim() === "" || a.password.trim() === "") {
+        if (l.url.trim() === "" || l.username.trim() === "" || l.password.trim() === "") {
             var r = e.dialog({
                 backdrop: true,
                 keyboard: true,
@@ -446,19 +446,19 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         }
     };
     var u = function(e, o) {
-        var r = a.url.replace(/\/$/, "") + "/xmlrpc.php";
+        var r = l.url.replace(/\/$/, "") + "/xmlrpc.php";
         try {
-            s = new WordPress(r, a.username, a.password);
-            t.log("logged into blog '" + a.url + "'", "wordpress service");
-            if (a.shouldStoreCredentials) {
-                localStorage["url"] = a.url;
-                localStorage["username"] = a.username;
-                localStorage["password"] = a.password;
-                t.log("saved login credentials for blog + '" + a.url + "'", "wordpress service");
+            s = new WordPress(r, l.username, l.password);
+            t.log("logged into blog '" + l.url + "'", "wordpress service");
+            if (l.shouldStoreCredentials) {
+                localStorage["url"] = l.url;
+                localStorage["username"] = l.username;
+                localStorage["password"] = l.password;
+                t.log("saved login credentials for blog + '" + l.url + "'", "wordpress service");
             }
             e();
         } catch (n) {
-            t.log("unable to log into blog '" + a.url + "': " + n.message, "wordpress service");
+            t.log("unable to log into blog '" + l.url + "': " + n.message, "wordpress service");
             o(n.message);
         }
     };
@@ -469,7 +469,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             post_type: o,
             post_status: e.status,
             post_title: e.title,
-            post_author: l,
+            post_author: a,
             post_excerpt: e.excerpt,
             post_content: e.content,
             post_format: "",
@@ -485,22 +485,22 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         if (e.wordPressId) {
             c = s.editPost(i, e.wordPressId, d);
             f(c, e, function() {
-                t.log("updated post '" + e.title + "' in blog '" + a.url + "'", "wordpress service");
+                t.log("updated post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
             }, n);
         } else {
             c = s.newPost(i, d);
             f(c, e, function() {
                 r(c.concat());
-                t.log("created post '" + e.title + "' in blog '" + a.url + "'", "wordpress service");
+                t.log("created post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
             }, n);
         }
     };
     var p = function(e, o, r) {
         var n = s.getTerms(i, e, "");
         if (n.faultCode) {
-            var l = n.faultString.concat();
-            t.log("error for loading tags for blog '" + a.url + "': " + l, "wordpress service");
-            r(l);
+            var a = n.faultString.concat();
+            t.log("error for loading tags for blog '" + l.url + "': " + a, "wordpress service");
+            r(a);
         } else {
             o(n);
         }
@@ -508,7 +508,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
     var f = function(e, o, r, n) {
         if (e.faultCode) {
             var i = e.faultString.concat();
-            t.log("error for post '" + o.title + "' in blog '" + a.url + "': " + i, "wordpress service");
+            t.log("error for post '" + o.title + "' in blog '" + l.url + "': " + i, "wordpress service");
             n(i);
         } else {
             r();
@@ -524,14 +524,14 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         }
     };
     return {
-        login: a,
+        login: l,
         resetCredentials: function() {
             localStorage["url"] = "";
             localStorage["username"] = "";
             localStorage["password"] = "";
-            a.url = "";
-            a.username = "";
-            a.password = "";
+            l.url = "";
+            l.username = "";
+            l.password = "";
             t.log("reset credentials", "wordpress service");
         },
         getPost: function(e) {

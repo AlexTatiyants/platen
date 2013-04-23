@@ -26,36 +26,6 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
 }
-.btn {
-  border-radius: 5px;
-  border: 0px;
-  color: white;
-  padding: 4px;
-  font-weight: 600;
-  line-height: 28.8px;
-  background-color: #cc0000;
-}
-.pull-right {
-  float: right;
-}
-.full {
-  width: 95%;
-}
-.half {
-  width: 45%;
-  margin-right: 5%;
-}
-.center {
-  margin: auto;
-}
-h2 {
-  font-weight: 300;
-  font-size: 22.4px;
-}
-.input-box {
-  border: 1px solid #e6e6e6;
-  border-radius: 2px;
-}
 .list-container {
   margin: auto;
   width: 80%;
@@ -65,7 +35,7 @@ h2 {
   width: 90%;
 }
 .list-item {
-  border: 1px solid #e6e6e6;
+  border: 1px solid #404040;
   padding: 14px;
   border-radius: 6px;
   list-style: none;
@@ -77,6 +47,9 @@ h2 {
   font-weight: 300;
   margin: 0 0 10px 0;
 }
+.list-item .clickable-title {
+  cursor: pointer;
+}
 .list-item .icon {
   font-size: 22.4px;
   float: right;
@@ -85,7 +58,7 @@ h2 {
 }
 .list-item .item-date {
   font-size: 12.8px;
-  color: #cccccc;
+  color: #404040;
   padding-top: 10px;
 }
 #editor {
@@ -98,24 +71,24 @@ h2 {
   padding: 1%;
   height: 94%;
   margin: auto;
-  max-width: 960px;
+  max-width: 700px;
   width: 80%;
 }
 .post-common {
-  width: 93%;
+  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
+  border: 1px dotted #404040;
   padding: 12px;
   resize: none;
   outline: none;
   overflow-y: auto;
 }
 .post-content-common {
-  width: 93%;
+  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
+  border: 1px dotted #404040;
   padding: 12px;
   resize: none;
   outline: none;
@@ -126,10 +99,10 @@ h2 {
   line-height: 25px;
 }
 #post-title {
-  width: 93%;
+  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
+  border: 1px dotted #404040;
   padding: 12px;
   resize: none;
   outline: none;
@@ -143,10 +116,10 @@ h2 {
   white-space: nowrap;
 }
 #post-content {
-  width: 93%;
+  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
+  border: 1px dotted #404040;
   padding: 12px;
   resize: none;
   outline: none;
@@ -158,10 +131,10 @@ h2 {
   font-weight: 300;
 }
 #post-content-preview {
-  width: 93%;
+  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
+  border: 1px dotted #404040;
   padding: 12px;
   resize: none;
   outline: none;
@@ -170,7 +143,7 @@ h2 {
   font-family: 'inconsolata';
   font-size: 16px;
   line-height: 25px;
-  border: 1px dotted #cccccc;
+  border: 1px dotted #595959;
 }
 #status-panel {
   display: block;
@@ -178,7 +151,7 @@ h2 {
   font-size: 12.8px;
   margin-top: 8px;
   margin-right: 20px;
-  color: #999999;
+  color: #404040;
   text-align: right;
   width: 30%;
 }
@@ -190,14 +163,14 @@ h2 {
 #metadata-container {
   padding: 6px;
   border-radius: 10px 10px 0 0;
-  background-color: #4d4d4d;
-  color: #b3b3b3;
-  border: 1px solid #404040;
+  background-color: #d9d9d9;
+  color: #272727;
+  border: 1px solid #f2f2f2;
   position: relative;
   margin: auto;
   width: 80%;
   overflow: hidden;
-  box-shadow: 2px 2px 2px #666666;
+  box-shadow: 2px 2px 2px #a6a6a6;
 }
 #metadata-collapser {
   display: block;
@@ -207,7 +180,7 @@ h2 {
   margin: auto;
   cursor: pointer;
   height: 8px;
-  background-color: #262626;
+  background-color: #ffffff;
 }
 #post-metadata {
   overflow: hidden;
@@ -225,9 +198,9 @@ h2 {
   margin: 4px;
 }
 .field-group .input {
-  border: 1px solid #999999;
+  border: 1px solid #f2f2f2;
   border-radius: 4px;
-  color: #b3b3b3;
+  color: #272727;
   padding: 4px;
   font-size: 12.8px;
   width: 100%;
@@ -238,6 +211,21 @@ h2 {
   top: -20px;
   left: 30px;
 }
+.edit-controls {
+  position: relative;
+  top: -60px;
+  font-size: 28.8px;
+  width: 100%;
+  float: right;
+}
+.edit-control {
+  margin: 10px;
+  float: right;
+  color: #404040;
+}
+.edit-control:hover {
+  color: #bfbfbf;
+}
 @font-face {
   font-family: 'icons';
   src: url('/fonts/icons.ttf');
@@ -246,13 +234,14 @@ a [class^="icon-"],
 a [class*=" icon-"] {
   display: inline-block;
   text-decoration: none;
-  color: #e6e6e6;
+  color: #404040;
   padding: 10px;
   font-size: 20.8px;
+  cursor: pointer;
 }
 a [class^="icon-"]:hover,
 a [class*=" icon-"]:hover {
-  color: #666666;
+  color: #bfbfbf;
 }
 [class^="icon-"],
 [class*=" icon-"] {
@@ -301,7 +290,7 @@ a [class*=" icon-"]:hover {
   bottom: 0;
   left: 0;
   z-index: 1040;
-  background-color: #000000;
+  background-color: #d9d9d9;
   opacity: 0.8;
   filter: alpha(opacity=80);
 }
@@ -319,13 +308,11 @@ a [class*=" icon-"]:hover {
   z-index: 1050;
   width: 560px;
   margin-left: -280px;
-  background-color: #ffffff;
-  border: 1px solid #999;
-  border: 1px solid rgba(0, 0, 0, 0.3);
-  *border: 1px solid #999;
-  border-radius: 6px;
+  background-color: #262626;
+  border: 1px solid #404040;
+  border-radius: 10px;
   outline: none;
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 4px #a6a6a6;
   background-clip: padding-box;
 }
 .modal.fade {
@@ -337,7 +324,7 @@ a [class*=" icon-"]:hover {
 }
 .modal-header {
   padding: 9px 15px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #404040;
 }
 .modal-header .close {
   margin-top: 2px;
@@ -361,15 +348,11 @@ a [class*=" icon-"]:hover {
   padding: 14px 15px 15px;
   margin-bottom: 0;
   text-align: right;
-  background-color: #f5f5f5;
-  border-top: 1px solid #ddd;
-  -webkit-border-radius: 0 0 6px 6px;
-  -moz-border-radius: 0 0 6px 6px;
-  border-radius: 0 0 6px 6px;
+  background-color: #191919;
+  border-top: 1px solid #404040;
+  border-radius: 0 0 4px 4px;
   *zoom: 1;
-  -webkit-box-shadow: inset 0 1px 0 #ffffff;
-  -moz-box-shadow: inset 0 1px 0 #ffffff;
-  box-shadow: inset 0 1px 0 #ffffff;
+  box-shadow: inset 0 1px 0 #262626;
 }
 .modal-footer:before,
 .modal-footer:after {
@@ -392,9 +375,6 @@ a [class*=" icon-"]:hover {
 }
 .fade {
   opacity: 0;
-  -webkit-transition: opacity 0.15s linear;
-  -moz-transition: opacity 0.15s linear;
-  -o-transition: opacity 0.15s linear;
   transition: opacity 0.15s linear;
 }
 .fade.in {
@@ -407,7 +387,7 @@ html {
   height: 100%;
 }
 body {
-  background-color: #ffffff;
+  background-color: #262626;
   font-weight: 300;
   width: 100%;
   overflow-x: hidden;
@@ -420,7 +400,7 @@ input,
 textarea,
 button {
   font-family: 'Ubuntu', sans-serif;
-  color: #666666;
+  color: #bfbfbf;
 }
 .main-container {
   height: 100%;
@@ -442,4 +422,33 @@ nav ul li {
 }
 #main-panel {
   height: 88%;
+}
+.btn {
+  border-radius: 5px;
+  border: 0px;
+  color: white;
+  padding: 4px;
+  font-weight: 600;
+  line-height: 28.8px;
+}
+.pull-right {
+  float: right;
+}
+.full {
+  width: 95%;
+}
+.half {
+  width: 45%;
+  margin-right: 5%;
+}
+.center {
+  margin: auto;
+}
+h2 {
+  font-weight: 300;
+  font-size: 22.4px;
+}
+.input-box {
+  border: 1px solid #404040;
+  border-radius: 2px;
 }

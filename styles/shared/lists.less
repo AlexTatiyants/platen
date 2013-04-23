@@ -22,6 +22,10 @@
     margin: 0 0 @pad-unit * 0.5 0;
   }
 
+  .clickable-title {
+    cursor: pointer;
+  }
+
   .icon {
     font-size: @base-font-size * 1.4;
     float: right;
@@ -30,7 +34,7 @@
   }
   .item-date {
     font-size: @base-font-size * 0.8;
-    color: lighten(@text-color, 40%);
+    color: @text-color-weak;
     padding-top: @pad-unit * 0.5;
   }
 }
