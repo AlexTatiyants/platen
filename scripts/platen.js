@@ -1,4 +1,4 @@
-/*! platen 2013-04-19 */
+/*! platen 2013-04-23 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -94,6 +94,9 @@ var EditorController = function(e, t, o, r, n, i, l, a) {
     e.updateExcerpt = function() {
         console.log(e.post);
     };
+    e.read = function() {
+        v(e.post.id);
+    };
     e.sync = function() {
         e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
         l.savePost(e.post, function(t) {
@@ -183,30 +186,7 @@ var PostsController = function(e, t, o, r, n, i) {
 
 PostsController.$inject = [ "$scope", "$q", "$location", "fileManager", "logger", "resources" ];
 
-angular.module("platen.directives").directive("editable", function() {
-    return {
-        restrict: "A",
-        require: "?ngModel",
-        link: function(e, t, o, r) {
-            if (!r) return;
-            r.$render = function() {
-                t.html(r.$viewValue || "");
-            };
-            t.bind("blur keyup change", function() {
-                e.$apply(n);
-            });
-            var n = function() {
-                r.$setViewValue(t.context.innerText);
-            };
-            t.bind("blur paste", function() {
-                e.$emit("elementEdited", t[0].id);
-            });
-            n();
-        }
-    };
-});
-
-angular.module("platen.directives").directive("markdownenabled", function() {
+angular.module("platen.directives").directive("editableMarkdown", function() {
     return {
         restrict: "A",
         require: "?ngModel",
@@ -223,7 +203,30 @@ angular.module("platen.directives").directive("markdownenabled", function() {
                 r.$setViewValue(t.html());
             };
             t.bind("blur paste", function() {
-                e.$emit("postContentChanged");
+                e.$emit("elementEdited", t[0].id);
+            });
+            n();
+        }
+    };
+});
+
+angular.module("platen.directives").directive("editableText", function() {
+    return {
+        restrict: "A",
+        require: "?ngModel",
+        link: function(e, t, o, r) {
+            if (!r) return;
+            r.$render = function() {
+                t.html(r.$viewValue || "");
+            };
+            t.bind("blur keyup change", function() {
+                e.$apply(n);
+            });
+            var n = function() {
+                r.$setViewValue(t.context.innerText);
+            };
+            t.bind("blur paste", function() {
+                e.$emit("elementEdited", t[0].id);
             });
             n();
         }
@@ -332,11 +335,15 @@ angular.module("platen.services").factory("fileManager", function() {
             o(e, true, function(o) {
                 o.createWriter(function(e) {
                     var r = new Blob([ n ], {
-                        type: "text/javascript"
+                        type: "text/plain"
                     });
                     e.onerror = t;
-                    e.onwriteend = i(o);
-                    e.write(r);
+                    e.onwriteend = function() {
+                        e.onwriteend = null;
+                        e.write(r);
+                        i(o);
+                    };
+                    e.truncate(r.size);
                 }, function(o) {
                     t(o, "in writeFile(), while creating fileWriter for " + e + "/" + r);
                 });

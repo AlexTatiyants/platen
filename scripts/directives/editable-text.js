@@ -1,4 +1,4 @@
-angular.module('platen.directives').directive('editable', function() {
+angular.module('platen.directives').directive('editableText', function() {
   return {
     restrict: 'A',
     require: '?ngModel',

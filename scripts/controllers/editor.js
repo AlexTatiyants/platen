@@ -71,6 +71,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     postToSave.contentHtmlPreview = '';
     postToSave.lastUpdatedDate = new Date();
 
+
     fileManager.writeFile($scope.post.path, $scope.post.id, JSON.stringify(postToSave), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
       logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
@@ -94,6 +95,11 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
 
   $scope.updateExcerpt = function() {
     console.log($scope.post);
+
+  };
+
+  $scope.read = function() {
+    loadPost($scope.post.id);
   };
 
   $scope.sync = function() {

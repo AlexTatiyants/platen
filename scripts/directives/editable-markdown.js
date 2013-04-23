@@ -1,4 +1,4 @@
-angular.module('platen.directives').directive('markdownenabled', function() {
+angular.module('platen.directives').directive('editableMarkdown', function() {
   return {
     restrict: 'A',
     require: '?ngModel',
@@ -19,7 +19,7 @@ angular.module('platen.directives').directive('markdownenabled', function() {
       };
 
       element.bind('blur paste', function() {
-        scope.$emit('postContentChanged');
+        scope.$emit('elementEdited', element[0].id);
       })
 
       read();

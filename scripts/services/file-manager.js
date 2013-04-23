@@ -102,12 +102,23 @@ angular.module('platen.services').factory('fileManager', function() {
     writeFile: function(filePath, fileName, fileBody, onSuccessCallback) {
       handleFile(filePath, true, function(fileEntry) {
         fileEntry.createWriter(function(fileWriter) {
+
           var blob = new Blob([fileBody], {
-            type: 'text/javascript'
+            type: 'text/plain'
           });
+
           fileWriter.onerror = onError;
-          fileWriter.onwriteend = onSuccessCallback(fileEntry);
-          fileWriter.write(blob);
+
+          fileWriter.onwriteend = function() {
+            fileWriter.onwriteend = null;
+            fileWriter.write(blob);
+            onSuccessCallback(fileEntry);
+          }
+
+          // a call to truncate() is apparently required if the same file is being overriden with
+          // different contents
+          fileWriter.truncate(blob.size);
+
         }, function(e) {
           onError(e, "in writeFile(), while creating fileWriter for " + filePath + "/" + fileName);
         });
