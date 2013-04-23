@@ -115,9 +115,17 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
       $scope.post.wordPressId = result;
       savePost();
     }, function(errorMessage) {
-      alert("OOPS" + errorMessage);
+      alert("OOPS " + errorMessage);
     });
   };
+
+  $scope.getTags = function() {
+    wordpress.getTags(function(result) {
+      console.log(result);
+    }, function(errorMessage) {
+      alert("OOPS " + errorMessage);
+    });
+  }
 
   $scope.$on('elementEdited', function(event, elementId) {
     if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT

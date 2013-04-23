@@ -1,5 +1,7 @@
 angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', function($dialog, logger) {
   var POST_TYPE = 'post';
+  var TAG_TYPE = 'post_tag';
+  var CATEGORY_TYPE = 'category';
   var DEFAULT_BLOG_ID = 1;
   var DEFAULT_AUTHOR_ID = 1;
 
@@ -55,6 +57,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
 
   var save = function(post, onSuccessCallback, onErrorCallback) {
     var result;
+    var terms = {};
 
     var data = {
       post_type: POST_TYPE,
@@ -63,8 +66,19 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       post_author: DEFAULT_AUTHOR_ID,
       post_excerpt: post.excerpt,
       post_content: post.content,
-      post_format: ''
+      post_format: '',
+      terms_names: ''
     };
+
+    if (post.tags.trim() !== '') {
+      terms.post_tag = post.tags.replace(' ', '').split(',');
+    }
+
+    if (post.categories.trim() !== '') {
+      terms.category = post.categories.replace(' ', '').split(',');
+    }
+
+    data.terms_names = terms;
 
     if (post.wordPressId) {
       result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
@@ -81,6 +95,17 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     }
   };
 
+  var getTerms = function(termType, onSuccessCallback, onErrorCallback) {
+    var result = wp.getTerms(DEFAULT_BLOG_ID, termType, '');
+    if (result.faultCode) {
+      var err = result.faultString.concat()
+      logger.log("error for loading tags for blog '" + l.url + "': " + err, "wordpress service");
+      onErrorCallback(err);
+    } else {
+      onSuccessCallback(result);
+    }
+  };
+
   var processResponse = function(result, post, onSuccessCallback, onErrorCallback) {
     if (result.faultCode) {
       var err = result.faultString.concat()
@@ -89,6 +114,16 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     } else {
       onSuccessCallback();
     }
+  };
+
+  var runCommand = function(runAction, args, onSuccessCallback, onErrorCallback) {
+      if (!wp) {
+        initialize(function() {
+          runAction(args, onSuccessCallback, onErrorCallback);
+        }, onErrorCallback);
+      } else {
+        runAction(args, onSuccessCallback, onErrorCallback);
+      }
   };
 
   return {
@@ -110,13 +145,16 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     },
 
     savePost: function(post, onSuccessCallback, onErrorCallback) {
-      if (!wp) {
-        initialize(function() {
-          save(post, onSuccessCallback, onErrorCallback);
-        }, onErrorCallback);
-      } else {
-        save(post, onSuccessCallback, onErrorCallback);
-      }
-    }
+      runCommand(save, post, onSuccessCallback, onErrorCallback);
+    },
+
+    getTags: function(onSuccessCallback, onErrorCallback) {
+      runCommand(getTerms, TAG_TYPE, onSuccessCallback, onErrorCallback);
+    },
+
+    getCategories: function(onSuccessCallback, onErrorCallback) {
+      runCommand(getTerms, CATEGORY_TYPE, onSuccessCallback, onErrorCallback);
+    },
+
   }
 }]);
