@@ -3,22 +3,20 @@
   <section id="edit-panel">
     <h1 class="input-box" id="post-title" contenteditable="true" data-editable-text="true" data-ng-model="post.title"></h1>
     <div id="post-container">
-
       <article contenteditable="true" class="input-box" data-editable-markdown="true" id="post-content" data-ng-show="!previewOn"
-        data-ng-model="post.contentMarkdownHtml"></article>
+      data-ng-model="post.contentMarkdownHtml"></article>
       <div id="post-content-preview" data-ng-show="previewOn" data-ng-bind-html-unsafe="post.contentHtmlPreview"></div>
-
 
       <span id="status-panel">
         <span>last saved <strong><span data-ng-bind="status.autoSaveTime"></span></strong></span>
       </span>
-      <div class="edit-controls">
-        <div data-ng-click="togglePreview()" class="edit-control icon-preview-on" title="preview as HTML"></div>
-        <div data-ng-click="sync()" class="edit-control icon-sync-post" title="sync to blog"></div>
-      </div>
-
     </div>
   </section>
+
+  <ul class="edit-controls">
+    <li data-ng-click="togglePreview()" class="edit-control icon-preview-on" title="preview as HTML"></li>
+    <li data-ng-click="sync()" class="edit-control icon-sync-post" title="sync to blog"></li>
+  </ul>
 
   <aside id="metadata-panel">
     <div id="metadata-container">

@@ -63,9 +63,7 @@
 }
 #editor {
   height: 100%;
-}
-#post-container {
-  height: 90%;
+  min-height: 100%;
 }
 #edit-panel {
   padding: 1%;
@@ -156,9 +154,15 @@
   width: 30%;
 }
 #metadata-panel {
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   width: 100%;
+}
+#metadata-panel .collapsed {
+  height: 22px;
+}
+#metadata-panel .expanded {
+  height: 173px;
 }
 #metadata-container {
   padding: 6px;
@@ -212,16 +216,18 @@
   left: 30px;
 }
 .edit-controls {
-  position: relative;
-  top: -60px;
-  font-size: 28.8px;
-  width: 100%;
-  float: right;
+  position: fixed;
+  left: 0;
+  top: 200px;
+  font-size: 27.2px;
+  width: 5%;
+  padding: 1%;
+  margin: auto;
+  border-top: 1px solid #404040;
 }
 .edit-control {
-  margin: 10px;
-  float: right;
   color: #404040;
+  padding: 10px;
 }
 .edit-control:hover {
   color: #bfbfbf;
@@ -408,8 +414,9 @@ button {
   margin: 0;
 }
 nav {
-  height: 5%;
-  overflow: hidden;
+  width: 5%;
+  float: left;
+  position: fixed;
   padding: 1%;
 }
 nav ul {
