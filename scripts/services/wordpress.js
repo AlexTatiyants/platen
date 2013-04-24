@@ -102,7 +102,22 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       logger.log("error for loading tags for blog '" + l.url + "': " + err, "wordpress service");
       onErrorCallback(err);
     } else {
-      onSuccessCallback(result);
+
+      // create a proper terms array
+      var terms = [], term;
+
+      _.each(result, function(rawTerm) {
+        term = {};
+        term.count = rawTerm.count;
+        term.name = rawTerm.name.concat();
+        term.slug = rawTerm.slug.concat();
+        term.taxonomy = rawTerm.taxonomy.concat();
+        term.term_id = rawTerm.term_id.concat();
+        terms.push(term);
+
+      });
+
+      onSuccessCallback(terms);
     }
   };
 

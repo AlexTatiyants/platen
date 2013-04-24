@@ -95,7 +95,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
       $scope.updateExcerpt();
     }
     if ($scope.showMetadata) {
-        $('#post-excerpt').focus();
+      $('#post-excerpt').focus();
     }
   };
 
@@ -121,15 +121,45 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
 
   $scope.getTags = function() {
     wordpress.getTags(function(result) {
-      console.log(result);
+      $scope.tags = result;
+
     }, function(errorMessage) {
       alert("OOPS " + errorMessage);
     });
   }
 
+  $scope.addTag = function(tag) {
+    if ($scope.post.tags.indexOf(tag.name) === -1) {
+      if ($scope.post.tags.trim() === '') {
+        $scope.post.tags += tag.name;
+      } else {
+        $scope.post.tags += ', ' + tag.name;
+      }
+    }
+  };
+
+  $scope.getCategories = function() {
+    wordpress.getCategories(function(result) {
+      $scope.categories = result;
+
+    }, function(errorMessage) {
+      alert("OOPS " + errorMessage);
+    });
+  }
+
+  $scope.addCategory = function(category) {
+    if ($scope.post.categories.indexOf(category.name) === -1) {
+      if ($scope.post.categories.trim() === '') {
+        $scope.post.categories += category.name;
+      } else {
+        $scope.post.categories += ', ' + category.name;
+      }
+    }
+  };
+
+
   $scope.$on('elementEdited', function(event, elementId) {
-    if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT
-        || elementId === POST_TAGS || elementId || POST_CATEGORIES) {
+    if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT || elementId === POST_TAGS || elementId || POST_CATEGORIES) {
       savePost();
     }
   });

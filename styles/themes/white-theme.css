@@ -67,7 +67,6 @@
 }
 #edit-panel {
   padding: 1%;
-  height: 94%;
   margin: auto;
   max-width: 700px;
   width: 80%;
@@ -206,14 +205,16 @@
   border-radius: 4px;
   color: #b3b3b3;
   padding: 4px;
+  padding-right: 20px;
   font-size: 12.8px;
   width: 100%;
 }
-.field-group .icon-reload {
+.field-group .icon-reload,
+.field-group .icon-sync-wordpress {
   float: right;
   position: relative;
-  top: -20px;
-  left: 30px;
+  top: 6px;
+  left: 20px;
 }
 .edit-controls {
   position: fixed;
@@ -231,6 +232,28 @@
 }
 .edit-control:hover {
   color: #666666;
+}
+.term-list {
+  padding: 0;
+  max-height: 100px;
+  overflow-y: auto;
+}
+.term-list li {
+  width: 43%;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  float: left;
+  list-style: none;
+  font-size: 12.8px;
+  margin: 2px;
+  padding: 4px;
+  cursor: pointer;
+  color: #4d4d4d;
+  background-color: #b3b3b3;
+}
+.term-list li:hover {
+  background-color: #4d4d4d;
+  color: #b3b3b3;
 }
 @font-face {
   font-family: 'icons';
@@ -262,7 +285,7 @@ a [class*=" icon-"]:hover {
 .icon-posts-list:before {
   content: '\f00b';
 }
-.icon-sync-post:before {
+.icon-sync-wordpress:before {
   content: '\e000';
 }
 .icon-new-post:before {
@@ -445,8 +468,8 @@ nav ul li {
   width: 95%;
 }
 .half {
-  width: 45%;
-  margin-right: 5%;
+  width: 43%;
+  margin-right: 7%;
 }
 .center {
   margin: auto;

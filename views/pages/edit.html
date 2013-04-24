@@ -24,20 +24,32 @@
       <section id="post-metadata" data-ng-show="showMetadata" data-ng-animate>
 
         <div class="field-group full">
-          <label>exceprt</label>
+          <label>excerpt</label>
+          <span class="icon-reload" data-ng-click="updateExcerpt()" title="set excerpt to post's first paragraph"></span>
           <div class="input" contenteditable="true" data-editable-text="true" data-ng-model="post.excerpt" id="post-excerpt"></div>
-          <span class="icon-reload" data-ng-click="updateExcerpt()"></span>
         </div>
 
         <div class="field-group half">
           <label>tags</label>
+          <span class="icon-sync-wordpress" data-ng-click="getTags()" title="get existing tags from WordPress"></span>
           <div class="input" contenteditable="true" data-editable-text="true" data-ng-model="post.tags" id="post-tags"></div>
-          <button data-ng-click="getTags()">tags</button>
+          <ul class="term-list">
+            <li data-ng-repeat="tag in tags"  data-ng-click="addTag(tag)">
+              <span data-ng-bind="tag.name"></span>
+            </li>
+          </ul>
         </div>
 
         <div class="field-group half">
           <label>categories</label>
-          <div class="input" contenteditable="true" data-editable-text="true" data-ng-model="post.categories" id="post-categories"></div>
+          <span class="icon-sync-wordpress" data-ng-click="getCategories()" title="get existing categories from WordPress"></span>
+          <div class="input" contenteditable="true" data-editable-text="true" data-ng-model="post.categories" id="post-categories">
+          </div>
+          <ul class="term-list">
+            <li data-ng-repeat="category in categories"  data-ng-click="addCategory(category)">
+              <span data-ng-bind="category.name"></span>
+            </li>
+          </ul>
         </div>
       </section>
     </div>

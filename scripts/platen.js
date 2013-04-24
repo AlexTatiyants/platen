@@ -1,4 +1,4 @@
-/*! platen 2013-04-23 */
+/*! platen 2013-04-24 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -114,11 +114,36 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
         });
     };
     e.getTags = function() {
-        a.getTags(function(e) {
-            console.log(e);
+        a.getTags(function(t) {
+            e.tags = t;
         }, function(e) {
             alert("OOPS " + e);
         });
+    };
+    e.addTag = function(t) {
+        if (e.post.tags.indexOf(t.name) === -1) {
+            if (e.post.tags.trim() === "") {
+                e.post.tags += t.name;
+            } else {
+                e.post.tags += ", " + t.name;
+            }
+        }
+    };
+    e.getCategories = function() {
+        a.getCategories(function(t) {
+            e.categories = t;
+        }, function(e) {
+            alert("OOPS " + e);
+        });
+    };
+    e.addCategory = function(t) {
+        if (e.post.categories.indexOf(t.name) === -1) {
+            if (e.post.categories.trim() === "") {
+                e.post.categories += t.name;
+            } else {
+                e.post.categories += ", " + t.name;
+            }
+        }
     };
     e.$on("elementEdited", function(e, t) {
         if (t === d || t === p || t === f || t === g || t || v) {
@@ -502,7 +527,17 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             t.log("error for loading tags for blog '" + l.url + "': " + a, "wordpress service");
             r(a);
         } else {
-            o(n);
+            var c = [], u;
+            _.each(n, function(e) {
+                u = {};
+                u.count = e.count;
+                u.name = e.name.concat();
+                u.slug = e.slug.concat();
+                u.taxonomy = e.taxonomy.concat();
+                u.term_id = e.term_id.concat();
+                c.push(u);
+            });
+            o(c);
         }
     };
     var f = function(e, o, r, n) {

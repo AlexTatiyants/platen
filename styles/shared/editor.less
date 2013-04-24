@@ -7,12 +7,10 @@
 }
 
 #post-container {
-    // height: 90%;
 }
 
 #edit-panel {
     padding: 1%;
-    height: 94%;
     margin: auto;
     max-width: 700px;
     width: 80%;
@@ -131,15 +129,16 @@
         border-radius: @pad-unit * 0.2;
         color: @alt-text-color;
         padding: @pad-unit * 0.2;
+        padding-right: @pad-unit;
         font-size: @base-font-size * 0.8;
         width: 100%;
     }
 
-    .icon-reload {
+    .icon-reload, .icon-sync-wordpress {
         float: right;
         position: relative;
-        top: @pad-unit * -1;
-        left: @pad-unit * 1.5;
+        top: @pad-unit * 0.3;
+        left: @pad-unit;
     }
 }
 
@@ -160,5 +159,29 @@
 
     &:hover {
       color: @text-color;
+    }
+}
+
+.term-list {
+    padding: 0;
+    max-height: @pad-unit * 5;
+    overflow-y: auto;
+    li {
+        width: 43%;
+        border: 1px solid @alt-line-color;
+        border-radius: @pad-unit * 0.3;
+        float: left;
+        list-style: none;
+        font-size: @base-font-size * 0.8;
+        margin: @pad-unit * 0.1;
+        padding: @pad-unit *0.2;
+        cursor: pointer;
+        color: @alt-base-color;
+        background-color: @alt-text-color;
+
+        &:hover {
+            background-color: @alt-base-color;
+            color: @alt-text-color;
+        }
     }
 }
