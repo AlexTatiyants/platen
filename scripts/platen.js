@@ -7,29 +7,29 @@ angular.module("platen.services", []);
 
 var platen = angular.module("platen", [ "platen.directives", "platen.services", "ui.bootstrap" ]).config([ "$routeProvider", function(e) {
     e.when("/posts", {
-        templateUrl: "views/pages/posts.html"
+        templateUrl: "views/posts.html"
     });
     e.when("/posts/:postId", {
-        templateUrl: "views/pages/edit.html"
+        templateUrl: "views/edit.html"
     });
     e.when("/logs", {
-        templateUrl: "views/pages/logs.html"
+        templateUrl: "views/logs.html"
     });
     e.when("/login", {
-        templateUrl: "views/pages/login.html"
+        templateUrl: "views/login.html"
     });
     e.otherwise({
         redirectTo: "/posts"
     });
 } ]);
 
-var EditorController = function(e, t, o, r, n, i, a, s) {
-    var l = 12e3;
+var EditorController = function(e, t, o, r, n, i, a, l) {
+    var s = 12e3;
     var c = "draft";
     var u = "publish";
     var d = "post-title";
-    var p = "post-content";
-    var f = "post-excerpt";
+    var f = "post-content";
+    var p = "post-excerpt";
     var g = "post-tags";
     var v = "post-categories";
     e.status = {};
@@ -38,7 +38,7 @@ var EditorController = function(e, t, o, r, n, i, a, s) {
     e.showMetadata = false;
     e.post = {};
     var m = function(e) {
-        return "/" + s.POST_DIRECTORY_PATH + "/" + e;
+        return "/" + l.POST_DIRECTORY_PATH + "/" + e;
     };
     var w = function() {
         e.post.id = new Date().getTime();
@@ -71,7 +71,7 @@ var EditorController = function(e, t, o, r, n, i, a, s) {
     };
     E();
     $("#post-title").focus();
-    var _ = function() {
+    var C = function() {
         if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
         t.content = "";
@@ -99,7 +99,7 @@ var EditorController = function(e, t, o, r, n, i, a, s) {
     };
     e.updateExcerpt = function() {
         e.post.excerpt = e.post.contentMarkdown.match(/^(.*)$/m);
-        _();
+        C();
     };
     e.read = function() {
         h(e.post.id);
@@ -108,7 +108,7 @@ var EditorController = function(e, t, o, r, n, i, a, s) {
         e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
         a.savePost(e.post, function(t) {
             e.post.wordPressId = t;
-            _();
+            C();
         }, function(e) {
             alert("OOPS " + e);
         });
@@ -146,8 +146,8 @@ var EditorController = function(e, t, o, r, n, i, a, s) {
         }
     };
     e.$on("elementEdited", function(e, t) {
-        if (t === d || t === p || t === f || t === g || t || v) {
-            _();
+        if (t === d || t === f || t === p || t === g || t || v) {
+            C();
         }
     });
 };
@@ -185,7 +185,7 @@ var MainController = function(e, t, o) {
             keyboard: true,
             backdropClick: true,
             controller: "LoginController",
-            templateUrl: "views/pages/login.html"
+            templateUrl: "views/login.html"
         });
         r.open();
     };
@@ -195,7 +195,9 @@ MainController.$inject = [ "$scope", "$dialog", "fileManager" ];
 
 var PostsController = function(e, t, o, r, n, i) {
     e.posts = {};
+    e.confirm = {};
     e.loaded = false;
+    e.postToDelete = {};
     if (!e.loaded) {
         r.readFilesInDirectory(i.POST_DIRECTORY_PATH, function(t) {
             var o = JSON.parse(this.result);
@@ -205,12 +207,23 @@ var PostsController = function(e, t, o, r, n, i) {
             n.log("read post '" + o.title + "'", "PostsController");
         });
     }
-    e.deletePost = function(t) {
-        r.removeFile(t.path, function() {
-            delete e.posts[t.id];
+    e.cancelDelete = function() {
+        e.shouldBeOpen = false;
+        e.postToDelete = {};
+    };
+    e.proceedWithDelete = function() {
+        debugger;
+        e.shouldBeOpen = false;
+        r.removeFile(e.postToDelete.path, function() {
+            delete e.posts[e.postToDelete.id];
+            n.log("deleted post '" + e.postToDelete.title + "'", "PostsController");
+            e.postToDelete = {};
             e.$apply();
-            n.log("deleted post '" + t.title + "'", "PostsController");
         });
+    };
+    e.deletePost = function(t) {
+        e.postToDelete = t;
+        e.shouldBeOpen = true;
     };
     e.editPost = function(e) {
         o.path("posts/" + e.id);
@@ -447,15 +460,15 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
     var n = "category";
     var i = 1;
     var a = 1;
-    var s = {
+    var l = {
         url: localStorage["url"] || "",
         username: localStorage["username"] || "",
         password: localStorage["password"] || "",
         shouldStoreCredentials: false
     };
-    var l = null;
+    var s = null;
     var c = function(t, o) {
-        if (s.url.trim() === "" || s.username.trim() === "" || s.password.trim() === "") {
+        if (l.url.trim() === "" || l.username.trim() === "" || l.password.trim() === "") {
             var r = e.dialog({
                 backdrop: true,
                 keyboard: true,
@@ -471,19 +484,19 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         }
     };
     var u = function(e, o) {
-        var r = s.url.replace(/\/$/, "") + "/xmlrpc.php";
+        var r = l.url.replace(/\/$/, "") + "/xmlrpc.php";
         try {
-            l = new WordPress(r, s.username, s.password);
-            t.log("logged into blog '" + s.url + "'", "wordpress service");
-            if (s.shouldStoreCredentials) {
-                localStorage["url"] = s.url;
-                localStorage["username"] = s.username;
-                localStorage["password"] = s.password;
-                t.log("saved login credentials for blog + '" + s.url + "'", "wordpress service");
+            s = new WordPress(r, l.username, l.password);
+            t.log("logged into blog '" + l.url + "'", "wordpress service");
+            if (l.shouldStoreCredentials) {
+                localStorage["url"] = l.url;
+                localStorage["username"] = l.username;
+                localStorage["password"] = l.password;
+                t.log("saved login credentials for blog + '" + l.url + "'", "wordpress service");
             }
             e();
         } catch (n) {
-            t.log("unable to log into blog '" + s.url + "': " + n.message, "wordpress service");
+            t.log("unable to log into blog '" + l.url + "': " + n.message, "wordpress service");
             o(n.message);
         }
     };
@@ -508,23 +521,23 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         }
         d.terms_names = u;
         if (e.wordPressId) {
-            c = l.editPost(i, e.wordPressId, d);
-            f(c, e, function() {
-                t.log("updated post '" + e.title + "' in blog '" + s.url + "'", "wordpress service");
+            c = s.editPost(i, e.wordPressId, d);
+            p(c, e, function() {
+                t.log("updated post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
             }, n);
         } else {
-            c = l.newPost(i, d);
-            f(c, e, function() {
+            c = s.newPost(i, d);
+            p(c, e, function() {
                 r(c.concat());
-                t.log("created post '" + e.title + "' in blog '" + s.url + "'", "wordpress service");
+                t.log("created post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
             }, n);
         }
     };
-    var p = function(e, o, r) {
-        var n = l.getTerms(i, e, "");
+    var f = function(e, o, r) {
+        var n = s.getTerms(i, e, "");
         if (n.faultCode) {
             var a = n.faultString.concat();
-            t.log("error for loading tags for blog '" + s.url + "': " + a, "wordpress service");
+            t.log("error for loading tags for blog '" + l.url + "': " + a, "wordpress service");
             r(a);
         } else {
             var c = [], u;
@@ -540,17 +553,17 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             o(c);
         }
     };
-    var f = function(e, o, r, n) {
+    var p = function(e, o, r, n) {
         if (e.faultCode) {
             var i = e.faultString.concat();
-            t.log("error for post '" + o.title + "' in blog '" + s.url + "': " + i, "wordpress service");
+            t.log("error for post '" + o.title + "' in blog '" + l.url + "': " + i, "wordpress service");
             n(i);
         } else {
             r();
         }
     };
     var g = function(e, t, o, r) {
-        if (!l) {
+        if (!s) {
             c(function() {
                 e(t, o, r);
             }, r);
@@ -559,27 +572,27 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         }
     };
     return {
-        login: s,
+        login: l,
         resetCredentials: function() {
             localStorage["url"] = "";
             localStorage["username"] = "";
             localStorage["password"] = "";
-            s.url = "";
-            s.username = "";
-            s.password = "";
+            l.url = "";
+            l.username = "";
+            l.password = "";
             t.log("reset credentials", "wordpress service");
         },
         getPost: function(e) {
-            if (!l) c();
+            if (!s) c();
         },
         savePost: function(e, t, o) {
             g(d, e, t, o);
         },
         getTags: function(e, t) {
-            g(p, r, e, t);
+            g(f, r, e, t);
         },
         getCategories: function(e, t) {
-            g(p, n, e, t);
+            g(f, n, e, t);
         }
     };
 } ]);

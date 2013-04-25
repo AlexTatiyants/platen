@@ -59,7 +59,7 @@
 }
 .list-item .item-date {
   font-size: 12.8px;
-  color: #e6e6e6;
+  color: #999999;
   padding-top: 10px;
 }
 .list-table {
@@ -263,11 +263,7 @@
   border-top: 1px solid #e6e6e6;
 }
 .edit-control {
-  color: #e6e6e6;
   padding: 10px;
-}
-.edit-control:hover {
-  color: #666666;
 }
 .term-list {
   padding: 0;
@@ -299,17 +295,13 @@ a [class^="icon-"],
 a [class*=" icon-"] {
   display: inline-block;
   text-decoration: none;
-  color: #e6e6e6;
   padding: 10px;
   font-size: 20.8px;
   cursor: pointer;
 }
-a [class^="icon-"]:hover,
-a [class*=" icon-"]:hover {
-  color: #666666;
-}
 [class^="icon-"],
 [class*=" icon-"] {
+  color: #e6e6e6;
   font-family: 'icons';
   font-weight: normal;
   font-style: normal;
@@ -317,6 +309,10 @@ a [class*=" icon-"]:hover {
   -webkit-font-smoothing: antialiased;
   display: block;
   cursor: pointer;
+}
+[class^="icon-"]:hover,
+[class*=" icon-"]:hover {
+  color: #666666;
 }
 .icon-posts-list:before {
   content: '\f00b';
@@ -413,7 +409,7 @@ a [class*=" icon-"]:hover {
   padding: 14px 15px 15px;
   margin-bottom: 0;
   text-align: right;
-  background-color: #ffffff;
+  background-color: #f2f2f2;
   border-top: 1px solid #e6e6e6;
   border-radius: 0 0 4px 4px;
   *zoom: 1;
@@ -531,6 +527,16 @@ h2 {
   font-size: 22.4px;
 }
 .input-box {
+  background-color: #ffffff;
   border: 1px solid #e6e6e6;
   border-radius: 2px;
+  padding: 4px;
+  padding-right: 20px;
+  font-size: 12.8px;
+  width: 100%;
+}
+.warning-message {
+  font-style: italic;
+  font-size: 12.8px;
+  color: #999999;
 }

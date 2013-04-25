@@ -8,20 +8,16 @@ a {
   [class*=" icon-"] {
     display: inline-block;
     text-decoration: none;
-    color: @text-color-weak;
     padding: @pad-unit * 0.5;
     font-size: @base-font-size * 1.3;
     cursor: pointer;
-
-    &:hover {
-      color: @text-color;
-    }
   }
 }
 
 
 [class^="icon-"],
 [class*=" icon-"] {
+  color: @text-color-very-weak;
   font-family: 'icons';
   font-weight: normal;
   font-style: normal;
@@ -29,6 +25,10 @@ a {
   -webkit-font-smoothing: antialiased;
   display: block;
   cursor: pointer;
+
+    &:hover {
+      color: @text-color;
+    }
 }
 
 .icon-posts-list:before {content:'\f00b';};

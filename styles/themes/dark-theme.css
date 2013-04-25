@@ -59,7 +59,7 @@
 }
 .list-item .item-date {
   font-size: 12.8px;
-  color: #404040;
+  color: #8c8c8c;
   padding-top: 10px;
 }
 .list-table {
@@ -263,11 +263,7 @@
   border-top: 1px solid #404040;
 }
 .edit-control {
-  color: #404040;
   padding: 10px;
-}
-.edit-control:hover {
-  color: #bfbfbf;
 }
 .term-list {
   padding: 0;
@@ -299,17 +295,13 @@ a [class^="icon-"],
 a [class*=" icon-"] {
   display: inline-block;
   text-decoration: none;
-  color: #404040;
   padding: 10px;
   font-size: 20.8px;
   cursor: pointer;
 }
-a [class^="icon-"]:hover,
-a [class*=" icon-"]:hover {
-  color: #bfbfbf;
-}
 [class^="icon-"],
 [class*=" icon-"] {
+  color: #404040;
   font-family: 'icons';
   font-weight: normal;
   font-style: normal;
@@ -317,6 +309,10 @@ a [class*=" icon-"]:hover {
   -webkit-font-smoothing: antialiased;
   display: block;
   cursor: pointer;
+}
+[class^="icon-"]:hover,
+[class*=" icon-"]:hover {
+  color: #bfbfbf;
 }
 .icon-posts-list:before {
   content: '\f00b';
@@ -503,17 +499,15 @@ nav ul li {
   padding: 4px 20px 4px 20px;
   line-height: 28.8px;
   box-shadow: inset 0px 1px 3px 0px #91b8b3;
-  background: linear-gradient(to bottom, #404040 5%, #bfbfbf 100%);
+  background: linear-gradient(to bottom, #bfbfbf 5%, #a6a6a6 100%);
   background-color: #bfbfbf;
-  border: 1px solid #404040;
+  border: 1px solid #bfbfbf;
   color: #262626;
   text-shadow: 0px -1px 0px #a6a6a6;
 }
 .btn:hover {
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #6c7c7c), color-stop(1, #768d87));
-  background: -webkit-linear-gradient(top, #6c7c7c 5%, #768d87 100%);
-  background: linear-gradient(to bottom, #6c7c7c 5%, #768d87 100%);
-  background-color: #6c7c7c;
+  background: linear-gradient(to bottom, #a6a6a6 5%, #bfbfbf 100%);
+  background-color: #a6a6a6;
 }
 .pull-right {
   float: right;
@@ -533,6 +527,16 @@ h2 {
   font-size: 22.4px;
 }
 .input-box {
+  background-color: #262626;
   border: 1px solid #404040;
   border-radius: 2px;
+  padding: 4px;
+  padding-right: 20px;
+  font-size: 12.8px;
+  width: 100%;
+}
+.warning-message {
+  font-style: italic;
+  font-size: 12.8px;
+  color: #8c8c8c;
 }

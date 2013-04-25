@@ -12,4 +12,18 @@
         </li>
     </ul>
 
+    <div>
+        <div modal="shouldBeOpen" close="close()" options="opts">
+            <div class="modal-header">
+                <h2>Delete Post</h2>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete post '<span data-ng-bind="postToDelete.title"></span>' ?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning cancel" ng-click="proceedWithDelete()">Proceed</button>
+                <button class="btn btn-warning cancel" ng-click="cancelDelete()">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>

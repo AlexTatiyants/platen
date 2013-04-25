@@ -8,7 +8,7 @@ var MainController = function($scope, $dialog, fileManager) {
         keyboard: true,
         backdropClick: true,
         controller: 'LoginController',
-        templateUrl: 'views/pages/login.html'
+        templateUrl: 'views/login.html'
       });
 
       d.open();

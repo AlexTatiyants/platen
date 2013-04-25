@@ -1,27 +1,28 @@
 <div id="login-panel">
     <header class="modal-header">
-        <h2>Login</h2>
+        <h2>Login Credentials</h2>
     </header>
 
     <section class="modal-form">
         <div class="field-group full">
             <label>blog url</label>
-            <input id="login-url" type="text" class="input" data-ng-model="login.url"></input>
+            <input id="login-url" type="text" class="input-box" data-ng-model="login.url"></input>
         </div>
 
         <div class="field-group full">
             <label>user name</label>
-            <input id="login-username" type="text" class="input" data-ng-model="login.username"></input>
+            <input id="login-username" type="text" class="input-box" data-ng-model="login.username"></input>
         </div>
 
         <div class="field-group full">
             <label>password</label>
-            <input id="login-password" type="text" class="input" data-ng-model="login.password"></input>
+            <input id="login-password" type="text" class="input-box" data-ng-model="login.password"></input>
         </div>
 
         <div class="field-group full">
-            <label>store credentials?</label>
+            <label>remember credentials?</label>
             <input type="checkbox" data-ng-model="login.shouldStoreCredentials"></input>
+            <span class="warning-message">Please note that your user id and password are stored unencrypted. Don't select this option if you're concerned about securing your password</span>
         </div>
     </section>
 

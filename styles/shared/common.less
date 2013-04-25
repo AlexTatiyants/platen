@@ -1,4 +1,3 @@
-// @import 'normalize.less';
 @import 'fonts.less';
 @import 'lists.less';
 @import 'editor.less';
@@ -58,8 +57,6 @@ nav {
   height: 88%;
 }
 
-
-
 .btn {
   border-radius: @pad-unit * 0.2;
   padding: @pad-unit * 0.2 @pad-unit @pad-unit * 0.2 @pad-unit;
@@ -100,6 +97,17 @@ h2 {
 }
 
 .input-box {
+  background-color: @base-color;
   border: 1px solid @line-color;
   border-radius: @pad-unit * 0.1;
+  padding: @pad-unit * 0.2;
+  padding-right: @pad-unit;
+  font-size: @base-font-size * 0.8;
+  width: 100%;
+}
+
+.warning-message {
+  font-style: italic;
+  font-size: @base-font-size * 0.8;
+  color: @text-color-weak;
 }
