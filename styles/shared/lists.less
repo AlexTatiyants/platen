@@ -1,7 +1,7 @@
 .list-container {
   margin: auto;
   width: 80%;
-
+  padding-top: @pad-unit;
   ul {
     padding: 0;
     width: 90%;
@@ -36,5 +36,20 @@
     font-size: @base-font-size * 0.8;
     color: @text-color-weak;
     padding-top: @pad-unit * 0.5;
+  }
+}
+
+.list-table {
+  width: 100%;
+  font-size: @base-font-size * 0.9;
+  padding-bottom: @pad-unit;
+  padding-top: @pad-unit;
+
+  td, th {
+    text-align: left;
+    border-bottom: 1px solid @line-color;
+    padding-top: @pad-unit * 0.5;
+    padding-bottom: @pad-unit * 0.5;
+    padding-right: @pad-unit * 0.5;
   }
 }

@@ -29,6 +29,7 @@
 .list-container {
   margin: auto;
   width: 80%;
+  padding-top: 20px;
 }
 .list-container ul {
   padding: 0;
@@ -61,32 +62,42 @@
   color: #e6e6e6;
   padding-top: 10px;
 }
+.list-table {
+  width: 100%;
+  font-size: 14.4px;
+  padding-bottom: 20px;
+  padding-top: 20px;
+}
+.list-table td,
+.list-table th {
+  text-align: left;
+  border-bottom: 1px solid #e6e6e6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
 #editor {
   height: 100%;
   min-height: 100%;
 }
+#post-container {
+  padding-bottom: 40px;
+}
 #edit-panel {
-  padding: 1%;
   margin: auto;
   max-width: 700px;
   width: 80%;
 }
 .post-common {
-  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
-  padding: 12px;
   resize: none;
   outline: none;
   overflow-y: auto;
 }
 .post-content-common {
-  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
-  padding: 12px;
   resize: none;
   outline: none;
   overflow-y: auto;
@@ -96,16 +107,20 @@
   line-height: 25px;
 }
 #post-title {
-  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
-  padding: 12px;
   resize: none;
   outline: none;
   overflow-y: auto;
+  width: 100%;
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-bottom: 1px dotted #e6e6e6;
   font-family: 'economica';
-  margin-top: 10px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-left: 12px;
   margin-bottom: 10px;
   font-weight: 300;
   font-size: 32px;
@@ -113,11 +128,8 @@
   white-space: nowrap;
 }
 #post-content {
-  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
-  padding: 12px;
   resize: none;
   outline: none;
   overflow-y: auto;
@@ -125,14 +137,13 @@
   font-family: 'inconsolata';
   font-size: 16px;
   line-height: 25px;
+  padding: 12px;
+  border: 0px;
   font-weight: 300;
 }
 #post-content-preview {
-  width: 100%;
   max-width: 900px;
   border-radius: 4px;
-  border: 1px dotted #e6e6e6;
-  padding: 12px;
   resize: none;
   outline: none;
   overflow-y: auto;
@@ -140,14 +151,39 @@
   font-family: 'inconsolata';
   font-size: 16px;
   line-height: 25px;
+  padding: 30px 30px 30px 30px;
   border: 1px dotted #cccccc;
+  box-shadow: 2px 2px 2px #808080;
+}
+#post-content-preview p {
+  margin-bottom: 20px;
+}
+#post-content-preview h1 {
+  margin-bottom: 20px;
+  font-size: 32px;
+}
+#post-content-preview h2 {
+  margin-bottom: 16px;
+  font-size: 28.8px;
+}
+#post-content-preview h3 {
+  margin-bottom: 14px;
+  font-size: 25.6px;
+}
+#post-content-preview h4 {
+  margin-bottom: 10px;
+  font-size: 22.4px;
+}
+#post-content-preview h5,
+#post-content-preview h6 {
+  margin-bottom: 10px;
+  font-size: 19.2px;
 }
 #status-panel {
   display: block;
   float: right;
   font-size: 12.8px;
   margin-top: 8px;
-  margin-right: 20px;
   color: #e6e6e6;
   text-align: right;
   width: 30%;
@@ -339,7 +375,7 @@ a [class*=" icon-"]:hover {
   margin-left: -280px;
   background-color: #ffffff;
   border: 1px solid #e6e6e6;
-  border-radius: 10px;
+  border-radius: 2px;
   outline: none;
   box-shadow: 0 4px 4px #808080;
   background-clip: padding-box;
@@ -415,14 +451,25 @@ a [class*=" icon-"]:hover {
 html {
   height: 100%;
 }
+body,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+table,
+div {
+  padding: 0;
+  margin: 0;
+  font-weight: 300;
+  font-style: normal;
+}
 body {
   background-color: #ffffff;
-  font-weight: 300;
   width: 100%;
-  overflow-x: hidden;
   height: 100%;
-  margin: 0;
-  padding: 0;
 }
 body,
 input,
@@ -433,8 +480,6 @@ button {
 }
 .main-container {
   height: 100%;
-  padding: 0;
-  margin: 0;
 }
 nav {
   width: 5%;
@@ -454,12 +499,19 @@ nav ul li {
   height: 88%;
 }
 .btn {
-  border-radius: 5px;
-  border: 0px;
-  color: white;
-  padding: 4px;
-  font-weight: 600;
+  border-radius: 4px;
+  padding: 4px 20px 4px 20px;
   line-height: 28.8px;
+  box-shadow: inset 0px 1px 3px 0px #91b8b3;
+  background: linear-gradient(to bottom, #808080 5%, #666666 100%);
+  background-color: #808080;
+  border: 1px solid #666666;
+  color: #ffffff;
+  text-shadow: 0px -1px 0px #808080;
+}
+.btn:hover {
+  background: linear-gradient(to bottom, #666666 5%, #808080 100%);
+  background-color: #666666;
 }
 .pull-right {
   float: right;

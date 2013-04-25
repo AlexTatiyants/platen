@@ -7,21 +7,19 @@
 }
 
 #post-container {
+    padding-bottom: @pad-unit * 2;
 }
 
 #edit-panel {
-    padding: 1%;
+    // padding-left: 1%;
     margin: auto;
     max-width: 700px;
     width: 80%;
 }
 
 .post-common {
-    width: 100%;
     max-width: 900px;
     border-radius: @pad-unit * 0.2;
-    border: 1px dotted @line-color;
-    padding: @pad-unit * 0.6;
     resize: none;
     outline: none;
     overflow-y: auto;
@@ -37,8 +35,15 @@
 
 #post-title {
     .post-common;
+    width: 100%;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-bottom: 1px dotted @line-color;
     font-family: 'economica';
-    margin-top: @pad-unit * 0.5;
+    padding-top: @pad-unit * 0.6;
+    padding-bottom: @pad-unit * 0.6;
+    padding-left: @pad-unit * 0.6;
     margin-bottom: @pad-unit * 0.5;
     font-weight: 300;
     font-size: @base-font-size * 2;
@@ -48,12 +53,44 @@
 
 #post-content {
     .post-content-common;
+    padding: @pad-unit * 0.6;
+    border: 0px;
     font-weight: 300;
 }
 
 #post-content-preview {
     .post-content-common;
+    padding: @pad-unit * 1.5 @pad-unit * 1.5 @pad-unit * 1.5 @pad-unit * 1.5;
     border: 1px dotted @line-color-strong;
+    box-shadow: 2px 2px 2px @shadow-color;
+
+    p {
+        margin-bottom: @pad-unit;
+    }
+
+    h1 {
+        margin-bottom: @pad-unit;
+        font-size: @base-font-size * 2;
+    }
+
+    h2 {
+        margin-bottom: @pad-unit * 0.8;
+        font-size: @base-font-size * 1.8;
+    }
+
+    h3 {
+        margin-bottom: @pad-unit * 0.7;
+        font-size: @base-font-size * 1.6;
+    }
+
+    h4 {
+        margin-bottom: @pad-unit * 0.5;
+        font-size: @base-font-size * 1.4;
+    }
+    h5, h6 {
+        margin-bottom: @pad-unit * 0.5;
+        font-size: @base-font-size * 1.2;
+    }
 }
 
 #status-panel {
@@ -61,7 +98,6 @@
     float: right;
     font-size: @base-font-size * 0.8;
     margin-top: @pad-unit * 0.4;
-    margin-right: @pad-unit;
     color: @text-color-weak;
     text-align: right;
     width: 30%;

@@ -1,4 +1,4 @@
-/*! platen 2013-04-24 */
+/*! platen 2013-04-25 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -23,8 +23,8 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services", 
     });
 } ]);
 
-var EditorController = function(e, t, o, r, n, i, a, l) {
-    var s = 12e3;
+var EditorController = function(e, t, o, r, n, i, a, s) {
+    var l = 12e3;
     var c = "draft";
     var u = "publish";
     var d = "post-title";
@@ -37,12 +37,12 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
     e.status.autoSaveTime = "unsaved";
     e.showMetadata = false;
     e.post = {};
-    var w = function(e) {
-        return "/" + l.POST_DIRECTORY_PATH + "/" + e;
+    var m = function(e) {
+        return "/" + s.POST_DIRECTORY_PATH + "/" + e;
     };
-    var m = function() {
+    var w = function() {
         e.post.id = new Date().getTime();
-        e.post.path = w(e.post.id);
+        e.post.path = m(e.post.id);
         e.post.status = c;
         e.post.title = "";
         e.post.content = "";
@@ -56,7 +56,7 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
         e.post.categories = "";
     };
     var h = function(t) {
-        n.readFile(w(t), function(t) {
+        n.readFile(m(t), function(t) {
             e.post = JSON.parse(t);
             e.$apply();
             i.log("loaded post '" + e.post.title + "'", "EditorController");
@@ -64,14 +64,14 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
     };
     var E = function() {
         if (t.postId === "0") {
-            m();
+            w();
         } else {
             h(t.postId);
         }
     };
     E();
     $("#post-title").focus();
-    var T = function() {
+    var _ = function() {
         if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
         t.content = "";
@@ -99,7 +99,7 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
     };
     e.updateExcerpt = function() {
         e.post.excerpt = e.post.contentMarkdown.match(/^(.*)$/m);
-        T();
+        _();
     };
     e.read = function() {
         h(e.post.id);
@@ -108,7 +108,7 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
         e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
         a.savePost(e.post, function(t) {
             e.post.wordPressId = t;
-            T();
+            _();
         }, function(e) {
             alert("OOPS " + e);
         });
@@ -147,7 +147,7 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
     };
     e.$on("elementEdited", function(e, t) {
         if (t === d || t === p || t === f || t === g || t || v) {
-            T();
+            _();
         }
     });
 };
@@ -432,7 +432,7 @@ angular.module("platen.services").factory("logger", function() {
             });
         },
         getLogs: function() {
-            return o;
+            return o.reverse();
         }
     };
 });
@@ -447,15 +447,15 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
     var n = "category";
     var i = 1;
     var a = 1;
-    var l = {
+    var s = {
         url: localStorage["url"] || "",
         username: localStorage["username"] || "",
         password: localStorage["password"] || "",
         shouldStoreCredentials: false
     };
-    var s = null;
+    var l = null;
     var c = function(t, o) {
-        if (l.url.trim() === "" || l.username.trim() === "" || l.password.trim() === "") {
+        if (s.url.trim() === "" || s.username.trim() === "" || s.password.trim() === "") {
             var r = e.dialog({
                 backdrop: true,
                 keyboard: true,
@@ -471,19 +471,19 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         }
     };
     var u = function(e, o) {
-        var r = l.url.replace(/\/$/, "") + "/xmlrpc.php";
+        var r = s.url.replace(/\/$/, "") + "/xmlrpc.php";
         try {
-            s = new WordPress(r, l.username, l.password);
-            t.log("logged into blog '" + l.url + "'", "wordpress service");
-            if (l.shouldStoreCredentials) {
-                localStorage["url"] = l.url;
-                localStorage["username"] = l.username;
-                localStorage["password"] = l.password;
-                t.log("saved login credentials for blog + '" + l.url + "'", "wordpress service");
+            l = new WordPress(r, s.username, s.password);
+            t.log("logged into blog '" + s.url + "'", "wordpress service");
+            if (s.shouldStoreCredentials) {
+                localStorage["url"] = s.url;
+                localStorage["username"] = s.username;
+                localStorage["password"] = s.password;
+                t.log("saved login credentials for blog + '" + s.url + "'", "wordpress service");
             }
             e();
         } catch (n) {
-            t.log("unable to log into blog '" + l.url + "': " + n.message, "wordpress service");
+            t.log("unable to log into blog '" + s.url + "': " + n.message, "wordpress service");
             o(n.message);
         }
     };
@@ -508,23 +508,23 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         }
         d.terms_names = u;
         if (e.wordPressId) {
-            c = s.editPost(i, e.wordPressId, d);
+            c = l.editPost(i, e.wordPressId, d);
             f(c, e, function() {
-                t.log("updated post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
+                t.log("updated post '" + e.title + "' in blog '" + s.url + "'", "wordpress service");
             }, n);
         } else {
-            c = s.newPost(i, d);
+            c = l.newPost(i, d);
             f(c, e, function() {
                 r(c.concat());
-                t.log("created post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
+                t.log("created post '" + e.title + "' in blog '" + s.url + "'", "wordpress service");
             }, n);
         }
     };
     var p = function(e, o, r) {
-        var n = s.getTerms(i, e, "");
+        var n = l.getTerms(i, e, "");
         if (n.faultCode) {
             var a = n.faultString.concat();
-            t.log("error for loading tags for blog '" + l.url + "': " + a, "wordpress service");
+            t.log("error for loading tags for blog '" + s.url + "': " + a, "wordpress service");
             r(a);
         } else {
             var c = [], u;
@@ -543,14 +543,14 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
     var f = function(e, o, r, n) {
         if (e.faultCode) {
             var i = e.faultString.concat();
-            t.log("error for post '" + o.title + "' in blog '" + l.url + "': " + i, "wordpress service");
+            t.log("error for post '" + o.title + "' in blog '" + s.url + "': " + i, "wordpress service");
             n(i);
         } else {
             r();
         }
     };
     var g = function(e, t, o, r) {
-        if (!s) {
+        if (!l) {
             c(function() {
                 e(t, o, r);
             }, r);
@@ -559,18 +559,18 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         }
     };
     return {
-        login: l,
+        login: s,
         resetCredentials: function() {
             localStorage["url"] = "";
             localStorage["username"] = "";
             localStorage["password"] = "";
-            l.url = "";
-            l.username = "";
-            l.password = "";
+            s.url = "";
+            s.username = "";
+            s.password = "";
             t.log("reset credentials", "wordpress service");
         },
         getPost: function(e) {
-            if (!s) c();
+            if (!l) c();
         },
         savePost: function(e, t, o) {
             g(d, e, t, o);

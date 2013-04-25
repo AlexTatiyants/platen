@@ -24,7 +24,7 @@ angular.module('platen.services').factory('logger', function() {
     },
 
     getLogs: function() {
-      return log;
+      return log.reverse();
     }
   }
 });

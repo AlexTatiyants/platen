@@ -1,15 +1,15 @@
 <section id="editor" data-ng-controller="EditorController">
 
   <section id="edit-panel">
+      <span id="status-panel">
+        <span>last saved <strong><span data-ng-bind="status.autoSaveTime"></span></strong></span>
+      </span>
+
     <h1 class="input-box" id="post-title" contenteditable="true" data-editable-text="true" data-ng-model="post.title"></h1>
     <div id="post-container">
       <article contenteditable="true" class="input-box" data-editable-markdown="true" id="post-content" data-ng-show="!previewOn"
       data-ng-model="post.contentMarkdownHtml"></article>
       <div id="post-content-preview" data-ng-show="previewOn" data-ng-bind-html-unsafe="post.contentHtmlPreview"></div>
-
-      <span id="status-panel">
-        <span>last saved <strong><span data-ng-bind="status.autoSaveTime"></span></strong></span>
-      </span>
     </div>
   </section>
 

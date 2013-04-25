@@ -1,3 +1,4 @@
+// @import 'normalize.less';
 @import 'fonts.less';
 @import 'lists.less';
 @import 'editor.less';
@@ -15,14 +16,17 @@ html {
   height: 100%;
 }
 
+body, p, h1, h2, h3, h4, h5, h6, table, div {
+  padding: 0;
+  margin: 0;
+  font-weight: 300;
+  font-style: normal;
+}
+
 body {
   background-color: @base-color;
-  font-weight: 300;
   width: 100%;
-  overflow-x: hidden;
   height: 100%;
-  margin: 0;
-  padding: 0;
 }
 
 body, input, textarea, button {
@@ -32,8 +36,6 @@ body, input, textarea, button {
 
 .main-container {
   height: 100%;
-  padding: 0;
-  margin: 0;
 }
 
 nav {
@@ -56,13 +58,23 @@ nav {
   height: 88%;
 }
 
+
+
 .btn {
-    border-radius: 5px;
-    border: 0px;
-    color: white;
-    padding: @pad-unit * 0.2;
-    font-weight: 600;
-    line-height: @base-font-size * 1.8;
+  border-radius: @pad-unit * 0.2;
+  padding: @pad-unit * 0.2 @pad-unit @pad-unit * 0.2 @pad-unit;
+  line-height: @base-font-size * 1.8;
+  box-shadow:inset 0px 1px 3px 0px #91b8b3;
+  background:linear-gradient(to bottom, @button-color 5%, @button-color-secondary 100%);
+  background-color: @button-color;
+  border:1px solid @text-color;
+  color: @base-color;
+  text-shadow:0px -1px 0px @shadow-color;
+
+  &:hover {
+    background:linear-gradient(to bottom, @button-color-secondary 5%, @button-color 100%);
+    background-color: @button-color-secondary;
+  }
 }
 
 .pull-right {

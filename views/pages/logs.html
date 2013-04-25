@@ -1,5 +1,19 @@
 <div class="list-container" data-ng-controller="LogsController">
   <h2>Logs</h2>
+
+  <table class="list-table">
+    <tr>
+      <th>date</th>
+      <th>message</th>
+      <th>location</th>
+    </tr>
+    <tr data-ng-repeat="log in logs">
+      <td data-ng-bind="log.date | date:'short'"></td>
+      <td data-ng-bind="log.message"></td>
+      <td data-ng-bind="log.location"></td>
+    </tr>
+  </table>
+<!--
   <ul>
     <li class="list-item" data-ng-repeat="log in logs">
       <h3 data-ng-bind="log.message"></h3>
@@ -10,4 +24,4 @@
       <span data-ng-bind="log.location"></span>
     </li>
   </ul>
-</div>
+ --></div>
