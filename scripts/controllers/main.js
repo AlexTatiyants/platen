@@ -3,15 +3,15 @@ var MainController = function($scope, $dialog, fileManager) {
   var d;
 
   $scope.loginCredentials = function() {
-      d = $dialog.dialog({
-        backdrop: true,
-        keyboard: true,
-        backdropClick: true,
-        controller: 'LoginController',
-        templateUrl: 'views/login.html'
-      });
+    d = $dialog.dialog({
+      backdrop: true,
+      keyboard: true,
+      backdropClick: true,
+      controller: 'LoginController',
+      templateUrl: 'views/login.html'
+    });
 
-      d.open();
+    d.open();
   };
 
 };

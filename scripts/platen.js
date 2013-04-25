@@ -5,7 +5,7 @@ angular.module("platen.directives", []);
 
 angular.module("platen.services", []);
 
-var platen = angular.module("platen", [ "platen.directives", "platen.services", "ui.bootstrap" ]).config([ "$routeProvider", function(e) {
+var platen = angular.module("platen", [ "platen.directives", "platen.services", "ui.bootstrap", "ui" ]).config([ "$routeProvider", function(e) {
     e.when("/posts", {
         templateUrl: "views/posts.html"
     });
@@ -28,8 +28,8 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
     var c = "draft";
     var u = "publish";
     var d = "post-title";
-    var f = "post-content";
-    var p = "post-excerpt";
+    var p = "post-content";
+    var f = "post-excerpt";
     var g = "post-tags";
     var v = "post-categories";
     e.status = {};
@@ -71,7 +71,7 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
     };
     E();
     $("#post-title").focus();
-    var C = function() {
+    var T = function() {
         if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
         t.content = "";
@@ -99,7 +99,7 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
     };
     e.updateExcerpt = function() {
         e.post.excerpt = e.post.contentMarkdown.match(/^(.*)$/m);
-        C();
+        T();
     };
     e.read = function() {
         h(e.post.id);
@@ -108,7 +108,7 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
         e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
         a.savePost(e.post, function(t) {
             e.post.wordPressId = t;
-            C();
+            T();
         }, function(e) {
             alert("OOPS " + e);
         });
@@ -146,8 +146,8 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
         }
     };
     e.$on("elementEdited", function(e, t) {
-        if (t === d || t === f || t === p || t === g || t || v) {
-            C();
+        if (t === d || t === p || t === f || t === g || t || v) {
+            T();
         }
     });
 };
@@ -522,18 +522,18 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         d.terms_names = u;
         if (e.wordPressId) {
             c = s.editPost(i, e.wordPressId, d);
-            p(c, e, function() {
+            f(c, e, function() {
                 t.log("updated post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
             }, n);
         } else {
             c = s.newPost(i, d);
-            p(c, e, function() {
+            f(c, e, function() {
                 r(c.concat());
                 t.log("created post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
             }, n);
         }
     };
-    var f = function(e, o, r) {
+    var p = function(e, o, r) {
         var n = s.getTerms(i, e, "");
         if (n.faultCode) {
             var a = n.faultString.concat();
@@ -553,7 +553,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             o(c);
         }
     };
-    var p = function(e, o, r, n) {
+    var f = function(e, o, r, n) {
         if (e.faultCode) {
             var i = e.faultString.concat();
             t.log("error for post '" + o.title + "' in blog '" + l.url + "': " + i, "wordpress service");
@@ -589,10 +589,10 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             g(d, e, t, o);
         },
         getTags: function(e, t) {
-            g(f, r, e, t);
+            g(p, r, e, t);
         },
         getCategories: function(e, t) {
-            g(f, n, e, t);
+            g(p, n, e, t);
         }
     };
 } ]);
