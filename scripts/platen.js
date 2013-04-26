@@ -1,4 +1,4 @@
-/*! platen 2013-04-25 */
+/*! platen 2013-04-26 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -23,27 +23,27 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services", 
     });
 } ]);
 
-var EditorController = function(e, t, o, r, n, i, a, l) {
-    var s = 12e3;
-    var c = "draft";
-    var u = "publish";
-    var d = "post-title";
+var EditorController = function(e, t, o, r, n, i, a, l, s) {
+    var c = 12e3;
+    var u = "draft";
+    var d = "publish";
+    var f = "post-title";
     var p = "post-content";
-    var f = "post-excerpt";
-    var g = "post-tags";
-    var v = "post-categories";
+    var g = "post-excerpt";
+    var v = "post-tags";
+    var m = "post-categories";
     e.status = {};
     e.previewOn = false;
     e.status.autoSaveTime = "unsaved";
     e.showMetadata = false;
     e.post = {};
-    var m = function(e) {
-        return "/" + l.POST_DIRECTORY_PATH + "/" + e;
+    var w = function(e) {
+        return "/" + s.POST_DIRECTORY_PATH + "/" + e;
     };
-    var w = function() {
+    var h = function() {
         e.post.id = new Date().getTime();
-        e.post.path = m(e.post.id);
-        e.post.status = c;
+        e.post.path = w(e.post.id);
+        e.post.status = u;
         e.post.title = "";
         e.post.content = "";
         e.post.contentMarkdown = "";
@@ -55,8 +55,8 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
         e.post.tags = "";
         e.post.categories = "";
     };
-    var h = function(t) {
-        n.readFile(m(t), function(t) {
+    var T = function(t) {
+        n.readFile(w(t), function(t) {
             e.post = JSON.parse(t);
             e.$apply();
             i.log("loaded post '" + e.post.title + "'", "EditorController");
@@ -64,20 +64,20 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
     };
     var E = function() {
         if (t.postId === "0") {
-            w();
+            h();
         } else {
-            h(t.postId);
+            T(t.postId);
         }
     };
     E();
     $("#post-title").focus();
-    var T = function() {
+    var D = function() {
         if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
         var t = JSON.parse(JSON.stringify(e.post));
         t.content = "";
         t.contentHtmlPreview = "";
         t.lastUpdatedDate = new Date();
-        n.writeFile(e.post.path, e.post.id, JSON.stringify(t), function(t) {
+        n.writeTextFile(e.post.path, e.post.id, JSON.stringify(t), function(t) {
             e.status.autoSaveTime = r("date")(new Date(), "shortTime");
             i.log("saved post '" + e.post.title + "' on " + e.status.autoSaveTime, "EditorController");
         });
@@ -99,16 +99,16 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
     };
     e.updateExcerpt = function() {
         e.post.excerpt = e.post.contentMarkdown.match(/^(.*)$/m);
-        T();
+        D();
     };
     e.read = function() {
-        h(e.post.id);
+        T(e.post.id);
     };
     e.sync = function() {
         e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
         a.savePost(e.post, function(t) {
             e.post.wordPressId = t;
-            T();
+            D();
         }, function(e) {
             alert("OOPS " + e);
         });
@@ -146,13 +146,13 @@ var EditorController = function(e, t, o, r, n, i, a, l) {
         }
     };
     e.$on("elementEdited", function(e, t) {
-        if (t === d || t === p || t === f || t === g || t || v) {
-            T();
+        if (t === f || t === p || t === g || t === v || t || m) {
+            D();
         }
     });
 };
 
-EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "logger", "wordpress", "resources" ];
+EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "logger", "wordpress", "imageManager", "resources" ];
 
 var LoginController = function(e, t, o) {
     e.login = o.login;
@@ -176,22 +176,28 @@ var LogsController = function(e, t) {
 
 LogsController.$inject = [ "$scope", "logger" ];
 
-var MainController = function(e, t, o) {
+var MainController = function(e, t, o, r, n) {
     o.initialize();
-    var r;
+    o.createDirectory(r.POST_DIRECTORY_PATH, function() {
+        n.log("created directory for " + r.POST_DIRECTORY_PATH, "MainController");
+    });
+    o.createDirectory(r.IMAGE_DIRECTORY_PATH, function() {
+        n.log("created directory for " + r.IMAGE_DIRECTORY_PATH, "MainController");
+    });
+    var i;
     e.loginCredentials = function() {
-        r = t.dialog({
+        i = t.dialog({
             backdrop: true,
             keyboard: true,
             backdropClick: true,
             controller: "LoginController",
             templateUrl: "views/login.html"
         });
-        r.open();
+        i.open();
     };
 };
 
-MainController.$inject = [ "$scope", "$dialog", "fileManager" ];
+MainController.$inject = [ "$scope", "$dialog", "fileManager", "resources", "logger" ];
 
 var PostsController = function(e, t, o, r, n, i) {
     e.posts = {};
@@ -207,6 +213,11 @@ var PostsController = function(e, t, o, r, n, i) {
             n.log("read post '" + o.title + "'", "PostsController");
         });
     }
+    e.readImages = function() {
+        r.readFile("images", function(e) {
+            console.log("read image", e);
+        });
+    };
     e.cancelDelete = function() {
         e.shouldBeOpen = false;
         e.postToDelete = {};
@@ -286,143 +297,193 @@ angular.module("platen.directives").directive("editableText", function() {
 });
 
 angular.module("platen.services").factory("fileManager", function() {
-    var e;
-    var t = function(e, t) {
+    var t;
+    var o = function(e, t) {
         var o = "";
         switch (e.code) {
           case FileError.QUOTA_EXCEEDED_ERR:
-            o = "QUOTA_EXCEEDED_ERR";
+            o = "Quota Exceeded";
             break;
 
           case FileError.NOT_FOUND_ERR:
-            o = "NOT_FOUND_ERR";
+            o = "Not Found";
             break;
 
           case FileError.SECURITY_ERR:
-            o = "SECURITY_ERR";
+            o = "Security";
             break;
 
           case FileError.INVALID_MODIFICATION_ERR:
-            o = "INVALID_MODIFICATION_ERR";
+            o = "Invalid Modification";
             break;
 
           case FileError.INVALID_STATE_ERR:
-            o = "INVALID_STATE_ERR";
+            o = "Invalid State";
+            break;
+
+          case FileError.TYPE_MISMATCH_ERR:
+            o = "Type Mismatch";
             break;
 
           default:
             o = "Unknown Error";
             break;
         }
-        console.log("Error: " + o, t);
+        console.log("Error " + e.code + ": " + o, t);
     };
-    var o = function(o, r, n) {
-        if (e) {
-            e.root.getFile(o, {
+    var r = function(e, r, n) {
+        if (t) {
+            t.root.getFile(e, {
                 create: r
-            }, n, function(e) {
-                t(e, "in handleFile(), while getting file path " + o);
+            }, n, function(t) {
+                o(t, "in handleFile(), while getting file path " + e);
             });
         }
     };
+    var n = function(e, t, n, i) {
+        r(e, true, function(r) {
+            r.createWriter(function(e) {
+                e.onerror = o;
+                e.onwriteend = function() {
+                    e.onwriteend = null;
+                    e.write(n);
+                    i(r);
+                };
+                e.truncate(n.size);
+            }, function(r) {
+                o(r, "in writeFile(), while creating fileWriter for " + e + "/" + t);
+            });
+        });
+    };
     return {
         initialize: function() {
-            window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(t) {
-                e = t;
+            window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(e) {
+                t = e;
             });
         },
-        readFilesInDirectory: function(r, n) {
-            if (e) {
-                e.root.getDirectory(r, {
+        createDirectory: function(r, n) {
+            if (t) {
+                t.root.getDirectory(r, {
                     create: true
                 }, function(e) {
-                    var i = e.createReader();
+                    n();
+                }, o(e, "in createDirectory, while creating directory " + r));
+            }
+        },
+        readFilesInDirectory: function(e, n) {
+            if (t) {
+                t.root.getDirectory(e, {
+                    create: true
+                }, function(t) {
+                    var i = t.createReader();
                     i.readEntries(function(e) {
                         _.each(e, function(e) {
                             if (e.isFile) {
-                                o(e.fullPath, false, function(o) {
-                                    o.file(function(e) {
+                                console.log(e);
+                                r(e.fullPath, false, function(t) {
+                                    t.file(function(e) {
                                         var t = new FileReader();
                                         t.onloadend = n;
                                         t.readAsText(e);
-                                    }, function(o) {
-                                        t(o, "in readFilesInDirectory, while getting file " + e.fullPath);
+                                    }, function(t) {
+                                        o(t, "in readFilesInDirectory, while getting file " + e.fullPath);
                                     });
                                 });
                             }
                         });
-                    }, function(e) {
-                        t(e, "in readFilesInDirectory, while reading entries from " + r);
+                    }, function(t) {
+                        o(t, "in readFilesInDirectory, while reading entries from " + e);
                     });
-                }, function(e) {
-                    t(e, "in readFilesInDirectory, while getting directory " + r);
+                }, function(t) {
+                    o(t, "in readFilesInDirectory, while getting directory " + e);
                 });
             }
         },
-        clearDirectory: function(r) {
-            if (e) {
-                e.root.getDirectory(r, {}, function(e) {
-                    var n = e.createReader();
+        readDirectoryContents: function(e, r) {
+            if (t) {
+                t.root.getDirectory(e, {
+                    create: true
+                }, function(t) {
+                    var r = t.createReader();
+                    r.readEntries(function(e) {
+                        _.each(e, function(e) {
+                            console.log(e);
+                        });
+                    }, function(t) {
+                        o(t, "in readFilesInDirectory, while reading entries from " + e);
+                    });
+                }, function(t) {
+                    o(t, "in readFilesInDirectory, while getting directory " + e);
+                });
+            }
+        },
+        clearDirectory: function(e) {
+            if (t) {
+                t.root.getDirectory(e, {}, function(t) {
+                    var n = t.createReader();
                     n.readEntries(function(e) {
                         _.each(e, function(e) {
                             if (e.isFile) {
-                                o(e.fullPath, false, function(o) {
-                                    o.remove(function() {
+                                r(e.fullPath, false, function(t) {
+                                    t.remove(function() {
                                         console.log("removed file " + e.fullPath);
-                                    }, function(o) {
-                                        t(o, "while removing file " + e.fullPath);
+                                    }, function(t) {
+                                        o(t, "while removing file " + e.fullPath);
                                     });
                                 });
                             }
                         });
-                    }, function(e) {
-                        t(e, "in clearDirectory, while reading entries for " + r);
+                    }, function(t) {
+                        o(t, "in clearDirectory, while reading entries for " + e);
                     });
-                }, function(e) {
-                    t(e, "in clearDirectory(), while getting directory " + r);
+                }, function(t) {
+                    o(t, "in clearDirectory(), while getting directory " + e);
                 });
             }
         },
-        writeFile: function(e, r, n, i) {
-            o(e, true, function(o) {
-                o.createWriter(function(e) {
-                    var r = new Blob([ n ], {
-                        type: "text/plain"
-                    });
-                    e.onerror = t;
-                    e.onwriteend = function() {
-                        e.onwriteend = null;
-                        e.write(r);
-                        i(o);
+        writeTextFile: function(e, t, o, r) {
+            var i = new Blob([ o ], {
+                type: "text/plain"
+            });
+            n(e, t, i, r);
+        },
+        writeBlob: function(e, t, o, r) {
+            n(e, t, o, r);
+        },
+        readFile: function(e, t) {
+            r(e, false, function(r) {
+                r.file(function(e) {
+                    var o = new FileReader();
+                    o.onload = function(e) {
+                        t(e.target.result);
                     };
-                    e.truncate(r.size);
-                }, function(o) {
-                    t(o, "in writeFile(), while creating fileWriter for " + e + "/" + r);
+                    o.readAsText(e);
+                }, function(t) {
+                    o(t, "in readingFile(), while reading file " + e);
                 });
             });
         },
-        readFile: function(e, r) {
-            o(e, false, function(o) {
-                o.file(function(e) {
-                    var t = new FileReader();
-                    t.onload = function(e) {
-                        r(e.target.result);
-                    };
-                    t.readAsText(e);
-                }, function(o) {
-                    t(o, "in readingFile(), while reading file " + e);
-                });
-            });
-        },
-        removeFile: function(e, r) {
-            o(e, false, function(o) {
-                o.remove(r, function(o) {
-                    t(o, "in removeFile(), while reading file " + e);
+        removeFile: function(e, t) {
+            r(e, false, function(r) {
+                r.remove(t, function(t) {
+                    o(t, "in removeFile(), while reading file " + e);
                 });
             });
         }
     };
 });
+
+angular.module("platen.services").factory("imageManager", [ "$window", "fileManager", "logger", "resources", function(e, t, o, r) {
+    e.addEventListener("paste", function(e) {
+        var o = e.clipboardData.items[0];
+        if (o.type !== "image/png") return;
+        var n = new Date().getTime() + ".png";
+        t.writeBlob(r.IMAGE_DIRECTORY_PATH, n, o.getAsFile(), function() {
+            console.log("saved image " + n);
+            document.execCommand("insertHtml", false, "![Alt text](/images/" + n + ")");
+        });
+    });
+} ]);
 
 angular.module("platen.services").factory("logger", function() {
     var e = 100;
@@ -451,7 +512,8 @@ angular.module("platen.services").factory("logger", function() {
 });
 
 angular.module("platen.services").value("resources", {
-    POST_DIRECTORY_PATH: "posts"
+    POST_DIRECTORY_PATH: "posts",
+    IMAGE_DIRECTORY_PATH: "images"
 });
 
 angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", function(e, t) {
@@ -522,18 +584,18 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         d.terms_names = u;
         if (e.wordPressId) {
             c = s.editPost(i, e.wordPressId, d);
-            f(c, e, function() {
+            p(c, e, function() {
                 t.log("updated post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
             }, n);
         } else {
             c = s.newPost(i, d);
-            f(c, e, function() {
+            p(c, e, function() {
                 r(c.concat());
                 t.log("created post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
             }, n);
         }
     };
-    var p = function(e, o, r) {
+    var f = function(e, o, r) {
         var n = s.getTerms(i, e, "");
         if (n.faultCode) {
             var a = n.faultString.concat();
@@ -553,7 +615,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             o(c);
         }
     };
-    var f = function(e, o, r, n) {
+    var p = function(e, o, r, n) {
         if (e.faultCode) {
             var i = e.faultString.concat();
             t.log("error for post '" + o.title + "' in blog '" + l.url + "': " + i, "wordpress service");
@@ -589,10 +651,10 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             g(d, e, t, o);
         },
         getTags: function(e, t) {
-            g(p, r, e, t);
+            g(f, r, e, t);
         },
         getCategories: function(e, t) {
-            g(p, n, e, t);
+            g(f, n, e, t);
         }
     };
 } ]);

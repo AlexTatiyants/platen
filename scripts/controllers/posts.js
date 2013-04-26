@@ -15,6 +15,13 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
     });
   };
 
+  $scope.readImages = function() {
+    fileManager.readFile("images", function(e) {
+        console.log("read image", e);
+    });
+  }
+
+
 
   $scope.cancelDelete = function() {
     $scope.shouldBeOpen = false;
@@ -47,7 +54,6 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
       $scope.posts = {};
     });
   };
-
 };
 
 PostsController.$inject = ['$scope', '$q', '$location', 'fileManager', 'logger', 'resources'];

@@ -15,6 +15,7 @@
       "experimental",
       "fileSystem",
       "unlimitedStorage",
+      "clipboardRead",
       "http://*/",
       "https://*/"
     ],

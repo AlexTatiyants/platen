@@ -1,4 +1,4 @@
-var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, logger, wordpress, resources) {
+var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, logger, wordpress, imageManager, resources) {
   var AUTOSAVE_INTERVAL = 12000;
   var STATUS_DRAFT = 'draft';
   var STATUS_PUBLISH = 'publish';
@@ -74,8 +74,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     postToSave.contentHtmlPreview = '';
     postToSave.lastUpdatedDate = new Date();
 
-
-    fileManager.writeFile($scope.post.path, $scope.post.id, JSON.stringify(postToSave), function(fileEntry) {
+    fileManager.writeTextFile($scope.post.path, $scope.post.id, JSON.stringify(postToSave), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
       logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
     });
@@ -157,13 +156,11 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     }
   };
 
-
   $scope.$on('elementEdited', function(event, elementId) {
     if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT || elementId === POST_TAGS || elementId || POST_CATEGORIES) {
       savePost();
     }
   });
-
 };
 
-EditorController.$inject = ['$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'logger', 'wordpress', 'resources'];
+EditorController.$inject = ['$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'logger', 'wordpress', 'imageManager', 'resources'];

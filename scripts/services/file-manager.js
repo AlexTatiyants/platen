@@ -6,26 +6,28 @@ angular.module('platen.services').factory('fileManager', function() {
 
     switch (e.code) {
       case FileError.QUOTA_EXCEEDED_ERR:
-        msg = 'QUOTA_EXCEEDED_ERR';
+        msg = 'Quota Exceeded';
         break;
       case FileError.NOT_FOUND_ERR:
-        msg = 'NOT_FOUND_ERR';
+        msg = 'Not Found';
         break;
       case FileError.SECURITY_ERR:
-        msg = 'SECURITY_ERR';
+        msg = 'Security';
         break;
       case FileError.INVALID_MODIFICATION_ERR:
-        msg = 'INVALID_MODIFICATION_ERR';
+        msg = 'Invalid Modification';
         break;
       case FileError.INVALID_STATE_ERR:
-        msg = 'INVALID_STATE_ERR';
+        msg = 'Invalid State';
+        break;
+      case FileError.TYPE_MISMATCH_ERR:
+        msg = 'Type Mismatch';
         break;
       default:
         msg = 'Unknown Error';
         break;
     };
-
-    console.log('Error: ' + msg, step);
+    console.log('Error ' + e.code + ': ' + msg, step);
   };
 
   var handleFile = function(filePath, shouldCreate, action) {
@@ -38,6 +40,25 @@ angular.module('platen.services').factory('fileManager', function() {
     }
   };
 
+  var writeFile = function(filePath, fileName, blob, onSuccessCallback) {
+    handleFile(filePath, true, function(fileEntry) {
+      fileEntry.createWriter(function(fileWriter) {
+        fileWriter.onerror = onError;
+        fileWriter.onwriteend = function() {
+          fileWriter.onwriteend = null;
+          fileWriter.write(blob);
+          onSuccessCallback(fileEntry);
+        }
+        // a call to truncate() is apparently required if the same file is being overriden with
+        // different contents
+        fileWriter.truncate(blob.size);
+
+      }, function(e) {
+        onError(e, "in writeFile(), while creating fileWriter for " + filePath + "/" + fileName);
+      });
+    });
+  };
+
   return {
     initialize: function() {
       window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(localFs) {
@@ -45,7 +66,18 @@ angular.module('platen.services').factory('fileManager', function() {
       });
     },
 
-    readFilesInDirectory: function(directoryPath, onSuccess) {
+    createDirectory: function(directoryPath, onSuccessCallback) {
+      if (fs) {
+        fs.root.getDirectory(directoryPath, {
+          create: true
+        }, function(e) {
+          onSuccessCallback();
+        },
+        onError(e, "in createDirectory, while creating directory " + directoryPath));
+      }
+    },
+
+    readFilesInDirectory: function(directoryPath, onSuccessCallback) {
       if (fs) {
         fs.root.getDirectory(directoryPath, {
           create: true
@@ -54,16 +86,36 @@ angular.module('platen.services').factory('fileManager', function() {
           dirReader.readEntries(function(entries) {
             _.each(entries, function(entry) {
               if (entry.isFile) {
+                console.log(entry);
                 handleFile(entry.fullPath, false, function(fileEntry) {
                   fileEntry.file(function(file) {
                     var reader = new FileReader();
-                    reader.onloadend = onSuccess;
+                    reader.onloadend = onSuccessCallback;
                     reader.readAsText(file);
                   }, function(e) {
                     onError(e, "in readFilesInDirectory, while getting file " + entry.fullPath);
                   });
                 });
               }
+            })
+          }, function(e) {
+            onError(e, "in readFilesInDirectory, while reading entries from " + directoryPath);
+          });
+        }, function(e) {
+          onError(e, "in readFilesInDirectory, while getting directory " + directoryPath);
+        });
+      }
+    },
+
+    readDirectoryContents: function(directoryPath, onSuccessCallback) {
+      if (fs) {
+        fs.root.getDirectory(directoryPath, {
+          create: true
+        }, function(dirEntry) {
+          var dirReader = dirEntry.createReader();
+          dirReader.readEntries(function(entries) {
+            _.each(entries, function(entry) {
+              console.log(entry);
             })
           }, function(e) {
             onError(e, "in readFilesInDirectory, while reading entries from " + directoryPath);
@@ -99,30 +151,15 @@ angular.module('platen.services').factory('fileManager', function() {
       }
     },
 
-    writeFile: function(filePath, fileName, fileBody, onSuccessCallback) {
-      handleFile(filePath, true, function(fileEntry) {
-        fileEntry.createWriter(function(fileWriter) {
-
-          var blob = new Blob([fileBody], {
-            type: 'text/plain'
-          });
-
-          fileWriter.onerror = onError;
-
-          fileWriter.onwriteend = function() {
-            fileWriter.onwriteend = null;
-            fileWriter.write(blob);
-            onSuccessCallback(fileEntry);
-          }
-
-          // a call to truncate() is apparently required if the same file is being overriden with
-          // different contents
-          fileWriter.truncate(blob.size);
-
-        }, function(e) {
-          onError(e, "in writeFile(), while creating fileWriter for " + filePath + "/" + fileName);
-        });
+    writeTextFile: function(filePath, fileName, fileBody, onSuccessCallback) {
+      var blob = new Blob([fileBody], {
+        type: 'text/plain'
       });
+      writeFile(filePath, fileName, blob, onSuccessCallback);
+    },
+
+    writeBlob: function(filePath, fileName, blob, onSuccessCallback) {
+      writeFile(filePath, fileName, blob, onSuccessCallback);
     },
 
     readFile: function(filePath, getResultCallback) {
