@@ -1,14 +1,6 @@
-var MainController = function($scope, $dialog, fileManager, resources, logger) {
+var MainController = function($scope, $dialog, fileManager, resources) {
 
   fileManager.initialize();
-
-  fileManager.createDirectory(resources.POST_DIRECTORY_PATH, function() {
-    logger.log("created directory for " + resources.POST_DIRECTORY_PATH, "MainController");
-  });
-
-  fileManager.createDirectory(resources.IMAGE_DIRECTORY_PATH, function() {
-    logger.log("created directory for " + resources.IMAGE_DIRECTORY_PATH, "MainController");
-  });
 
   var d;
 
@@ -26,4 +18,4 @@ var MainController = function($scope, $dialog, fileManager, resources, logger) {
 
 };
 
-MainController.$inject = ['$scope', '$dialog', 'fileManager', 'resources', 'logger'];
+MainController.$inject = ['$scope', '$dialog', 'fileManager', 'resources'];

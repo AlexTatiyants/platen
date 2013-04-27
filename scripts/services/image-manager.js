@@ -7,25 +7,12 @@ function($window, fileManager, logger, resources) {
 
     if (item.type !== 'image/png') return;
 
-    var fileName = new Date().getTime() + ".png";
+    var fileName = new Date().getTime() + ".png"
+    var filePath = resources.IMAGE_DIRECTORY_PATH + "/" + fileName;
 
-    fileManager.writeBlob(resources.IMAGE_DIRECTORY_PATH, fileName, item.getAsFile(), function() {
-      console.log("saved image " + fileName);
-      document.execCommand('insertHtml', false, '![Alt text](/images/' + fileName + ')');
+    fileManager.writeFile(filePath, item.getAsFile(), function(fileEntry) {
+      logger.log("saved image " + fileName, "imageManager service");
+      document.execCommand('insertHtml', false, '![Alt text](' + fileEntry.toURL() + ')');
     });
   });
-
 }]);
-
-// user inserts image - save it locally and insert it as <img> reference as well as add new entry in images:
-/*
-  images {
-    image {
-      localUrl: 'images/123231.png',
-      blogUrl: 'uploads...'
-    }
-  }
-
-  when syncing to WP, check if blog url is empty. If so, upload image and update file reference in HTML before inserting
-
-*/

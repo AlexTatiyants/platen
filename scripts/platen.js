@@ -1,248 +1,246 @@
-/*! platen 2013-04-26 */
+/*! platen 2013-04-27 */
 "use strict";
 
 angular.module("platen.directives", []);
 
 angular.module("platen.services", []);
 
-var platen = angular.module("platen", [ "platen.directives", "platen.services", "ui.bootstrap", "ui" ]).config([ "$routeProvider", function(e) {
-    e.when("/posts", {
+var platen = angular.module("platen", [ "platen.directives", "platen.services", "ui.bootstrap", "ui" ]).config([ "$routeProvider", function($routeProvider) {
+    $routeProvider.when("/posts", {
         templateUrl: "views/posts.html"
     });
-    e.when("/posts/:postId", {
+    $routeProvider.when("/posts/:postId", {
         templateUrl: "views/edit.html"
     });
-    e.when("/logs", {
+    $routeProvider.when("/logs", {
         templateUrl: "views/logs.html"
     });
-    e.when("/login", {
+    $routeProvider.when("/login", {
         templateUrl: "views/login.html"
     });
-    e.otherwise({
+    $routeProvider.otherwise({
         redirectTo: "/posts"
     });
 } ]);
 
-var EditorController = function(e, t, o, r, n, i, a, l, s) {
-    var c = 12e3;
-    var u = "draft";
-    var d = "publish";
-    var f = "post-title";
-    var p = "post-content";
-    var g = "post-excerpt";
-    var v = "post-tags";
-    var m = "post-categories";
-    e.status = {};
-    e.previewOn = false;
-    e.status.autoSaveTime = "unsaved";
-    e.showMetadata = false;
-    e.post = {};
-    var w = function(e) {
-        return "/" + s.POST_DIRECTORY_PATH + "/" + e;
+var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, logger, wordpress, imageManager, resources) {
+    var AUTOSAVE_INTERVAL = 12e3;
+    var STATUS_DRAFT = "draft";
+    var STATUS_PUBLISH = "publish";
+    var POST_TITLE_ID = "post-title";
+    var POST_CONTENT_ID = "post-content";
+    var POST_EXCERPT = "post-excerpt";
+    var POST_TAGS = "post-tags";
+    var POST_CATEGORIES = "post-categories";
+    $scope.status = {};
+    $scope.previewOn = false;
+    $scope.status.autoSaveTime = "unsaved";
+    $scope.showMetadata = false;
+    $scope.post = {};
+    var getFilePath = function(postId) {
+        return "/" + resources.POST_DIRECTORY_PATH + "/" + postId;
     };
-    var h = function() {
-        e.post.id = new Date().getTime();
-        e.post.path = w(e.post.id);
-        e.post.status = u;
-        e.post.title = "";
-        e.post.content = "";
-        e.post.contentMarkdown = "";
-        e.post.contentMarkdownHtml = "";
-        e.post.contentHtmlPreview = "";
-        e.post.excerpt = "";
-        e.post.createdDate = new Date();
-        e.post.lastUpdatedDate = "";
-        e.post.tags = "";
-        e.post.categories = "";
+    var createPost = function() {
+        $scope.post.id = new Date().getTime();
+        $scope.post.path = getFilePath($scope.post.id);
+        $scope.post.status = STATUS_DRAFT;
+        $scope.post.title = "";
+        $scope.post.content = "";
+        $scope.post.contentMarkdown = "";
+        $scope.post.contentMarkdownHtml = "";
+        $scope.post.contentHtmlPreview = "";
+        $scope.post.excerpt = "";
+        $scope.post.createdDate = new Date();
+        $scope.post.lastUpdatedDate = "";
+        $scope.post.tags = "";
+        $scope.post.categories = "";
     };
-    var T = function(t) {
-        n.readFile(w(t), function(t) {
-            e.post = JSON.parse(t);
-            e.$apply();
-            i.log("loaded post '" + e.post.title + "'", "EditorController");
+    var loadPost = function(postId) {
+        fileManager.readFile(getFilePath(postId), true, function(postJson) {
+            $scope.post = JSON.parse(postJson);
+            $scope.$apply();
+            logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
         });
     };
-    var E = function() {
-        if (t.postId === "0") {
-            h();
+    var initializePost = function() {
+        if ($routeParams.postId === "0") {
+            createPost();
         } else {
-            T(t.postId);
+            loadPost($routeParams.postId);
         }
     };
-    E();
+    var uploadImages = function() {};
+    initializePost();
     $("#post-title").focus();
-    var D = function() {
-        if (e.post.title.trim() === "" && e.post.contentMarkdown.trim() === "") return;
-        var t = JSON.parse(JSON.stringify(e.post));
-        t.content = "";
-        t.contentHtmlPreview = "";
-        t.lastUpdatedDate = new Date();
-        n.writeTextFile(e.post.path, e.post.id, JSON.stringify(t), function(t) {
-            e.status.autoSaveTime = r("date")(new Date(), "shortTime");
-            i.log("saved post '" + e.post.title + "' on " + e.status.autoSaveTime, "EditorController");
+    var savePost = function() {
+        if ($scope.post.title.trim() === "" && $scope.post.contentMarkdown.trim() === "") return;
+        var postToSave = JSON.parse(JSON.stringify($scope.post));
+        postToSave.content = "";
+        postToSave.contentHtmlPreview = "";
+        postToSave.lastUpdatedDate = new Date();
+        fileManager.writeFile(getFilePath($scope.post.id), JSON.stringify(postToSave), function(fileEntry) {
+            $scope.status.autoSaveTime = $filter("date")(new Date(), "shortTime");
+            logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
         });
     };
-    e.togglePreview = function() {
-        if (!e.previewOn) {
-            e.post.contentHtmlPreview = marked(e.post.contentMarkdown);
+    $scope.togglePreview = function() {
+        if (!$scope.previewOn) {
+            $scope.post.contentHtmlPreview = marked($scope.post.contentMarkdown);
         }
-        e.previewOn = !e.previewOn;
+        $scope.previewOn = !$scope.previewOn;
     };
-    e.toggleMetadataPanel = function() {
-        e.showMetadata = !e.showMetadata;
-        if (e.showMetadata && e.post.excerpt === "") {
-            e.updateExcerpt();
+    $scope.toggleMetadataPanel = function() {
+        $scope.showMetadata = !$scope.showMetadata;
+        if ($scope.showMetadata && $scope.post.excerpt === "") {
+            $scope.updateExcerpt();
         }
-        if (e.showMetadata) {
+        if ($scope.showMetadata) {
             $("#post-excerpt").focus();
         }
     };
-    e.updateExcerpt = function() {
-        e.post.excerpt = e.post.contentMarkdown.match(/^(.*)$/m);
-        D();
+    $scope.updateExcerpt = function() {
+        $scope.post.excerpt = $scope.post.contentMarkdown.match(/^(.*)$/m);
+        savePost();
     };
-    e.read = function() {
-        T(e.post.id);
+    $scope.read = function() {
+        loadPost($scope.post.id);
     };
-    e.sync = function() {
-        e.post.content = marked(e.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        a.savePost(e.post, function(t) {
-            e.post.wordPressId = t;
-            D();
-        }, function(e) {
-            alert("OOPS " + e);
+    $scope.sync = function() {
+        $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        uploadImages();
+        wordpress.savePost($scope.post, function(result) {
+            $scope.post.wordPressId = result;
+            savePost();
+        }, function(errorMessage) {
+            alert("OOPS " + errorMessage);
         });
     };
-    e.getTags = function() {
-        a.getTags(function(t) {
-            e.tags = t;
-        }, function(e) {
-            alert("OOPS " + e);
+    $scope.getTags = function() {
+        wordpress.getTags(function(result) {
+            $scope.tags = result;
+        }, function(errorMessage) {
+            alert("OOPS " + errorMessage);
         });
     };
-    e.addTag = function(t) {
-        if (e.post.tags.indexOf(t.name) === -1) {
-            if (e.post.tags.trim() === "") {
-                e.post.tags += t.name;
+    $scope.addTag = function(tag) {
+        if ($scope.post.tags.indexOf(tag.name) === -1) {
+            if ($scope.post.tags.trim() === "") {
+                $scope.post.tags += tag.name;
             } else {
-                e.post.tags += ", " + t.name;
+                $scope.post.tags += ", " + tag.name;
             }
         }
     };
-    e.getCategories = function() {
-        a.getCategories(function(t) {
-            e.categories = t;
-        }, function(e) {
-            alert("OOPS " + e);
+    $scope.getCategories = function() {
+        wordpress.getCategories(function(result) {
+            $scope.categories = result;
+        }, function(errorMessage) {
+            alert("OOPS " + errorMessage);
         });
     };
-    e.addCategory = function(t) {
-        if (e.post.categories.indexOf(t.name) === -1) {
-            if (e.post.categories.trim() === "") {
-                e.post.categories += t.name;
+    $scope.addCategory = function(category) {
+        if ($scope.post.categories.indexOf(category.name) === -1) {
+            if ($scope.post.categories.trim() === "") {
+                $scope.post.categories += category.name;
             } else {
-                e.post.categories += ", " + t.name;
+                $scope.post.categories += ", " + category.name;
             }
         }
     };
-    e.$on("elementEdited", function(e, t) {
-        if (t === f || t === p || t === g || t === v || t || m) {
-            D();
+    $scope.$on("elementEdited", function(event, elementId) {
+        if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT || elementId === POST_TAGS || elementId || POST_CATEGORIES) {
+            savePost();
         }
     });
 };
 
 EditorController.$inject = [ "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "logger", "wordpress", "imageManager", "resources" ];
 
-var LoginController = function(e, t, o) {
-    e.login = o.login;
-    e.submit = function() {
-        t.close("ok");
+var LoginController = function($scope, dialog, wordpress) {
+    $scope.login = wordpress.login;
+    $scope.submit = function() {
+        dialog.close("ok");
     };
-    e.resetCredentials = function() {
-        o.resetCredentials();
-        t.close();
+    $scope.resetCredentials = function() {
+        wordpress.resetCredentials();
+        dialog.close();
     };
-    e.cancel = function() {
-        t.close();
+    $scope.cancel = function() {
+        dialog.close();
     };
 };
 
 LoginController.$inject = [ "$scope", "dialog", "wordpress" ];
 
-var LogsController = function(e, t) {
-    e.logs = t.getLogs();
+var LogsController = function($scope, logger) {
+    $scope.logs = logger.getLogs();
 };
 
 LogsController.$inject = [ "$scope", "logger" ];
 
-var MainController = function(e, t, o, r, n) {
-    o.initialize();
-    o.createDirectory(r.POST_DIRECTORY_PATH, function() {
-        n.log("created directory for " + r.POST_DIRECTORY_PATH, "MainController");
-    });
-    o.createDirectory(r.IMAGE_DIRECTORY_PATH, function() {
-        n.log("created directory for " + r.IMAGE_DIRECTORY_PATH, "MainController");
-    });
-    var i;
-    e.loginCredentials = function() {
-        i = t.dialog({
+var MainController = function($scope, $dialog, fileManager, resources) {
+    fileManager.initialize();
+    var d;
+    $scope.loginCredentials = function() {
+        d = $dialog.dialog({
             backdrop: true,
             keyboard: true,
             backdropClick: true,
             controller: "LoginController",
             templateUrl: "views/login.html"
         });
-        i.open();
+        d.open();
     };
 };
 
-MainController.$inject = [ "$scope", "$dialog", "fileManager", "resources", "logger" ];
+MainController.$inject = [ "$scope", "$dialog", "fileManager", "resources" ];
 
-var PostsController = function(e, t, o, r, n, i) {
-    e.posts = {};
-    e.confirm = {};
-    e.loaded = false;
-    e.postToDelete = {};
-    if (!e.loaded) {
-        r.readFilesInDirectory(i.POST_DIRECTORY_PATH, function(t) {
-            var o = JSON.parse(this.result);
-            e.posts[o.id] = o;
-            e.loaded = true;
-            e.$apply();
-            n.log("read post '" + o.title + "'", "PostsController");
+var PostsController = function($scope, $q, $location, fileManager, logger, resources) {
+    $scope.posts = {};
+    $scope.confirm = {};
+    $scope.loaded = false;
+    $scope.postToDelete = {};
+    if (!$scope.loaded) {
+        fileManager.readFilesInDirectory(resources.POST_DIRECTORY_PATH, function(e) {
+            var post = JSON.parse(this.result);
+            $scope.posts[post.id] = post;
+            $scope.loaded = true;
+            $scope.$apply();
+            logger.log("read post '" + post.title + "'", "PostsController");
         });
     }
-    e.readImages = function() {
-        r.readFile("images", function(e) {
+    $scope.readImages = function() {
+        fileManager.readBlob("images", function(e) {
             console.log("read image", e);
         });
     };
-    e.cancelDelete = function() {
-        e.shouldBeOpen = false;
-        e.postToDelete = {};
+    $scope.readDirectory = function() {
+        fileManager.readRootDirectory();
     };
-    e.proceedWithDelete = function() {
-        debugger;
-        e.shouldBeOpen = false;
-        r.removeFile(e.postToDelete.path, function() {
-            delete e.posts[e.postToDelete.id];
-            n.log("deleted post '" + e.postToDelete.title + "'", "PostsController");
-            e.postToDelete = {};
-            e.$apply();
+    $scope.deletePost = function(post) {
+        $scope.postToDelete = post;
+        $scope.shouldBeOpen = true;
+    };
+    $scope.cancelDelete = function() {
+        $scope.shouldBeOpen = false;
+        $scope.postToDelete = {};
+    };
+    $scope.proceedWithDelete = function() {
+        $scope.shouldBeOpen = false;
+        fileManager.removeFile($scope.postToDelete.path, function() {
+            delete $scope.posts[$scope.postToDelete.id];
+            logger.log("deleted post '" + $scope.postToDelete.title + "'", "PostsController");
+            $scope.postToDelete = {};
+            $scope.$apply();
         });
     };
-    e.deletePost = function(t) {
-        e.postToDelete = t;
-        e.shouldBeOpen = true;
+    $scope.editPost = function(post) {
+        $location.path("posts/" + post.id);
     };
-    e.editPost = function(e) {
-        o.path("posts/" + e.id);
-    };
-    e.deleteAll = function() {
-        r.clearDirectory(i.POST_DIRECTORY_PATH, function() {
-            n.log("deleted all posts", "PostsController");
-            e.posts = {};
+    $scope.deleteAll = function() {
+        fileManager.clearDirectory(resources.POST_DIRECTORY_PATH, function() {
+            logger.log("deleted all posts", "PostsController");
+            $scope.posts = {};
         });
     };
 };
@@ -253,22 +251,22 @@ angular.module("platen.directives").directive("editableMarkdown", function() {
     return {
         restrict: "A",
         require: "?ngModel",
-        link: function(e, t, o, r) {
-            if (!r) return;
-            r.$render = function() {
-                t.html(r.$viewValue || "");
+        link: function(scope, element, attrs, ngModel) {
+            if (!ngModel) return;
+            ngModel.$render = function() {
+                element.html(ngModel.$viewValue || "");
             };
-            t.bind("blur keyup change", function() {
-                e.$apply(n);
+            element.bind("blur keyup change", function() {
+                scope.$apply(read);
             });
-            var n = function() {
-                e.post.contentMarkdown = t.context.innerText;
-                r.$setViewValue(t.html());
+            var read = function() {
+                scope.post.contentMarkdown = element.context.innerText;
+                ngModel.$setViewValue(element.html());
             };
-            t.bind("blur paste", function() {
-                e.$emit("elementEdited", t[0].id);
+            element.bind("blur paste", function() {
+                scope.$emit("elementEdited", element[0].id);
             });
-            n();
+            read();
         }
     };
 });
@@ -277,236 +275,207 @@ angular.module("platen.directives").directive("editableText", function() {
     return {
         restrict: "A",
         require: "?ngModel",
-        link: function(e, t, o, r) {
-            if (!r) return;
-            r.$render = function() {
-                t.html(r.$viewValue || "");
+        link: function(scope, element, attrs, ngModel) {
+            if (!ngModel) return;
+            ngModel.$render = function() {
+                element.html(ngModel.$viewValue || "");
             };
-            t.bind("blur keyup change", function() {
-                e.$apply(n);
+            element.bind("blur keyup change", function() {
+                scope.$apply(read);
             });
-            var n = function() {
-                r.$setViewValue(t.context.innerText);
+            var read = function() {
+                ngModel.$setViewValue(element.context.innerText);
             };
-            t.bind("blur paste", function() {
-                e.$emit("elementEdited", t[0].id);
+            element.bind("blur paste", function() {
+                scope.$emit("elementEdited", element[0].id);
             });
-            n();
+            read();
         }
     };
 });
 
 angular.module("platen.services").factory("fileManager", function() {
-    var t;
-    var o = function(e, t) {
-        var o = "";
-        switch (e.code) {
-          case FileError.QUOTA_EXCEEDED_ERR:
-            o = "Quota Exceeded";
-            break;
-
-          case FileError.NOT_FOUND_ERR:
-            o = "Not Found";
-            break;
-
-          case FileError.SECURITY_ERR:
-            o = "Security";
-            break;
-
-          case FileError.INVALID_MODIFICATION_ERR:
-            o = "Invalid Modification";
-            break;
-
-          case FileError.INVALID_STATE_ERR:
-            o = "Invalid State";
-            break;
-
-          case FileError.TYPE_MISMATCH_ERR:
-            o = "Type Mismatch";
-            break;
-
-          default:
-            o = "Unknown Error";
-            break;
-        }
-        console.log("Error " + e.code + ": " + o, t);
+    var fs;
+    var SIZE = 10 * 1024 * 1024;
+    var doCreate = {
+        create: true
     };
-    var r = function(e, r, n) {
-        if (t) {
-            t.root.getFile(e, {
-                create: r
-            }, n, function(t) {
-                o(t, "in handleFile(), while getting file path " + e);
+    var dontCreate = {
+        create: false
+    };
+    var DEFAULT_FILE_TYPE = {
+        type: "text/plain"
+    };
+    var onError = function(e, step) {
+        console.log("Error " + e.code + ": " + e.name, step);
+    };
+    FileError.prototype.__defineGetter__("name", function() {
+        var keys = Object.keys(FileError);
+        for (var i = 0, key; key = keys[i]; ++i) {
+            if (FileError[key] == this.code) {
+                return key;
+            }
+        }
+        return "Unknown Error";
+    });
+    var getFileEntryAndDoAction = function(filePath, createParam, action) {
+        if (fs) {
+            fs.root.getFile(filePath, createParam, action, function(e) {
+                onError(e, "in getFileEntryAndDoAction(), while getting file entry for " + filePath);
             });
         }
-    };
-    var n = function(e, t, n, i) {
-        r(e, true, function(r) {
-            r.createWriter(function(e) {
-                e.onerror = o;
-                e.onwriteend = function() {
-                    e.onwriteend = null;
-                    e.write(n);
-                    i(r);
-                };
-                e.truncate(n.size);
-            }, function(r) {
-                o(r, "in writeFile(), while creating fileWriter for " + e + "/" + t);
-            });
-        });
     };
     return {
         initialize: function() {
-            window.webkitRequestFileSystem(PERSISTENT, 1024 * 1024, function(e) {
-                t = e;
-            });
+            window.webkitRequestFileSystem(PERSISTENT, SIZE, function(fileSystem) {
+                fs = fileSystem;
+            }, onError);
         },
-        createDirectory: function(r, n) {
-            if (t) {
-                t.root.getDirectory(r, {
-                    create: true
+        readFilesInDirectory: function(directoryPath, onSuccessCallback) {
+            if (fs) {
+                fs.root.getDirectory(directoryPath, doCreate, function(dirEntry) {
+                    var dirReader = dirEntry.createReader();
+                    dirReader.readEntries(function(entries) {
+                        _.each(entries, function(entry) {
+                            if (entry.isFile) {
+                                getFileEntryAndDoAction(entry.fullPath, dontCreate, function(fileEntry) {
+                                    fileEntry.file(function(file) {
+                                        var reader = new FileReader();
+                                        reader.onloadend = onSuccessCallback;
+                                        reader.readAsText(file);
+                                    }, function(e) {
+                                        onError(e, "in readFilesInDirectory, while getting file " + entry.fullPath);
+                                    });
+                                });
+                            }
+                        });
+                    }, function(e) {
+                        onError(e, "in readFilesInDirectory, while reading entries from " + directoryPath);
+                    });
                 }, function(e) {
-                    n();
-                }, o(e, "in createDirectory, while creating directory " + r));
-            }
-        },
-        readFilesInDirectory: function(e, n) {
-            if (t) {
-                t.root.getDirectory(e, {
-                    create: true
-                }, function(t) {
-                    var i = t.createReader();
-                    i.readEntries(function(e) {
-                        _.each(e, function(e) {
-                            if (e.isFile) {
-                                console.log(e);
-                                r(e.fullPath, false, function(t) {
-                                    t.file(function(e) {
-                                        var t = new FileReader();
-                                        t.onloadend = n;
-                                        t.readAsText(e);
-                                    }, function(t) {
-                                        o(t, "in readFilesInDirectory, while getting file " + e.fullPath);
-                                    });
-                                });
-                            }
-                        });
-                    }, function(t) {
-                        o(t, "in readFilesInDirectory, while reading entries from " + e);
-                    });
-                }, function(t) {
-                    o(t, "in readFilesInDirectory, while getting directory " + e);
+                    onError(e, "in readFilesInDirectory, while getting directory " + directoryPath);
                 });
             }
         },
-        readDirectoryContents: function(e, r) {
-            if (t) {
-                t.root.getDirectory(e, {
-                    create: true
-                }, function(t) {
-                    var r = t.createReader();
-                    r.readEntries(function(e) {
-                        _.each(e, function(e) {
-                            console.log(e);
-                        });
-                    }, function(t) {
-                        o(t, "in readFilesInDirectory, while reading entries from " + e);
+        readRootDirectory: function() {
+            var dirReader = fs.root.createReader();
+            dirReader.readEntries(function(entries) {
+                var imgReader = entries[2].createReader();
+                imgReader.readEntries(function(images) {
+                    console.log(images);
+                    _.each(images, function(image) {
+                        console.log(image.toURL());
                     });
-                }, function(t) {
-                    o(t, "in readFilesInDirectory, while getting directory " + e);
                 });
-            }
-        },
-        clearDirectory: function(e) {
-            if (t) {
-                t.root.getDirectory(e, {}, function(t) {
-                    var n = t.createReader();
-                    n.readEntries(function(e) {
-                        _.each(e, function(e) {
-                            if (e.isFile) {
-                                r(e.fullPath, false, function(t) {
-                                    t.remove(function() {
-                                        console.log("removed file " + e.fullPath);
-                                    }, function(t) {
-                                        o(t, "while removing file " + e.fullPath);
-                                    });
-                                });
-                            }
-                        });
-                    }, function(t) {
-                        o(t, "in clearDirectory, while reading entries for " + e);
-                    });
-                }, function(t) {
-                    o(t, "in clearDirectory(), while getting directory " + e);
-                });
-            }
-        },
-        writeTextFile: function(e, t, o, r) {
-            var i = new Blob([ o ], {
-                type: "text/plain"
             });
-            n(e, t, i, r);
         },
-        writeBlob: function(e, t, o, r) {
-            n(e, t, o, r);
+        clearDirectory: function(directoryPath) {
+            if (fs) {
+                fs.root.getDirectory(directoryPath, {}, function(dirEntry) {
+                    var dirReader = dirEntry.createReader();
+                    dirReader.readEntries(function(entries) {
+                        _.each(entries, function(entry) {
+                            if (entry.isFile) {
+                                getFileEntryAndDoAction(entry.fullPath, false, function(fileEntry) {
+                                    fileEntry.remove(function() {
+                                        console.log("removed file " + entry.fullPath);
+                                    }, function(e) {
+                                        onError(e, "while removing file " + entry.fullPath);
+                                    });
+                                });
+                            }
+                        });
+                    }, function(e) {
+                        onError(e, "in clearDirectory, while reading entries for " + directoryPath);
+                    });
+                }, function(e) {
+                    onError(e, "in clearDirectory(), while getting directory " + directoryPath);
+                });
+            }
         },
-        readFile: function(e, t) {
-            r(e, false, function(r) {
-                r.file(function(e) {
-                    var o = new FileReader();
-                    o.onload = function(e) {
-                        t(e.target.result);
+        writeFile: function(filePath, fileBody, onSuccessCallback) {
+            var blob;
+            if (fileBody instanceof Blob) {
+                blob = fileBody;
+            } else {
+                blob = new Blob([ fileBody ], DEFAULT_FILE_TYPE);
+            }
+            getFileEntryAndDoAction(filePath, doCreate, function(fileEntry) {
+                fileEntry.createWriter(function(fileWriter) {
+                    fileWriter.onerror = onError;
+                    fileWriter.onwriteend = function() {
+                        fileWriter.onwriteend = null;
+                        fileWriter.write(blob);
+                        onSuccessCallback(fileEntry);
                     };
-                    o.readAsText(e);
-                }, function(t) {
-                    o(t, "in readingFile(), while reading file " + e);
+                    fileWriter.truncate(blob.size);
+                }, function(e) {
+                    onError(e, "in writeFile(), while creating fileWriter for " + filePath + "/" + fileName);
                 });
             });
         },
-        removeFile: function(e, t) {
-            r(e, false, function(r) {
-                r.remove(t, function(t) {
-                    o(t, "in removeFile(), while reading file " + e);
+        readFile: function(filePath, asText, getResultCallback) {
+            getFileEntryAndDoAction(filePath, dontCreate, function(fileEntry) {
+                fileEntry.file(function(file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        getResultCallback(e.target.result);
+                    };
+                    if (asText) {
+                        reader.readAsText(file);
+                    } else {
+                        reader.readAsBinaryString(file);
+                    }
+                }, function(e) {
+                    onError(e, "in readingFile(), while reading file " + filePath);
+                });
+            });
+        },
+        removeFile: function(filePath, onSuccess) {
+            getFileEntryAndDoAction(filePath, dontCreate, function(fileEntry) {
+                fileEntry.remove(onSuccess, function(e) {
+                    onError(e, "in removeFile(), while reading file " + filePath);
                 });
             });
         }
     };
 });
 
-angular.module("platen.services").factory("imageManager", [ "$window", "fileManager", "logger", "resources", function(e, t, o, r) {
-    e.addEventListener("paste", function(e) {
-        var o = e.clipboardData.items[0];
-        if (o.type !== "image/png") return;
-        var n = new Date().getTime() + ".png";
-        t.writeBlob(r.IMAGE_DIRECTORY_PATH, n, o.getAsFile(), function() {
-            console.log("saved image " + n);
-            document.execCommand("insertHtml", false, "![Alt text](/images/" + n + ")");
+angular.module("platen.services").factory("imageManager", [ "$window", "fileManager", "logger", "resources", function($window, fileManager, logger, resources) {
+    $window.addEventListener("paste", function(event) {
+        var item = event.clipboardData.items[0];
+        if (item.type !== "image/png") return;
+        var fileName = new Date().getTime() + ".png";
+        var filePath = resources.IMAGE_DIRECTORY_PATH + "/" + fileName;
+        fileManager.writeFile(filePath, item.getAsFile(), function(fileEntry) {
+            logger.log("saved image " + fileName, "imageManager service");
+            document.execCommand("insertHtml", false, "![Alt text](" + fileEntry.toURL() + ")");
         });
     });
 } ]);
 
 angular.module("platen.services").factory("logger", function() {
-    var e = 100;
-    var t = 0;
-    var o = [];
+    var MAX_QUEUE_SIZE = 100;
+    var offset = 0;
+    var log = [];
     return {
-        log: function(r, n) {
-            if (o.length > e) {
+        log: function(message, location) {
+            if (log.length > MAX_QUEUE_SIZE) {
                 console.log("removing log item");
-                var i = o[t];
-                if (++t * 2 >= o.length) {
-                    o = o.slice(t);
-                    t = 0;
+                var item = log[offset];
+                if (++offset * 2 >= log.length) {
+                    log = log.slice(offset);
+                    offset = 0;
                 }
             }
-            o.push({
-                message: r,
-                location: n,
+            log.push({
+                message: message,
+                location: location,
                 date: new Date()
             });
         },
         getLogs: function() {
-            return o.reverse();
+            return log.reverse();
         }
     };
 });
@@ -516,121 +485,121 @@ angular.module("platen.services").value("resources", {
     IMAGE_DIRECTORY_PATH: "images"
 });
 
-angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", function(e, t) {
-    var o = "post";
-    var r = "post_tag";
-    var n = "category";
-    var i = 1;
-    var a = 1;
+angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", function($dialog, logger) {
+    var POST_TYPE = "post";
+    var TAG_TYPE = "post_tag";
+    var CATEGORY_TYPE = "category";
+    var DEFAULT_BLOG_ID = 1;
+    var DEFAULT_AUTHOR_ID = 1;
     var l = {
         url: localStorage["url"] || "",
         username: localStorage["username"] || "",
         password: localStorage["password"] || "",
         shouldStoreCredentials: false
     };
-    var s = null;
-    var c = function(t, o) {
+    var wp = null;
+    var initialize = function(onSuccessCallback, onErrorCallback) {
         if (l.url.trim() === "" || l.username.trim() === "" || l.password.trim() === "") {
-            var r = e.dialog({
+            var d = $dialog.dialog({
                 backdrop: true,
                 keyboard: true,
                 backdropClick: true,
                 controller: "LoginController",
-                templateUrl: "views/pages/login.html"
+                templateUrl: "views/login.html"
             });
-            r.open().then(function() {
-                u(t, o);
+            d.open().then(function() {
+                createConnection(onSuccessCallback, onErrorCallback);
             });
         } else {
-            u(t, o);
+            createConnection(onSuccessCallback, onErrorCallback);
         }
     };
-    var u = function(e, o) {
-        var r = l.url.replace(/\/$/, "") + "/xmlrpc.php";
+    var createConnection = function(onSuccessCallback, onErrorCallback) {
+        var fullUrl = l.url.replace(/\/$/, "") + "/xmlrpc.php";
         try {
-            s = new WordPress(r, l.username, l.password);
-            t.log("logged into blog '" + l.url + "'", "wordpress service");
+            wp = new WordPress(fullUrl, l.username, l.password);
+            logger.log("logged into blog '" + l.url + "'", "wordpress service");
             if (l.shouldStoreCredentials) {
                 localStorage["url"] = l.url;
                 localStorage["username"] = l.username;
                 localStorage["password"] = l.password;
-                t.log("saved login credentials for blog + '" + l.url + "'", "wordpress service");
+                logger.log("saved login credentials for blog + '" + l.url + "'", "wordpress service");
             }
-            e();
-        } catch (n) {
-            t.log("unable to log into blog '" + l.url + "': " + n.message, "wordpress service");
-            o(n.message);
+            onSuccessCallback();
+        } catch (e) {
+            logger.log("unable to log into blog '" + l.url + "': " + e.message, "wordpress service");
+            onErrorCallback(e.message);
         }
     };
-    var d = function(e, r, n) {
-        var c;
-        var u = {};
-        var d = {
-            post_type: o,
-            post_status: e.status,
-            post_title: e.title,
-            post_author: a,
-            post_excerpt: e.excerpt,
-            post_content: e.content,
+    var save = function(post, onSuccessCallback, onErrorCallback) {
+        var result;
+        var terms = {};
+        var data = {
+            post_type: POST_TYPE,
+            post_status: post.status,
+            post_title: post.title,
+            post_author: DEFAULT_AUTHOR_ID,
+            post_excerpt: post.excerpt,
+            post_content: post.content,
             post_format: "",
             terms_names: ""
         };
-        if (e.tags.trim() !== "") {
-            u.post_tag = e.tags.replace(" ", "").split(",");
+        if (post.tags.trim() !== "") {
+            terms.post_tag = post.tags.replace(" ", "").split(",");
         }
-        if (e.categories.trim() !== "") {
-            u.category = e.categories.replace(" ", "").split(",");
+        if (post.categories.trim() !== "") {
+            terms.category = post.categories.replace(" ", "").split(",");
         }
-        d.terms_names = u;
-        if (e.wordPressId) {
-            c = s.editPost(i, e.wordPressId, d);
-            p(c, e, function() {
-                t.log("updated post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
-            }, n);
+        data.terms_names = terms;
+        if (post.wordPressId) {
+            result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
+            processResponse(result, post, function() {
+                logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
+            }, onErrorCallback);
         } else {
-            c = s.newPost(i, d);
-            p(c, e, function() {
-                r(c.concat());
-                t.log("created post '" + e.title + "' in blog '" + l.url + "'", "wordpress service");
-            }, n);
+            result = wp.newPost(DEFAULT_BLOG_ID, data);
+            processResponse(result, post, function() {
+                onSuccessCallback(result.concat());
+                logger.log("created post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
+            }, onErrorCallback);
         }
     };
-    var f = function(e, o, r) {
-        var n = s.getTerms(i, e, "");
-        if (n.faultCode) {
-            var a = n.faultString.concat();
-            t.log("error for loading tags for blog '" + l.url + "': " + a, "wordpress service");
-            r(a);
+    var getTerms = function(termType, onSuccessCallback, onErrorCallback) {
+        var result = wp.getTerms(DEFAULT_BLOG_ID, termType, "");
+        if (result.faultCode) {
+            var err = result.faultString.concat();
+            logger.log("error for loading tags for blog '" + l.url + "': " + err, "wordpress service");
+            onErrorCallback(err);
         } else {
-            var c = [], u;
-            _.each(n, function(e) {
-                u = {};
-                u.count = e.count;
-                u.name = e.name.concat();
-                u.slug = e.slug.concat();
-                u.taxonomy = e.taxonomy.concat();
-                u.term_id = e.term_id.concat();
-                c.push(u);
+            var terms = [], term;
+            _.each(result, function(rawTerm) {
+                term = {};
+                term.count = rawTerm.count;
+                term.name = rawTerm.name.concat();
+                term.slug = rawTerm.slug.concat();
+                term.taxonomy = rawTerm.taxonomy.concat();
+                term.term_id = rawTerm.term_id.concat();
+                terms.push(term);
             });
-            o(c);
+            onSuccessCallback(terms);
         }
     };
-    var p = function(e, o, r, n) {
-        if (e.faultCode) {
-            var i = e.faultString.concat();
-            t.log("error for post '" + o.title + "' in blog '" + l.url + "': " + i, "wordpress service");
-            n(i);
+    var processResponse = function(result, post, onSuccessCallback, onErrorCallback) {
+        if (result.faultCode) {
+            var err = result.faultString.concat();
+            logger.log("error for post '" + post.title + "' in blog '" + l.url + "': " + err, "wordpress service");
+            onErrorCallback(err);
         } else {
-            r();
+            onSuccessCallback();
         }
     };
-    var g = function(e, t, o, r) {
-        if (!s) {
-            c(function() {
-                e(t, o, r);
-            }, r);
+    var runCommand = function(runAction, args, onSuccessCallback, onErrorCallback) {
+        if (!wp) {
+            initialize(function() {
+                runAction(args, onSuccessCallback, onErrorCallback);
+            }, onErrorCallback);
         } else {
-            e(t, o, r);
+            runAction(args, onSuccessCallback, onErrorCallback);
         }
     };
     return {
@@ -642,19 +611,20 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             l.url = "";
             l.username = "";
             l.password = "";
-            t.log("reset credentials", "wordpress service");
+            logger.log("reset credentials", "wordpress service");
         },
-        getPost: function(e) {
-            if (!s) c();
+        getPost: function(postId) {
+            if (!wp) initialize();
         },
-        savePost: function(e, t, o) {
-            g(d, e, t, o);
+        savePost: function(post, onSuccessCallback, onErrorCallback) {
+            runCommand(save, post, onSuccessCallback, onErrorCallback);
         },
-        getTags: function(e, t) {
-            g(f, r, e, t);
+        getTags: function(onSuccessCallback, onErrorCallback) {
+            runCommand(getTerms, TAG_TYPE, onSuccessCallback, onErrorCallback);
         },
-        getCategories: function(e, t) {
-            g(f, n, e, t);
-        }
+        getCategories: function(onSuccessCallback, onErrorCallback) {
+            runCommand(getTerms, CATEGORY_TYPE, onSuccessCallback, onErrorCallback);
+        },
+        uploadImage: function(onSuccessCallback, onErrorCallback) {}
     };
 } ]);

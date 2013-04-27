@@ -7,6 +7,7 @@
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
         compress: false,
+        mangle: false,
         beautify: true
       },
       build: {

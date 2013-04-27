@@ -21,7 +21,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
         keyboard: true,
         backdropClick: true,
         controller: 'LoginController',
-        templateUrl: 'views/pages/login.html'
+        templateUrl: 'views/login.html'
       });
 
       d.open().then(function() {
@@ -169,6 +169,10 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
 
     getCategories: function(onSuccessCallback, onErrorCallback) {
       runCommand(getTerms, CATEGORY_TYPE, onSuccessCallback, onErrorCallback);
+    },
+
+    uploadImage: function(onSuccessCallback, onErrorCallback) {
+      // TODO: implement
     },
 
   }

@@ -45,7 +45,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   };
 
   var loadPost = function(postId) {
-    fileManager.readFile(getFilePath(postId), function(postJson) {
+    fileManager.readFile(getFilePath(postId), true, function(postJson) {
       $scope.post = JSON.parse(postJson);
       $scope.$apply();
       logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
@@ -58,6 +58,12 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     } else {
       loadPost($routeParams.postId);
     }
+  };
+
+  var uploadImages = function() {
+    // look for images in converted HTML
+
+    // upload to WordPress and update post content with new URLs
   };
 
   initializePost();
@@ -74,7 +80,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     postToSave.contentHtmlPreview = '';
     postToSave.lastUpdatedDate = new Date();
 
-    fileManager.writeTextFile($scope.post.path, $scope.post.id, JSON.stringify(postToSave), function(fileEntry) {
+    fileManager.writeFile(getFilePath($scope.post.id), JSON.stringify(postToSave), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
       logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
     });
@@ -109,6 +115,8 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
 
   $scope.sync = function() {
     $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    uploadImages();
 
     wordpress.savePost($scope.post, function(result) {
       $scope.post.wordPressId = result;

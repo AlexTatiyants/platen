@@ -1,7 +1,12 @@
 <div class="list-container" data-ng-controller="PostsController">
-    <h2>Posts
-        <button data-ng-click="deleteAll()">delete all posts</button></h2>
-        <button data-ng-click="readImages()">read images</button></h2>
+    <h2>Posts</h2>
+
+    <div>
+        <button class="btn" data-ng-click="deleteAll()">delete all posts</button>
+        <button class="btn" data-ng-click="readImages()">read images</button>
+        <button class="btn" data-ng-click="readDirectory()">read directory</button>
+        <button class="btn" data-ng-click="readFile()">read file</button><input type="text" data-ng-model="fileName"></input>
+    </div>
     <ul>
         <li class="list-item" data-ng-repeat="(id, post) in posts">
             <span class="icon icon-delete-post" data-ng-click="deletePost(post)"></span>
@@ -21,11 +26,11 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure you want to delete post '<span data-ng-bind="postToDelete.title"></span>' ?
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-warning cancel" ng-click="proceedWithDelete()">Proceed</button>
-                <button class="btn btn-warning cancel" ng-click="cancelDelete()">Cancel</button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-warning cancel" ng-click="proceedWithDelete()">Proceed</button>
+                    <button class="btn btn-warning cancel" ng-click="cancelDelete()">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
-</div>

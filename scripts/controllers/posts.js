@@ -7,7 +7,6 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
   if (!$scope.loaded) {
     fileManager.readFilesInDirectory(resources.POST_DIRECTORY_PATH, function(e) {
       var post = JSON.parse(this.result);
-
       $scope.posts[post.id] = post;
       $scope.loaded = true;
       $scope.$apply();
@@ -16,12 +15,19 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
   };
 
   $scope.readImages = function() {
-    fileManager.readFile("images", function(e) {
+    fileManager.readBlob("images", function(e) {
         console.log("read image", e);
     });
   }
 
+  $scope.readDirectory = function() {
+    fileManager.readRootDirectory();
+  }
 
+  $scope.deletePost = function(post) {
+    $scope.postToDelete = post;
+    $scope.shouldBeOpen = true;
+  };
 
   $scope.cancelDelete = function() {
     $scope.shouldBeOpen = false;
@@ -29,7 +35,6 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
   };
 
   $scope.proceedWithDelete = function() {
-    debugger;
     $scope.shouldBeOpen = false;
     fileManager.removeFile($scope.postToDelete.path, function() {
       delete $scope.posts[$scope.postToDelete.id];
@@ -38,11 +43,6 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
       $scope.$apply();
     });
   }
-
-  $scope.deletePost = function(post) {
-    $scope.postToDelete = post;
-    $scope.shouldBeOpen = true;
-  };
 
   $scope.editPost = function(post) {
     $location.path('posts/' + post.id);
