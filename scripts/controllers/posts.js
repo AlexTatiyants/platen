@@ -1,4 +1,4 @@
-var PostsController = function($scope, $q, $location, fileManager, logger, resources) {
+var PostsController = function($scope, $location, fileManager, logger, resources) {
   $scope.posts = {};
   $scope.confirm = {};
   $scope.loaded = false;
@@ -14,28 +14,18 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
     });
   };
 
-  $scope.readImages = function() {
-    fileManager.readBlob("images", function(e) {
-        console.log("read image", e);
-    });
-  }
-
-  $scope.readDirectory = function() {
-    fileManager.readRootDirectory();
-  }
-
   $scope.deletePost = function(post) {
     $scope.postToDelete = post;
-    $scope.shouldBeOpen = true;
+    $scope.deletePostConfirmOpen = true;
   };
 
   $scope.cancelDelete = function() {
-    $scope.shouldBeOpen = false;
+    $scope.deletePostConfirmOpen = false;
     $scope.postToDelete = {};
   };
 
   $scope.proceedWithDelete = function() {
-    $scope.shouldBeOpen = false;
+    $scope.deletePostConfirmOpen = false;
     fileManager.removeFile($scope.postToDelete.path, function() {
       delete $scope.posts[$scope.postToDelete.id];
       logger.log("deleted post '" + $scope.postToDelete.title + "'", "PostsController");
@@ -56,4 +46,4 @@ var PostsController = function($scope, $q, $location, fileManager, logger, resou
   };
 };
 
-PostsController.$inject = ['$scope', '$q', '$location', 'fileManager', 'logger', 'resources'];
+PostsController.$inject = ['$scope', '$location', 'fileManager', 'logger', 'resources'];

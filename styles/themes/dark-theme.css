@@ -31,36 +31,65 @@
   width: 80%;
   padding-top: 20px;
 }
-.list-container ul {
+.list {
   padding: 0;
   width: 90%;
+  margin-top: 20px;
+  list-style: none;
+  overflow: hidden;
 }
-.list-item {
+.list .large-thumbnail {
+  float: left;
+  width: 200px;
+}
+.list-item-line {
   border: 1px solid #404040;
   padding: 14px;
   border-radius: 6px;
   list-style: none;
-  width: 100%;
+  width: 90%;
   margin: 0 0 6px 0;
 }
-.list-item h3 {
+.list-item-line h3 {
   font-size: 22.4px;
   font-weight: 300;
   margin: 0 0 10px 0;
 }
-.list-item .clickable-title {
+.list-item-line .clickable-title {
   cursor: pointer;
 }
-.list-item .icon {
+.list-item-line .icon {
   font-size: 22.4px;
   float: right;
   margin-left: 20px;
   cursor: pointer;
 }
-.list-item .item-date {
+.list-item-line .item-date {
   font-size: 12.8px;
   color: #8c8c8c;
   padding-top: 10px;
+}
+.list-item-tile {
+  border: 1px solid #404040;
+  padding: 14px;
+  border-radius: 6px;
+  list-style: none;
+  width: 200px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  float: left;
+}
+.list-item-tile h3 {
+  font-size: 22.4px;
+  font-weight: 300;
+  margin: 0 0 10px 0;
+}
+.list-item-tile .icon {
+  font-size: 22.4px;
+  float: right;
+  margin-left: 20px;
+  cursor: pointer;
 }
 .list-table {
   width: 100%;
@@ -188,6 +217,19 @@
   text-align: right;
   width: 30%;
 }
+.edit-controls {
+  position: fixed;
+  left: 0;
+  top: 240px;
+  font-size: 27.2px;
+  width: 5%;
+  padding: 1%;
+  margin: auto;
+  border-top: 1px solid #404040;
+}
+.edit-control {
+  padding: 10px;
+}
 #metadata-panel {
   position: fixed;
   bottom: 0px;
@@ -205,21 +247,12 @@
   background-color: #d9d9d9;
   color: #272727;
   border: 1px solid #f2f2f2;
+  font-size: 12.8px;
   position: relative;
   margin: auto;
   width: 80%;
   overflow: hidden;
   box-shadow: 2px 2px 2px #a6a6a6;
-}
-#metadata-collapser {
-  display: block;
-  border-radius: 4px;
-  text-align: center;
-  width: 95%;
-  margin: auto;
-  cursor: pointer;
-  height: 8px;
-  background-color: #ffffff;
 }
 #post-metadata {
   overflow: hidden;
@@ -233,7 +266,6 @@
 }
 .field-group label {
   display: block;
-  font-size: 12.8px;
   margin: 4px;
 }
 .field-group .input {
@@ -242,7 +274,6 @@
   color: #272727;
   padding: 4px;
   padding-right: 20px;
-  font-size: 12.8px;
   width: 100%;
 }
 .field-group .icon-reload,
@@ -252,18 +283,15 @@
   top: 6px;
   left: 20px;
 }
-.edit-controls {
-  position: fixed;
-  left: 0;
-  top: 200px;
-  font-size: 27.2px;
-  width: 5%;
-  padding: 1%;
+#metadata-collapser {
+  display: block;
+  border-radius: 4px;
+  text-align: center;
+  width: 95%;
   margin: auto;
-  border-top: 1px solid #404040;
-}
-.edit-control {
-  padding: 10px;
+  cursor: pointer;
+  height: 8px;
+  background-color: #ffffff;
 }
 .term-list {
   padding: 0;
@@ -286,6 +314,54 @@
 .term-list li:hover {
   background-color: #d9d9d9;
   color: #272727;
+}
+.image-list {
+  float: left;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+.image-list ul {
+  padding: 10px;
+  border: 1px solid #f2f2f2;
+  border-radius: 6px;
+  height: 180px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+.image-controls {
+  position: relative;
+  top: 100px;
+  left: 30px;
+  background-color: #d9d9d9;
+  opacity: 0.9;
+  padding: 6px;
+  border: 1px solid #f2f2f2;
+  border-radius: 4px;
+}
+.image-controls span {
+  display: inline;
+  margin: 4px;
+  font-size: 19.2px;
+}
+.thumbnail {
+  float: left;
+  list-style: none;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  width: 120px;
+}
+.thumbnail img {
+  float: left;
+  width: 100px;
+  border-radius: 6px;
+  border: 1px solid #f2f2f2;
+  box-shadow: 1px 1px 1px #595959;
+}
+.thumbnail .caption {
+  margin-top: 10px;
+  float: left;
+  font-size: 12.8px;
 }
 @font-face {
   font-family: 'icons';
@@ -323,10 +399,13 @@ a [class*=" icon-"] {
 .icon-new-post:before {
   content: '\e001';
 }
-.icon-edit-post:before {
+.icon-insert:before {
   content: '\f044';
 }
-.icon-delete-post:before {
+.icon-edit:before {
+  content: '\f044';
+}
+.icon-delete:before {
   content: '\f014';
 }
 .icon-settings:before {
@@ -456,7 +535,9 @@ h4,
 h5,
 h6,
 table,
-div {
+div,
+ul,
+ol {
   padding: 0;
   margin: 0;
   font-weight: 300;

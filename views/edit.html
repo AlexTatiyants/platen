@@ -1,8 +1,8 @@
 <section id="editor" data-ng-controller="EditorController">
   <section id="edit-panel">
-      <span id="status-panel">
-        <span>last saved <strong><span data-ng-bind="status.autoSaveTime"></span></strong></span>
-      </span>
+    <span id="status-panel">
+      <span>last saved <strong><span data-ng-bind="status.autoSaveTime"></span></strong></span>
+    </span>
 
     <h1 class="input-box" id="post-title" contenteditable="true" data-editable-text="true" data-ng-model="post.title"></h1>
     <div id="post-container">
@@ -50,7 +50,40 @@
             </li>
           </ul>
         </div>
+
+        <div class="image-list" data-ng-show="imagesAvailable()">
+          <label>associated images</label>
+          <ul>
+            <li class="thumbnail" data-ng-repeat="image in post.images">
+              <span class="image-controls">
+                <span class="icon-insert" data-ng-click="insertImage(image)"></span>
+                <span class="icon-delete" data-ng-click="deleteImage(image)"></span>
+              </span>
+              <img data-ng-src="{{image.localUrl}}"></img>
+              <span class="caption">
+                <span data-ng-bind="image.fileName"></span>
+                <br>
+                [<span data-ng-bind="image.blogId"></span>]
+              </span>
+            </li>
+          </ul>
+        </div>
       </section>
     </div>
   </aside>
+
+  <div id="delete-image-confirm">
+    <div modal="deleteImageConfirmOpen" close="close()" options="opts">
+      <div class="modal-header">
+        <h2>Delete Image</h2>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete image '<span data-ng-bind="imageToDelete.fileName"></span>' ?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning cancel" ng-click="proceedWithImageDelete()">Proceed</button>
+        <button class="btn btn-warning cancel" ng-click="cancelImageDelete()">Cancel</button>
+      </div>
+    </div>
+  </div>
 </section>

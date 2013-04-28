@@ -1,18 +1,39 @@
-angular.module('platen.services').factory('imageManager', ['$window', 'fileManager', 'logger', 'resources',
+angular.module('platen.services').factory('imageManager', ['$rootScope', '$window', 'fileManager', 'logger', 'resources',
 
-function($window, fileManager, logger, resources) {
+function($scope, $window, fileManager, logger, resources) {
+  var image = {};
 
   $window.addEventListener('paste', function(event) {
     var item = event.clipboardData.items[0];
-
+    
     if (item.type !== 'image/png') return;
 
-    var fileName = new Date().getTime() + ".png"
-    var filePath = resources.IMAGE_DIRECTORY_PATH + "/" + fileName;
+    var blob = item.getAsFile();
+    var fileName = $window.prompt("Please enter image name", "");
 
-    fileManager.writeFile(filePath, item.getAsFile(), function(fileEntry) {
-      logger.log("saved image " + fileName, "imageManager service");
-      document.execCommand('insertHtml', false, '![Alt text](' + fileEntry.toURL() + ')');
+    // TODO: sanitize user input
+
+    if (fileName.indexOf('.png') === -1) {
+      image.fileName = fileName + '.png';
+    } else {
+      image.fileName = fileName;
+    }
+
+    image.id = new Date().getTime();
+    image.type = 'image/png';
+    image.filePath = resources.IMAGE_DIRECTORY_PATH + "/" + image.fileName;
+
+    fileManager.writeFile(image.filePath, blob, function(fileEntry) {
+      image.localUrl = fileEntry.toURL();
+      logger.log("saved image " + image.fileName, "imageManager service");
+      document.execCommand('insertHtml', false, '![' + image.fileName + '](' + image.localUrl + ')');
+      $scope.$emit('imageInserted', image);
     });
+
   });
+
+  return {
+    image: image
+  }
+
 }]);

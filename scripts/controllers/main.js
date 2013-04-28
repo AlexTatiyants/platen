@@ -10,7 +10,7 @@ var MainController = function($scope, $dialog, fileManager, resources) {
       keyboard: true,
       backdropClick: true,
       controller: 'LoginController',
-      templateUrl: 'views/login.html'
+      templateUrl: 'views/modals/login.html'
     });
 
     d.open();

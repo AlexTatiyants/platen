@@ -1,0 +1,30 @@
+<div class="list-container" data-ng-controller="ImagesController">
+    <h2>Images</h2>
+
+    <ul class="list">
+        <li class="list-item-tile" data-ng-repeat="image in images">
+            <span class="icon icon-delete" data-ng-click="deleteImage(image)"></span>
+            <h3 data-ng-bind="image.name"></h3>
+            <img class="large-thumbnail" data-ng-src="{{image.url}}"></img>
+        </li>
+    </ul>
+
+    <div>
+        <button class="btn" data-ng-click="deleteAll()">delete all images</button>
+    </div>
+
+    <div id="delete-image-confirm">
+        <div modal="deleteImageConfirmOpen" options="opts">
+            <div class="modal-header">
+                <h2>Delete Images</h2>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete image '<span data-ng-bind="imageToDelete.name"></span>' ?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning cancel" ng-click="proceedWithDelete()">Proceed</button>
+                <button class="btn btn-warning cancel" ng-click="cancelDelete()">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -14,6 +14,10 @@ var platen = angular.module('platen', ['platen.directives', 'platen.services', '
 		templateUrl: 'views/edit.html'
 	});
 
+	$routeProvider.when('/images', {
+		templateUrl: 'views/images.html'
+	});
+	
 	$routeProvider.when('/logs', {
 		templateUrl: 'views/logs.html'
 	});

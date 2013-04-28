@@ -1,5 +1,4 @@
 Posts
-- add confirmation before deleting posts
 
 Editor
 - add keyboard shortcut for preview
@@ -14,4 +13,7 @@ WP integration
 - add keyboard shortcut for sync
 - add setting author
 - add loading draft posts
-- add saving images
+
+Images
+- add image removal if it gets deleted from post
+- add checking for duplicate image names

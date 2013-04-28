@@ -2,18 +2,27 @@
   margin: auto;
   width: 80%;
   padding-top: @pad-unit;
-  ul {
-    padding: 0;
-    width: 90%;
+}
+
+.list {
+  padding: 0;
+  width: 90%;
+  margin-top: @pad-unit;
+  list-style: none;
+  overflow: hidden;
+
+  .large-thumbnail {
+    float: left;
+    width: @pad-unit * 10;
   }
 }
 
-.list-item {
+.list-item-line {
   border: 1px solid @line-color;
   padding: @pad-unit * 0.7;
   border-radius: @pad-unit * 0.3;
   list-style: none;
-  width: 100%;
+  width: 90%;
   margin: 0 0 @pad-unit * 0.3 0;
 
   h3 {
@@ -36,6 +45,31 @@
     font-size: @base-font-size * 0.8;
     color: @text-color-weak;
     padding-top: @pad-unit * 0.5;
+  }
+}
+
+.list-item-tile {
+  border: 1px solid @line-color;
+  padding: @pad-unit * 0.7;
+  border-radius: @pad-unit * 0.3;
+  list-style: none;
+  width: @pad-unit * 10;
+  margin-right: @pad-unit;
+  margin-bottom: @pad-unit;
+  overflow: hidden;
+  float: left;
+
+  h3 {
+    font-size: @base-font-size * 1.4;
+    font-weight: 300;
+    margin: 0 0 @pad-unit * 0.5 0;
+  }
+
+  .icon {
+    font-size: @base-font-size * 1.4;
+    float: right;
+    margin-left: @pad-unit;
+    cursor: pointer;
   }
 }
 

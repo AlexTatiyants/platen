@@ -1,4 +1,4 @@
-var EditorController = function($scope, $routeParams, $timeout, $filter, fileManager, logger, wordpress, imageManager, resources) {
+var EditorController = function($rootScope, $scope, $routeParams, $timeout, $filter, fileManager, logger, wordpress, imageManager, resources) {
   var AUTOSAVE_INTERVAL = 12000;
   var STATUS_DRAFT = 'draft';
   var STATUS_PUBLISH = 'publish';
@@ -11,7 +11,7 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   $scope.status = {};
   $scope.previewOn = false;
   $scope.status.autoSaveTime = "unsaved";
-  $scope.showMetadata = false;
+  $scope.showMetadata = true;
 
   $scope.post = {};
 
@@ -24,16 +24,17 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     $scope.post.path = getFilePath($scope.post.id);
     $scope.post.status = STATUS_DRAFT;
     $scope.post.title = '';
+    $scope.post.images = {};
 
-    // there are 4 representations of the post:
-
-    // contentMarkdown - raw text written using markdown formatting (innerText property of the editor window)
-    // contentMarkdownHTML - markdown text, HTMLified by the browswer (innerHTML property of the editor window)
-    // contentHTMLPreview - markdown text converted to HTML (innerHTML content of the preview window)
-    // content - markdown text converted to HTML and encoded (i.e. content of the post for Wordpress)
+    /* there are 4 representations of the post:
+        contentMarkdown - raw text written using markdown formatting (innerText property of the editor window)
+        contentMarkdownHTML - markdown text, HTMLified by the browswer (innerHTML property of the editor window)
+        contentHTMLPreview - markdown text converted to HTML (innerHTML content of the preview window)
+        content - markdown text converted to HTML and encoded (i.e. content of the post for Wordpress)
+    */
 
     $scope.post.content = '';
-    $scope.post.contentMarkdown = ''; // set by markdown service
+    $scope.post.contentMarkdown = ''; // set by editable-markdown directive
     $scope.post.contentMarkdownHtml = '';
     $scope.post.contentHtmlPreview = '';
 
@@ -47,10 +48,16 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   var loadPost = function(postId) {
     fileManager.readFile(getFilePath(postId), true, function(postJson) {
       $scope.post = JSON.parse(postJson);
+
+      if (!$scope.post.images) {
+        $scope.post.images = {};
+      }
+
       $scope.$apply();
       logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
     });
   };
+
 
   var initializePost = function() {
     if ($routeParams.postId === "0") {
@@ -60,10 +67,32 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     }
   };
 
-  var uploadImages = function() {
-    // look for images in converted HTML
+  var uploadImages = function(content) {
 
-    // upload to WordPress and update post content with new URLs
+    var updatedContent = content;
+
+    _.each($scope.post.images, function(image) {
+      if (!image.blogId || !image.blogId.trim() === '') {
+        fileManager.readFile(image.filePath, false, function(imageData) {
+
+          wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
+
+            image.blogUrl = url;
+            image.blogId = id;
+            savePost();
+
+            updatedContent = updatedContent.replace(image.localUrl, image.blogUrl);
+
+            console.log("updated content in callback", updatedContent);
+          },
+
+          function(e) {
+            logger.log("error uploading image " + image.fileName, "EditorController");
+          })
+        });
+      }
+    });
+    return updatedContent;
   };
 
   initializePost();
@@ -116,7 +145,10 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
   $scope.sync = function() {
     $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    uploadImages();
+    uploadImages($scope.post.content);
+
+    console.log("content after image upload", $scope.post.content);
+    return;
 
     wordpress.savePost($scope.post, function(result) {
       $scope.post.wordPressId = result;
@@ -164,11 +196,43 @@ var EditorController = function($scope, $routeParams, $timeout, $filter, fileMan
     }
   };
 
+  $scope.imagesAvailable = function() {
+    return !($.isEmptyObject($scope.post.images));
+  };
+
+  $scope.deleteImage = function(image) {
+    $scope.imageToDelete = image;
+    $scope.deleteImageConfirmOpen = true;
+  };
+
+  $scope.cancelImageDelete = function() {
+    $scope.deleteImageConfirmOpen = false;
+    $scope.imageToDelete = {};
+  };
+
+  $scope.proceedWithImageDelete = function() {
+    $scope.deleteImageConfirmOpen = false;
+  
+    fileManager.removeFile($scope.imageToDelete.filePath, function() {
+      delete $scope.post.images[$scope.imageToDelete.id];
+      savePost();
+      logger.log("deleted image '" + $scope.imageToDelete.fileName + "'", "EditorController");
+      $scope.imageToDelete = {};
+      $scope.$apply();
+    });
+  };
+
   $scope.$on('elementEdited', function(event, elementId) {
     if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT || elementId === POST_TAGS || elementId || POST_CATEGORIES) {
       savePost();
+      event.stopPropagation();
     }
+  });
+
+  $rootScope.$on('imageInserted', function(event, image) {
+    $scope.post.images[image.id] = image;
+    event.stopPropagation();
   });
 };
 
-EditorController.$inject = ['$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'logger', 'wordpress', 'imageManager', 'resources'];
+EditorController.$inject = ['$rootScope', '$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'logger', 'wordpress', 'imageManager', 'resources'];

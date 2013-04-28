@@ -44,6 +44,25 @@ angular.module('platen.services').factory('fileManager', function() {
       }, onError);
     },
 
+    listFilesinDirectory: function(directoryPath, onSuccessCallback) {
+      if (fs) {
+        fs.root.getDirectory(directoryPath, doCreate, function(dirEntry) {
+          var dirReader = dirEntry.createReader();
+          dirReader.readEntries(function(entries) {
+            _.each(entries, function(entry) {
+              if (entry.isFile) {
+                onSuccessCallback(entry);
+              }
+            })
+          }, function(e) {
+            onError(e, "in readFilesInDirectory, while reading entries from " + directoryPath);
+          });
+        }, function(e) {
+          onError(e, "in readFilesInDirectory, while getting directory " + directoryPath);
+        });
+      }      
+    },
+
     readFilesInDirectory: function(directoryPath, onSuccessCallback) {
       if (fs) {
         fs.root.getDirectory(directoryPath, doCreate, function(dirEntry) {
