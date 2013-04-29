@@ -11,7 +11,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
   $scope.status = {};
   $scope.previewOn = false;
   $scope.status.autoSaveTime = "unsaved";
-  $scope.showMetadata = true;
+  $scope.showMetadata = false;
 
   $scope.post = {};
 
@@ -70,14 +70,12 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     var d = $q.defer();
 
     fileManager.readFile(image.filePath, false, function(imageData) {
-
       wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
-
         image.blogUrl = url;
         image.blogId = id;
         savePost();
 
-        console.log("uploaded image", image.fileName);
+        logger.log("uploaded image" + image.fileName, "EditorController");
         d.resolve();
       },
 
@@ -93,12 +91,9 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     var promises = [];
 
     _.each($scope.post.images, function(image) {
-
       if (!image.blogId || !image.blogId.trim() === '') {
         // for each image to be uploaded, initiate upload to wordpress
-        // because this operation is asyncronous, we need to get a promise
-        // from the operation
-        console.log("adding promise for", image);
+        // because this operation is asyncronous, we need to get a promise for it
         promises.push(uploadImage(image));
       }
     });

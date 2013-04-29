@@ -8,11 +8,9 @@ function($scope, $window, fileManager, logger, resources) {
     
     if (item.type !== 'image/png') return;
 
-
     var blob = item.getAsFile();
-    var fileName = $window.prompt("Please enter image name", "");
-
-    // TODO: sanitize user input
+    var fileName = $window.prompt("Enter image name", "");
+    fileName = fileName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
     if (fileName.indexOf('.png') === -1) {
       image.fileName = fileName + '.png';

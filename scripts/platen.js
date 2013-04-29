@@ -38,7 +38,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     $scope.status = {};
     $scope.previewOn = false;
     $scope.status.autoSaveTime = "unsaved";
-    $scope.showMetadata = true;
+    $scope.showMetadata = false;
     $scope.post = {};
     var getFilePath = function(postId) {
         return "/" + resources.POST_DIRECTORY_PATH + "/" + postId;
@@ -83,7 +83,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
                 image.blogUrl = url;
                 image.blogId = id;
                 savePost();
-                console.log("uploaded image", image.fileName);
+                logger.log("uploaded image" + image.fileName, "EditorController");
                 d.resolve();
             }, function(e) {
                 logger.log("error uploading image " + image.fileName, "EditorController");
@@ -95,7 +95,6 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
         var promises = [];
         _.each($scope.post.images, function(image) {
             if (!image.blogId || !image.blogId.trim() === "") {
-                console.log("adding promise for", image);
                 promises.push(uploadImage(image));
             }
         });
@@ -564,7 +563,8 @@ angular.module("platen.services").factory("imageManager", [ "$rootScope", "$wind
         var item = event.clipboardData.items[0];
         if (item.type !== "image/png") return;
         var blob = item.getAsFile();
-        var fileName = $window.prompt("Please enter image name", "");
+        var fileName = $window.prompt("Enter image name", "");
+        fileName = fileName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
         if (fileName.indexOf(".png") === -1) {
             image.fileName = fileName + ".png";
         } else {
