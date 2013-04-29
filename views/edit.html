@@ -7,7 +7,7 @@
     <h1 class="input-box" id="post-title" contenteditable="true" data-editable-text="true" data-ng-model="post.title"></h1>
     <div id="post-container">
       <article contenteditable="true" class="input-box" data-editable-markdown="true" id="post-content" data-ng-show="!previewOn"
-      data-ng-model="post.contentMarkdownHtml"></article>
+      data-ng-model="post.contentMarkdownHtml" paste="true"></article>
       <div id="post-content-preview" data-ng-show="previewOn" data-ng-bind-html-unsafe="post.contentHtmlPreview"></div>
     </div>
   </section>
@@ -73,7 +73,7 @@
   </aside>
 
   <div id="delete-image-confirm">
-    <div modal="deleteImageConfirmOpen" close="close()" options="opts">
+    <div modal="deleteImageConfirmOpen" close="cancelImageDelete()" options="opts">
       <div class="modal-header">
         <h2>Delete Image</h2>
       </div>
@@ -86,4 +86,23 @@
       </div>
     </div>
   </div>
+
+  <div id="insert-image-dialog">
+    <div modal="insertImageDialogOpen" close="cancelImageInsert()" options="opts">
+      <div class="modal-header">
+        <h2>Insert Image</h2>
+      </div>
+      <div class="modal-body">
+        <div class="field-group full">
+            <label>enter image name</label>
+            <input id="inserted-image-name" type="text" class="input-box" data-ng-model="imageToInsert.fileName"></input>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning cancel" ng-click="proceedWithImageInsert()">Ok</button>
+        <button class="btn btn-warning cancel" ng-click="cancelImageInsert()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
 </section>

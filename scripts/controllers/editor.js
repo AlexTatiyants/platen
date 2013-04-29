@@ -7,6 +7,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
   var POST_EXCERPT = 'post-excerpt';
   var POST_TAGS = 'post-tags';
   var POST_CATEGORIES = 'post-categories';
+  var INSERTED_IMAGE_PLACEHOLDER = '[[!@#IMAGE_PLACEHOLDER#@!]]';
 
   $scope.status = {};
   $scope.previewOn = false;
@@ -101,7 +102,58 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     // once all promises are fullfilled (i.e. all items have been uploaded),
     // proceed with uploading the post
     $q.all(promises).then(onCompletionCallback);
+  };
 
+  var insertImage = function(blob) {
+    // 1. get file name
+    $scope.imageToInsert = {};
+    $scope.imageToInsert.blob = blob;
+
+    // need to insert a temporary token into the body of the post
+    // which will be replaced (or removed) once the user enters file name
+    document.execCommand('insertHtml', false, INSERTED_IMAGE_PLACEHOLDER);
+
+    $('#inserted-image-name').focus();
+
+    console.log("post in insert image", $scope.post.contentMarkdownHtml);
+    $scope.insertImageDialogOpen = true;
+  };
+
+  $scope.proceedWithImageInsert = function() {
+    $scope.insertImageDialogOpen = false;
+
+    // TODO: handle images pasted as text/html
+
+    var image = {};
+    image.fileName = $scope.imageToInsert.fileName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+    if (image.fileName.indexOf('.png') === -1) {
+      image.fileName += '.png';
+    }
+
+    image.id = new Date().getTime();
+    image.type = 'image/png';
+    image.filePath = resources.IMAGE_DIRECTORY_PATH + "/" + image.fileName;
+
+    console.log("post before write", $scope.post.contentMarkdownHtml);
+
+    fileManager.writeFile(image.filePath, $scope.imageToInsert.blob, function(fileEntry) {
+      console.log("post after write", $scope.post.contentMarkdownHtml);
+      logger.log("saved image " + image.fileName, "imageManager service");
+      image.localUrl = fileEntry.toURL();
+      image.markdownUrl = '![' + image.fileName + '](' + image.localUrl + ')';
+      $scope.post.contentMarkdownHtml = $scope.post.contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
+      $scope.post.images[image.id] = image;
+      savePost();
+      image = {};
+    });
+  };
+
+  $scope.cancelImageInsert = function() {
+    $scope.imageToInsert = {};
+    $scope.post.contentMarkdownHtml = $scope.post.contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, '');
+    $('#post-content').focus();
+    $scope.insertImageDialogOpen = false;
   };
 
   initializePost();
@@ -242,11 +294,8 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     }
   });
 
-  $rootScope.$on('imageInserted', function(event, image) {
-    if (!_.contains($scope.post.images, image.id)) {
-      $scope.post.images[image.id] = image;
-      savePost();
-    }
+  $scope.$on('imageInserted', function(event, blob) {
+    insertImage(blob);
   });
 };
 
