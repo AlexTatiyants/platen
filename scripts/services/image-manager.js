@@ -5,8 +5,10 @@ function($scope, $window, fileManager, logger, resources) {
 
   $window.addEventListener('paste', function(event) {
     var item = event.clipboardData.items[0];
-    
+
     if (item.type !== 'image/png') return;
+
+    // TODO: handle images pasted as text/html
 
     var blob = item.getAsFile();
     var fileName = $window.prompt("Enter image name", "");

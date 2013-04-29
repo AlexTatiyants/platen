@@ -1,4 +1,4 @@
-/*! platen 2013-04-28 */
+/*! platen 2013-04-29 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -130,7 +130,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
         }
     };
     $scope.updateExcerpt = function() {
-        $scope.post.excerpt = $scope.post.contentMarkdown.match(/^(.*)$/m);
+        $scope.post.excerpt = $scope.post.contentMarkdown.match(/^(.*)$/m)[0];
         savePost();
     };
     $scope.read = function() {

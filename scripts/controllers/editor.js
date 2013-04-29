@@ -144,7 +144,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
   };
 
   $scope.updateExcerpt = function() {
-    $scope.post.excerpt = $scope.post.contentMarkdown.match(/^(.*)$/m);
+    $scope.post.excerpt = $scope.post.contentMarkdown.match(/^(.*)$/m)[0];
     savePost();
   };
 
