@@ -8,6 +8,7 @@ function($scope, $window, fileManager, logger, resources) {
     
     if (item.type !== 'image/png') return;
 
+
     var blob = item.getAsFile();
     var fileName = $window.prompt("Please enter image name", "");
 
@@ -28,6 +29,7 @@ function($scope, $window, fileManager, logger, resources) {
       logger.log("saved image " + image.fileName, "imageManager service");
       document.execCommand('insertHtml', false, '![' + image.fileName + '](' + image.localUrl + ')');
       $scope.$emit('imageInserted', image);
+      image = {};
     });
 
   });

@@ -1,4 +1,4 @@
-var EditorController = function($rootScope, $scope, $routeParams, $timeout, $filter, fileManager, logger, wordpress, imageManager, resources) {
+var EditorController = function($rootScope, $scope, $routeParams, $timeout, $filter, $q, fileManager, logger, wordpress, imageManager, resources) {
   var AUTOSAVE_INTERVAL = 12000;
   var STATUS_DRAFT = 'draft';
   var STATUS_PUBLISH = 'publish';
@@ -58,7 +58,6 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     });
   };
 
-
   var initializePost = function() {
     if ($routeParams.postId === "0") {
       createPost();
@@ -67,32 +66,47 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     }
   };
 
-  var uploadImages = function(content) {
+  var uploadImage = function(image) {
+    var d = $q.defer();
 
-    var updatedContent = content;
+    fileManager.readFile(image.filePath, false, function(imageData) {
+
+      wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
+
+        image.blogUrl = url;
+        image.blogId = id;
+        savePost();
+
+        console.log("uploaded image", image.fileName);
+        d.resolve();
+      },
+
+      function(e) {
+        logger.log("error uploading image " + image.fileName, "EditorController");
+      })
+    });
+
+    return d.promise;
+  };
+
+  var uploadImages = function(content, onCompletionCallback) {
+    var promises = [];
 
     _.each($scope.post.images, function(image) {
+
       if (!image.blogId || !image.blogId.trim() === '') {
-        fileManager.readFile(image.filePath, false, function(imageData) {
-
-          wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
-
-            image.blogUrl = url;
-            image.blogId = id;
-            savePost();
-
-            updatedContent = updatedContent.replace(image.localUrl, image.blogUrl);
-
-            console.log("updated content in callback", updatedContent);
-          },
-
-          function(e) {
-            logger.log("error uploading image " + image.fileName, "EditorController");
-          })
-        });
+        // for each image to be uploaded, initiate upload to wordpress
+        // because this operation is asyncronous, we need to get a promise
+        // from the operation
+        console.log("adding promise for", image);
+        promises.push(uploadImage(image));
       }
     });
-    return updatedContent;
+
+    // once all promises are fullfilled (i.e. all items have been uploaded),
+    // proceed with uploading the post
+    $q.all(promises).then(onCompletionCallback);
+
   };
 
   initializePost();
@@ -111,6 +125,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
 
     fileManager.writeFile(getFilePath($scope.post.id), JSON.stringify(postToSave), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
+      $scope.$apply();
       logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
     });
   };
@@ -145,17 +160,22 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
   $scope.sync = function() {
     $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-    uploadImages($scope.post.content);
+    uploadImages($scope.post.content, function() {
+      var content = $scope.post.content;
 
-    console.log("content after image upload", $scope.post.content);
-    return;
+      _.each($scope.post.images, function(image) {
+        content = content.replace(image.localUrl, image.blogUrl);
+      });
 
-    wordpress.savePost($scope.post, function(result) {
-      $scope.post.wordPressId = result;
-      savePost();
-    }, function(errorMessage) {
-      alert("OOPS " + errorMessage);
+      $scope.post.content = content;
+      wordpress.savePost($scope.post, function(result) {
+        $scope.post.wordPressId = result;
+        savePost();
+      }, function(errorMessage) {
+        alert("OOPS " + errorMessage);
+      });
     });
+
   };
 
   $scope.getTags = function() {
@@ -212,27 +232,27 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
 
   $scope.proceedWithImageDelete = function() {
     $scope.deleteImageConfirmOpen = false;
-  
+
     fileManager.removeFile($scope.imageToDelete.filePath, function() {
       delete $scope.post.images[$scope.imageToDelete.id];
       savePost();
       logger.log("deleted image '" + $scope.imageToDelete.fileName + "'", "EditorController");
       $scope.imageToDelete = {};
-      $scope.$apply();
     });
   };
 
   $scope.$on('elementEdited', function(event, elementId) {
     if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT || elementId === POST_TAGS || elementId || POST_CATEGORIES) {
       savePost();
-      event.stopPropagation();
     }
   });
 
   $rootScope.$on('imageInserted', function(event, image) {
-    $scope.post.images[image.id] = image;
-    event.stopPropagation();
+    if (!_.contains($scope.post.images, image.id)) {
+      $scope.post.images[image.id] = image;
+      savePost();
+    }
   });
 };
 
-EditorController.$inject = ['$rootScope', '$scope', '$routeParams', '$timeout', '$filter', 'fileManager', 'logger', 'wordpress', 'imageManager', 'resources'];
+EditorController.$inject = ['$rootScope', '$scope', '$routeParams', '$timeout', '$filter', '$q', 'fileManager', 'logger', 'wordpress', 'imageManager', 'resources'];

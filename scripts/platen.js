@@ -26,7 +26,7 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services", 
     });
 } ]);
 
-var EditorController = function($rootScope, $scope, $routeParams, $timeout, $filter, fileManager, logger, wordpress, imageManager, resources) {
+var EditorController = function($rootScope, $scope, $routeParams, $timeout, $filter, $q, fileManager, logger, wordpress, imageManager, resources) {
     var AUTOSAVE_INTERVAL = 12e3;
     var STATUS_DRAFT = "draft";
     var STATUS_PUBLISH = "publish";
@@ -76,24 +76,30 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
             loadPost($routeParams.postId);
         }
     };
-    var uploadImages = function(content) {
-        var updatedContent = content;
+    var uploadImage = function(image) {
+        var d = $q.defer();
+        fileManager.readFile(image.filePath, false, function(imageData) {
+            wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
+                image.blogUrl = url;
+                image.blogId = id;
+                savePost();
+                console.log("uploaded image", image.fileName);
+                d.resolve();
+            }, function(e) {
+                logger.log("error uploading image " + image.fileName, "EditorController");
+            });
+        });
+        return d.promise;
+    };
+    var uploadImages = function(content, onCompletionCallback) {
+        var promises = [];
         _.each($scope.post.images, function(image) {
             if (!image.blogId || !image.blogId.trim() === "") {
-                fileManager.readFile(image.filePath, false, function(imageData) {
-                    wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
-                        image.blogUrl = url;
-                        image.blogId = id;
-                        savePost();
-                        updatedContent = updatedContent.replace(image.localUrl, image.blogUrl);
-                        console.log("updated content in callback", updatedContent);
-                    }, function(e) {
-                        logger.log("error uploading image " + image.fileName, "EditorController");
-                    });
-                });
+                console.log("adding promise for", image);
+                promises.push(uploadImage(image));
             }
         });
-        return updatedContent;
+        $q.all(promises).then(onCompletionCallback);
     };
     initializePost();
     $("#post-title").focus();
@@ -105,6 +111,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
         postToSave.lastUpdatedDate = new Date();
         fileManager.writeFile(getFilePath($scope.post.id), JSON.stringify(postToSave), function(fileEntry) {
             $scope.status.autoSaveTime = $filter("date")(new Date(), "shortTime");
+            $scope.$apply();
             logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
         });
     };
@@ -132,14 +139,18 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     };
     $scope.sync = function() {
         $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        uploadImages($scope.post.content);
-        console.log("content after image upload", $scope.post.content);
-        return;
-        wordpress.savePost($scope.post, function(result) {
-            $scope.post.wordPressId = result;
-            savePost();
-        }, function(errorMessage) {
-            alert("OOPS " + errorMessage);
+        uploadImages($scope.post.content, function() {
+            var content = $scope.post.content;
+            _.each($scope.post.images, function(image) {
+                content = content.replace(image.localUrl, image.blogUrl);
+            });
+            $scope.post.content = content;
+            wordpress.savePost($scope.post, function(result) {
+                $scope.post.wordPressId = result;
+                savePost();
+            }, function(errorMessage) {
+                alert("OOPS " + errorMessage);
+            });
         });
     };
     $scope.getTags = function() {
@@ -192,22 +203,22 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
             savePost();
             logger.log("deleted image '" + $scope.imageToDelete.fileName + "'", "EditorController");
             $scope.imageToDelete = {};
-            $scope.$apply();
         });
     };
     $scope.$on("elementEdited", function(event, elementId) {
         if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT || elementId === POST_TAGS || elementId || POST_CATEGORIES) {
             savePost();
-            event.stopPropagation();
         }
     });
     $rootScope.$on("imageInserted", function(event, image) {
-        $scope.post.images[image.id] = image;
-        event.stopPropagation();
+        if (!_.contains($scope.post.images, image.id)) {
+            $scope.post.images[image.id] = image;
+            savePost();
+        }
     });
 };
 
-EditorController.$inject = [ "$rootScope", "$scope", "$routeParams", "$timeout", "$filter", "fileManager", "logger", "wordpress", "imageManager", "resources" ];
+EditorController.$inject = [ "$rootScope", "$scope", "$routeParams", "$timeout", "$filter", "$q", "fileManager", "logger", "wordpress", "imageManager", "resources" ];
 
 var ImagesController = function($scope, fileManager, logger, resources) {
     $scope.images = {};
@@ -567,6 +578,7 @@ angular.module("platen.services").factory("imageManager", [ "$rootScope", "$wind
             logger.log("saved image " + image.fileName, "imageManager service");
             document.execCommand("insertHtml", false, "![" + image.fileName + "](" + image.localUrl + ")");
             $scope.$emit("imageInserted", image);
+            image = {};
         });
     });
     return {
