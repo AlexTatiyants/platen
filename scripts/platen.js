@@ -26,7 +26,7 @@ var platen = angular.module("platen", [ "platen.directives", "platen.services", 
     });
 } ]);
 
-var EditorController = function($rootScope, $scope, $routeParams, $timeout, $filter, $q, fileManager, logger, wordpress, imageManager, resources) {
+var EditorController = function($rootScope, $scope, $routeParams, $timeout, $filter, $q, fileManager, logger, wordpress, resources) {
     var AUTOSAVE_INTERVAL = 12e3;
     var STATUS_DRAFT = "draft";
     var STATUS_PUBLISH = "publish";
@@ -35,6 +35,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     var POST_EXCERPT = "post-excerpt";
     var POST_TAGS = "post-tags";
     var POST_CATEGORIES = "post-categories";
+    var IMAGE_TYPE = "image/png";
     var INSERTED_IMAGE_PLACEHOLDER = "[[!@#IMAGE_PLACEHOLDER#@!]]";
     $scope.status = {};
     $scope.previewOn = false;
@@ -105,27 +106,26 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
         $scope.imageToInsert = {};
         $scope.imageToInsert.blob = blob;
         document.execCommand("insertHtml", false, INSERTED_IMAGE_PLACEHOLDER);
-        $("#inserted-image-name").focus();
-        console.log("post in insert image", $scope.post.contentMarkdownHtml);
         $scope.insertImageDialogOpen = true;
     };
     $scope.proceedWithImageInsert = function() {
         $scope.insertImageDialogOpen = false;
-        var image = {};
-        image.fileName = $scope.imageToInsert.fileName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
-        if (image.fileName.indexOf(".png") === -1) {
-            image.fileName += ".png";
+        var fileName = $scope.imageToInsert.fileName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
+        if (fileName.indexOf(".png") === -1) {
+            fileName += ".png";
         }
-        image.id = new Date().getTime();
-        image.type = "image/png";
-        image.filePath = resources.IMAGE_DIRECTORY_PATH + "/" + image.fileName;
-        console.log("post before write", $scope.post.contentMarkdownHtml);
+        var image = {
+            id: new Date().getTime(),
+            type: IMAGE_TYPE,
+            fileName: fileName,
+            filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName
+        };
+        var contentMarkdownHtml = $scope.post.contentMarkdownHtml;
         fileManager.writeFile(image.filePath, $scope.imageToInsert.blob, function(fileEntry) {
-            console.log("post after write", $scope.post.contentMarkdownHtml);
-            logger.log("saved image " + image.fileName, "imageManager service");
+            logger.log("saved image " + image.fileName, "EditorController");
             image.localUrl = fileEntry.toURL();
             image.markdownUrl = "![" + image.fileName + "](" + image.localUrl + ")";
-            $scope.post.contentMarkdownHtml = $scope.post.contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
+            $scope.post.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
             $scope.post.images[image.id] = image;
             savePost();
             image = {};
@@ -251,7 +251,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     });
 };
 
-EditorController.$inject = [ "$rootScope", "$scope", "$routeParams", "$timeout", "$filter", "$q", "fileManager", "logger", "wordpress", "imageManager", "resources" ];
+EditorController.$inject = [ "$rootScope", "$scope", "$routeParams", "$timeout", "$filter", "$q", "fileManager", "logger", "wordpress", "resources" ];
 
 var ImagesController = function($scope, fileManager, logger, resources) {
     $scope.images = {};
@@ -426,7 +426,7 @@ angular.module("platen.directives").directive("editableText", function() {
     };
 });
 
-angular.module("platen.directives").directive("paste", function() {
+angular.module("platen.directives").directive("pastableImage", function() {
     return {
         restrict: "A",
         require: "?ngModel",
@@ -604,13 +604,6 @@ angular.module("platen.services").factory("fileManager", function() {
         }
     };
 });
-
-angular.module("platen.services").factory("imageManager", [ "$rootScope", "$window", "fileManager", "logger", "resources", function($scope, $window, fileManager, logger, resources) {
-    var image = {};
-    return {
-        image: image
-    };
-} ]);
 
 angular.module("platen.services").factory("logger", function() {
     var MAX_QUEUE_SIZE = 100;

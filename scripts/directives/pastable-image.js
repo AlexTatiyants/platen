@@ -1,4 +1,4 @@
-angular.module('platen.directives').directive('paste', function() {
+angular.module('platen.directives').directive('pastableImage', function() {
   return {
 
     restrict: 'A',
