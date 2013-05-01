@@ -121,7 +121,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
 
     // TODO: handle images pasted as text/html
 
-    var fileName =  $scope.imageToInsert.fileName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    var fileName = $scope.imageToInsert.fileName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     if (fileName.indexOf('.png') === -1) {
       fileName += '.png';
     }
@@ -162,8 +162,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
 
   var savePost = function() {
     if ($scope.post.title.trim() === '' && $scope.post.contentMarkdown.trim() === '') return;
-
-    var postToSave = JSON.parse(JSON.stringify($scope.post));
+     var postToSave = JSON.parse(JSON.stringify($scope.post));
 
     // since there are 4 different representations of the same content, we only need to save one of them
     postToSave.content = '';
@@ -173,7 +172,11 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     fileManager.writeFile(getFilePath($scope.post.id), JSON.stringify(postToSave), function(fileEntry) {
       $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
       $scope.$apply();
-      logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
+
+       logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
+
+    }, function() {
+      // $scope.$emit(resources.events.PROCESSING_FINISHED, "error saving post", false);
     });
   };
 
@@ -205,6 +208,8 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
   };
 
   $scope.sync = function() {
+    $scope.$emit(resources.events.PROCESSING_STARTED, "uploading post to WordPress");
+
     $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     uploadImages($scope.post.content, function() {
@@ -216,10 +221,13 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
 
       $scope.post.content = content;
       wordpress.savePost($scope.post, function(result) {
+        console.log("finished wordpress upload in editor");
         $scope.post.wordPressId = result;
         savePost();
+        $scope.$emit(resources.events.PROCESSING_FINISHED, {message: "upload to WordPress complete", success: true});
+
       }, function(errorMessage) {
-        alert("OOPS " + errorMessage);
+        $scope.$emit(resources.events.PROCESSING_FINISHED, {message: "upload to WordPress failed", success: false});
       });
     });
 

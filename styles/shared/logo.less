@@ -1,0 +1,93 @@
+@circle-radius: 30px;
+@circle-border: 6px;
+@top-margin: @pad-unit;
+@left-margin: @pad-unit * 0.5;
+
+.logo-container {
+  margin-top: @top-margin;
+  margin-bottom: @pad-unit;
+  margin-left: @left-margin;
+}
+
+.logo {
+  border-radius: 50%;
+  width: @circle-radius;
+  height: @circle-radius;
+  margin: auto;
+  background-color: @base-color;
+}
+
+.success {
+  background-color: @base-color;
+}
+
+.error {
+  background-color: red;
+}
+
+.error-message {
+  float: left;
+  position: absolute;
+  top: 25px;
+  left: 83px;
+  width: 500px;
+  background-color: red;
+  padding: 10px;
+  color: white;
+  border-radius: 5px;
+
+}
+
+.spinning:before {
+  content: "";
+  border-radius: 50%;
+  position: relative;
+  display: block;
+  height: (@circle-radius + @circle-border * 2) * 1;
+  width: (@circle-radius + @circle-border * 2) * 1;
+  top: @circle-border * -1;
+  left: @circle-border * -1;
+  background-color: @progress-color;
+  z-index: -2;
+}
+
+span.loading-wheel {
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: @circle-radius - @circle-border + @left-margin;
+  top: @circle-radius - @circle-border + @top-margin;
+  border-left: @circle-radius solid transparent;
+  border-top: @circle-radius solid @base-color-rgba-transparent;
+  z-index: -1;
+
+  -webkit-animation: spin 6s linear infinite;
+  -webkit-transform-origin: 0 0;
+}
+
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-moz-keyframes spin {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+
+@-ms-keyframes spin {
+  from {
+    -ms-transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+  }
+}

@@ -83,13 +83,14 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
       processResponse(result, post, function() {
         logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
+        onSuccessCallback();
       }, onErrorCallback);
 
     } else {
       result = wp.newPost(DEFAULT_BLOG_ID, data);
       processResponse(result, post, function() {
-        onSuccessCallback(result.concat());
         logger.log("created post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
+        onSuccessCallback(result.concat());
       }, onErrorCallback);
     }
   };

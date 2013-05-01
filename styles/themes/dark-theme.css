@@ -220,7 +220,7 @@
 .edit-controls {
   position: fixed;
   left: 0;
-  top: 240px;
+  top: 300px;
   font-size: 27.2px;
   width: 5%;
   padding: 1%;
@@ -391,37 +391,40 @@ a [class*=" icon-"] {
   color: #bfbfbf;
 }
 .icon-posts-list:before {
-  content: '\f00b';
+  content: '\e00a';
+}
+.icon-images-list:before {
+  content: '\e009';
 }
 .icon-sync-wordpress:before {
-  content: '\e000';
+  content: '\e004';
 }
 .icon-new-post:before {
-  content: '\e001';
+  content: '\e006';
 }
 .icon-insert:before {
-  content: '\f044';
+  content: '\e008';
 }
 .icon-edit:before {
   content: '\f044';
 }
 .icon-delete:before {
-  content: '\f014';
+  content: '\e005';
 }
 .icon-settings:before {
-  content: '\f085';
+  content: '\e000';
 }
 .icon-preview-on:before {
-  content: '\f06e';
+  content: '\e001';
 }
 .icon-preview-off:before {
-  content: '\f070';
+  content: '\e001';
 }
 .icon-logs:before {
-  content: '\E007';
+  content: '\e002';
 }
 .icon-reload:before {
-  content: '\E006';
+  content: '\e007';
 }
 .modal-backdrop {
   position: fixed;
@@ -522,6 +525,83 @@ a [class*=" icon-"] {
 }
 .hide {
   display: none;
+}
+.logo-container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 10px;
+}
+.logo {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  margin: auto;
+  background-color: #262626;
+}
+.success {
+  background-color: #262626;
+}
+.error {
+  background-color: red;
+}
+.error-message {
+  float: left;
+  position: absolute;
+  top: 25px;
+  left: 83px;
+  width: 500px;
+  background-color: red;
+  padding: 10px;
+  color: white;
+  border-radius: 5px;
+}
+.spinning:before {
+  content: "";
+  border-radius: 50%;
+  position: relative;
+  display: block;
+  height: 42px;
+  width: 42px;
+  top: -6px;
+  left: -6px;
+  background-color: rgba(0, 255, 255, 0.6);
+  z-index: -2;
+}
+span.loading-wheel {
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: 34px;
+  top: 44px;
+  border-left: 30px solid transparent;
+  border-top: 30px solid rgba(255, 255, 255, 0.6);
+  z-index: -1;
+  -webkit-animation: spin 6s linear infinite;
+  -webkit-transform-origin: 0 0;
+}
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-moz-keyframes spin {
+  from {
+    -moz-transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-ms-keyframes spin {
+  from {
+    -ms-transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+  }
 }
 html {
   height: 100%;

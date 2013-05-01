@@ -134,7 +134,7 @@ angular.module('platen.services').factory('fileManager', function() {
       }
     },
 
-    writeFile: function(filePath, fileBody, onSuccessCallback) {
+    writeFile: function(filePath, fileBody, onSuccessCallback, onErrorCallback) {
       var blob;
 
       if (fileBody instanceof Blob) {
@@ -158,6 +158,7 @@ angular.module('platen.services').factory('fileManager', function() {
 
         }, function(e) {
           onError(e, "in writeFile(), while creating fileWriter for " + filePath + "/" + fileName);
+          onErrorCallback();
         });
       });
     },

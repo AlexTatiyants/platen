@@ -20,16 +20,26 @@
 	<div data-ng-controller="MainController" class="main-container">
 		<nav>
 			<ul>
-				<li><a data-ng-click="loginCredentials()"><i class="icon-settings"></i></a></li>
-				<li><a href="#/posts"><i class="icon-posts-list"></i></a></li>
-				<li><a href="#/posts/0"><i class="icon-new-post"></i></a></li>
-				<li><a href="#/logs"><i class="icon-logs"></i></a></li>
-				<li><a href="#/images"><i class="icon-posts-list"></i></a></li>
-			</ul>
-		</nav>
+				<li class="logo-container">
+						<span class="loading-wheel"></span>
+						<div data-ng-class="{spinning: appStatus.isProcessing, logo: true, success: appStatus.isSuccess, error: !appStatus.isSuccess}" 
+						title="{{appStatus.message}}"></div>				
+					</li>
+					<li><a data-ng-click="loginCredentials()"><i class="icon-settings"></i></a></li>
+					<li><a href="#/posts"><i class="icon-posts-list"></i></a></li>
+					<li><a href="#/posts/0"><i class="icon-new-post"></i></a></li>
+					<li><a href="#/logs"><i class="icon-logs"></i></a></li>
+					<li><a href="#/images"><i class="icon-images-list"></i></a></li>
+				</ul>
+			</nav>
+			<span class="error-message" data-ng-bind="appStatus.message"></span>	
 
-		<section data-ng-view id="main-panel"></section>
-	</div>
-</body>
-</html>
+			<section data-ng-view id="main-panel"></section>
+			<div>
+				<button data-ng-click="startProcessing()">start</button>
+				<button data-ng-click="stopProcessing()">stop</button>
+			</div>
+		</div>
+	</body>
+	</html>
 

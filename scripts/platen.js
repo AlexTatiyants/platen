@@ -1,4 +1,4 @@
-/*! platen 2013-04-29 */
+/*! platen 2013-04-30 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -149,7 +149,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
             $scope.status.autoSaveTime = $filter("date")(new Date(), "shortTime");
             $scope.$apply();
             logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
-        });
+        }, function() {});
     };
     $scope.togglePreview = function() {
         if (!$scope.previewOn) {
@@ -174,6 +174,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
         loadPost($scope.post.id);
     };
     $scope.sync = function() {
+        $scope.$emit(resources.events.PROCESSING_STARTED, "uploading post to WordPress");
         $scope.post.content = marked($scope.post.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
         uploadImages($scope.post.content, function() {
             var content = $scope.post.content;
@@ -182,10 +183,18 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
             });
             $scope.post.content = content;
             wordpress.savePost($scope.post, function(result) {
+                console.log("finished wordpress upload in editor");
                 $scope.post.wordPressId = result;
                 savePost();
+                $scope.$emit(resources.events.PROCESSING_FINISHED, {
+                    message: "upload to WordPress complete",
+                    success: true
+                });
             }, function(errorMessage) {
-                alert("OOPS " + errorMessage);
+                $scope.$emit(resources.events.PROCESSING_FINISHED, {
+                    message: "upload to WordPress failed",
+                    success: false
+                });
             });
         });
     };
@@ -319,6 +328,11 @@ var LogsController = function($scope, logger) {
 LogsController.$inject = [ "$scope", "logger" ];
 
 var MainController = function($scope, $dialog, fileManager, resources) {
+    $scope.appStatus = {
+        isProcessing: false,
+        isSuccess: true,
+        message: ""
+    };
     fileManager.initialize();
     var d;
     $scope.loginCredentials = function() {
@@ -330,6 +344,24 @@ var MainController = function($scope, $dialog, fileManager, resources) {
             templateUrl: "views/modals/login.html"
         });
         d.open();
+    };
+    $scope.$on(resources.events.PROCESSING_STARTED, function(event, message) {
+        $scope.appStatus.isProcessing = true;
+        $scope.appStatus.message = message;
+    });
+    $scope.$on(resources.events.PROCESSING_FINISHED, function(event, args) {
+        $scope.appStatus.isProcessing = false;
+        $scope.appStatus.message = args.message;
+        $scope.appStatus.isSuccess = args.success;
+    });
+    $scope.startProcessing = function() {
+        $scope.$emit(resources.events.PROCESSING_STARTED, "starting something");
+    };
+    $scope.stopProcessing = function() {
+        $scope.$emit(resources.events.PROCESSING_FINISHED, {
+            message: "bad things happened",
+            success: false
+        });
     };
 };
 
@@ -557,7 +589,7 @@ angular.module("platen.services").factory("fileManager", function() {
                 });
             }
         },
-        writeFile: function(filePath, fileBody, onSuccessCallback) {
+        writeFile: function(filePath, fileBody, onSuccessCallback, onErrorCallback) {
             var blob;
             if (fileBody instanceof Blob) {
                 blob = fileBody;
@@ -575,6 +607,7 @@ angular.module("platen.services").factory("fileManager", function() {
                     fileWriter.truncate(blob.size);
                 }, function(e) {
                     onError(e, "in writeFile(), while creating fileWriter for " + filePath + "/" + fileName);
+                    onErrorCallback();
                 });
             });
         },
@@ -633,7 +666,11 @@ angular.module("platen.services").factory("logger", function() {
 
 angular.module("platen.services").value("resources", {
     POST_DIRECTORY_PATH: "posts",
-    IMAGE_DIRECTORY_PATH: "images"
+    IMAGE_DIRECTORY_PATH: "images",
+    events: {
+        PROCESSING_STARTED: "processingStarted",
+        PROCESSING_FINISHED: "processingFinished"
+    }
 });
 
 angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", function($dialog, logger) {
@@ -708,12 +745,13 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
             processResponse(result, post, function() {
                 logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
+                onSuccessCallback();
             }, onErrorCallback);
         } else {
             result = wp.newPost(DEFAULT_BLOG_ID, data);
             processResponse(result, post, function() {
-                onSuccessCallback(result.concat());
                 logger.log("created post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
+                onSuccessCallback(result.concat());
             }, onErrorCallback);
         }
     };
