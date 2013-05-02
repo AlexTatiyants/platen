@@ -13,7 +13,8 @@
   </section>
 
   <ul class="edit-controls">
-    <li data-ng-click="togglePreview()" class="edit-control icon-preview-on" title="preview as HTML"></li>
+    <li data-ng-click="togglePreview()" title="{{previewMessage}}"
+      data-ng-class="{'edit-control': true, 'icon-view-markdown': previewOn, 'icon-view-html': !previewOn}"></li>
     <li data-ng-click="sync()" class="edit-control icon-sync-wordpress" title="sync to blog"></li>
   </ul>
 

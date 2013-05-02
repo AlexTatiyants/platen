@@ -41,6 +41,7 @@
 .list .large-thumbnail {
   float: left;
   width: 200px;
+  margin-top: 20px;
 }
 .list-item-line {
   border: 1px solid #404040;
@@ -75,6 +76,7 @@
   border-radius: 6px;
   list-style: none;
   width: 200px;
+  height: 240px;
   margin-right: 20px;
   margin-bottom: 20px;
   overflow: hidden;
@@ -83,7 +85,11 @@
 .list-item-tile h3 {
   font-size: 22.4px;
   font-weight: 300;
-  margin: 0 0 10px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: absolute;
+  width: 180px;
 }
 .list-item-tile .icon {
   font-size: 22.4px;
@@ -414,17 +420,20 @@ a [class*=" icon-"] {
 .icon-settings:before {
   content: '\e000';
 }
-.icon-preview-on:before {
+.icon-view-html:before {
   content: '\e001';
 }
-.icon-preview-off:before {
-  content: '\e001';
+.icon-view-markdown:before {
+  content: '\e00b';
 }
 .icon-logs:before {
   content: '\e002';
 }
 .icon-reload:before {
   content: '\e007';
+}
+.icon-close:before {
+  content: '\e003';
 }
 .modal-backdrop {
   position: fixed;
@@ -538,22 +547,45 @@ a [class*=" icon-"] {
   margin: auto;
   background-color: #262626;
 }
-.success {
-  background-color: #262626;
-}
 .error {
-  background-color: red;
+  background-color: #ff0000;
+}
+.icon-close {
+  float: right;
 }
 .error-message {
   float: left;
   position: absolute;
-  top: 25px;
-  left: 83px;
-  width: 500px;
-  background-color: red;
+  top: 26px;
+  left: 62px;
+  width: 80%;
+  background-color: #ff0000;
   padding: 10px;
-  color: white;
-  border-radius: 5px;
+  color: #262626;
+  border-radius: 6px;
+}
+.error-message:after {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 0;
+  margin-left: -10px;
+  border-style: solid;
+  border-width: 10px;
+  border-color: transparent #ff0000 transparent;
+  border-left: 0;
+}
+.mycss-animation {
+  -webkit-transition: 1s linear all;
+  -moz-transition: 1s linear all;
+  -o-transition: 1s linear all;
+  transition: 1s linear all;
+  /* future proof */
+
+  background: red;
+}
+.mycss-animation.mycss-animation-start {
+  background: blue;
 }
 .spinning:before {
   content: "";
@@ -564,7 +596,7 @@ a [class*=" icon-"] {
   width: 42px;
   top: -6px;
   left: -6px;
-  background-color: rgba(0, 255, 255, 0.6);
+  background-color: #bfbfbf;
   z-index: -2;
 }
 span.loading-wheel {
@@ -642,7 +674,7 @@ nav {
   width: 5%;
   float: left;
   position: fixed;
-  padding: 1%;
+  padding: 10px;
 }
 nav ul {
   margin: 0;

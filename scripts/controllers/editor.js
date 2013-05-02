@@ -9,11 +9,14 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
   var POST_CATEGORIES = 'post-categories';
   var IMAGE_TYPE = 'image/png';
   var INSERTED_IMAGE_PLACEHOLDER = '[[!@#IMAGE_PLACEHOLDER#@!]]';
+  var MESSAGE_PREVIEW_HTML = 'Preview as HTML';
+  var MESSAGE_PREVIEW_MARKDOWN = 'View Markdown';
 
   $scope.status = {};
   $scope.previewOn = false;
   $scope.status.autoSaveTime = "unsaved";
   $scope.showMetadata = false;
+  $scope.previewMessage = MESSAGE_PREVIEW_HTML;
 
   $scope.post = {};
 
@@ -185,6 +188,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
       $scope.post.contentHtmlPreview = marked($scope.post.contentMarkdown);
     };
     $scope.previewOn = !$scope.previewOn;
+    $scope.previewMessage = $scope.previewOn ? MESSAGE_PREVIEW_MARKDOWN : MESSAGE_PREVIEW_HTML;
   };
 
   $scope.toggleMetadataPanel = function() {

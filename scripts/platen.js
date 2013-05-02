@@ -1,4 +1,4 @@
-/*! platen 2013-04-30 */
+/*! platen 2013-05-02 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -37,10 +37,13 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
     var POST_CATEGORIES = "post-categories";
     var IMAGE_TYPE = "image/png";
     var INSERTED_IMAGE_PLACEHOLDER = "[[!@#IMAGE_PLACEHOLDER#@!]]";
+    var MESSAGE_PREVIEW_HTML = "Preview as HTML";
+    var MESSAGE_PREVIEW_MARKDOWN = "View Markdown";
     $scope.status = {};
     $scope.previewOn = false;
     $scope.status.autoSaveTime = "unsaved";
     $scope.showMetadata = false;
+    $scope.previewMessage = MESSAGE_PREVIEW_HTML;
     $scope.post = {};
     var getFilePath = function(postId) {
         return "/" + resources.POST_DIRECTORY_PATH + "/" + postId;
@@ -156,6 +159,7 @@ var EditorController = function($rootScope, $scope, $routeParams, $timeout, $fil
             $scope.post.contentHtmlPreview = marked($scope.post.contentMarkdown);
         }
         $scope.previewOn = !$scope.previewOn;
+        $scope.previewMessage = $scope.previewOn ? MESSAGE_PREVIEW_MARKDOWN : MESSAGE_PREVIEW_HTML;
     };
     $scope.toggleMetadataPanel = function() {
         $scope.showMetadata = !$scope.showMetadata;
@@ -347,6 +351,7 @@ var MainController = function($scope, $dialog, fileManager, resources) {
     };
     $scope.$on(resources.events.PROCESSING_STARTED, function(event, message) {
         $scope.appStatus.isProcessing = true;
+        $scope.appStatus.isSuccess = true;
         $scope.appStatus.message = message;
     });
     $scope.$on(resources.events.PROCESSING_FINISHED, function(event, args) {
@@ -362,6 +367,11 @@ var MainController = function($scope, $dialog, fileManager, resources) {
             message: "bad things happened",
             success: false
         });
+    };
+    $scope.resetError = function() {
+        $scope.appStatus.message = "";
+        $scope.appStatus.isProcessing = false;
+        $scope.appStatus.isSuccess = true;
     };
 };
 
