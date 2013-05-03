@@ -1,15 +1,21 @@
+@status-bar-height: 40px;
+
 @circle-radius: 30px;
 @circle-border: 6px;
 @top-margin: @pad-unit;
 @left-margin: @pad-unit * 0.5;
 
-.logo-container {
-  margin-top: @top-margin;
-  margin-bottom: @pad-unit;
-  margin-left: @left-margin;
+@spinner-width: 20px;
+@spinner-length: 6px;
+
+.status-bar {
+  position: absolute;
+  bottom: @pad-unit;
+  width: 100%;
+  height: @status-bar-height;
 }
 
-.logo {
+.status {
   border-radius: 50%;
   width: @circle-radius;
   height: @circle-radius;
@@ -21,44 +27,52 @@
   background-color: @error-color;
 }
 
+.success {
+  background-color: @success-color;
+}
+
 .icon-close {
   float: right;
 }
 
-.error-message {
+.status-message-common {
   float: left;
   position: absolute;
-  top: @top-margin + @circle-border;
+  top: @circle-border;
   left: @pad-unit * 0.5 + @left-margin + @circle-radius + @circle-border * 2;
-  width: 80%;
-  background-color: @error-color;
+  width: 85%;
   padding: @pad-unit * 0.5;
   color: @base-color;
+  z-index: 2;
   border-radius: @pad-unit * 0.3;
+}
 
+.status-message-after-common {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 0;
+  margin-left: @pad-unit * -0.5;
+  border-style: solid;
+  border-width: @pad-unit * 0.5;
+  // border-color: transparent @error-color transparent;
+  border-left: 0;
+}
+
+.status-message.error {
+  .status-message-common;
     &:after {
-      content: '';
-      position: absolute;
-      top: 20%;
-      left: 0;
-      margin-left: @pad-unit * -0.5;
-      border-style: solid;
-      border-width: @pad-unit * 0.5;
-      border-color: transparent @error-color transparent;    
-      border-left: 0;
+      .status-message-after-common;
+      border-color: transparent @error-color transparent;
     }
   }
 
-  .mycss-animation {
-    -webkit-transition:1s linear all;
-    -moz-transition:1s linear all;
-    -o-transition:1s linear all;
-    transition:1s linear all; /* future proof */
-
-    background:red;
-  }
-  .mycss-animation.mycss-animation-start {
-    background:blue;
+.status-message.success {
+  .status-message-common;
+    &:after {
+      .status-message-after-common;
+      border-color: transparent @success-color transparent;
+    }
   }
 
 
@@ -75,14 +89,21 @@
     z-index: -2;
   }
 
-  span.loading-wheel {
+  .spinner-container {
+    float: left;
+    margin-left: @pad-unit;
+    margin-top: @pad-unit * 0.5;
+  }
+
+  .spinner {
     position: absolute;
     width: 0;
     height: 0;
     left: @circle-radius - @circle-border + @left-margin;
-    top: @circle-radius - @circle-border + @top-margin;
-    border-left: @circle-radius solid transparent;
-    border-top: @circle-radius solid @base-color-rgba-transparent;
+    top: @circle-radius - @circle-border;
+    border-left: @spinner-width solid transparent;
+    border-right: @spinner-length solid transparent;
+    border-top: @spinner-width solid @base-color-rgba-transparent;
     z-index: -1;
 
     -webkit-animation: spin 6s linear infinite;
@@ -114,4 +135,4 @@
     to {
       -ms-transform: rotate(360deg);
     }
-  } 
+  }

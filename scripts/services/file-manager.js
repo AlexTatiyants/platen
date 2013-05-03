@@ -38,13 +38,21 @@ angular.module('platen.services').factory('fileManager', function() {
     }
   };
 
+  var processFile = function(filePath, createParam, onSuccessCallback, onErrorCallback) {
+    if (fs) {
+      fs.root.getFile(filePath, createParam,
+
+      function(fileEntry) {
+        fileEntry.file(onSuccessCallback, onErrorCallback)
+      }, onErrorCallback);
+    }
+  };
+
   return {
-    directoryAccessActions: function() {
-      return {
-        LIST: LIST_FILE,
-        READ: READ_FILE,
-        REMOVE: REMOVE_FILE
-      };
+    directoryAccessActions: {
+      LIST: LIST_FILE,
+      READ: READ_FILE,
+      REMOVE: REMOVE_FILE
     },
 
     initialize: function(onErrorCallback) {
@@ -64,8 +72,7 @@ angular.module('platen.services').factory('fileManager', function() {
         fs.root.getDirectory(directoryPath, doCreate,
 
         function(dirEntry) {
-          var dirReader = dirEntry.createReader();
-          dirReader.readEntries(function(entries) {
+          dirEntry.createReader().readEntries(function(entries) {
             _.each(entries, function(entry) {
               if (entry.isFile) {
 
@@ -75,34 +82,29 @@ angular.module('platen.services').factory('fileManager', function() {
                     break;
 
                   case READ_FILE:
-                    // getFileEntryAndDoAction(entry.fullPath, dontCreate,
+                    processFile(entry.fullPath, dontCreate,
 
-                    // function(fileEntry) {
-                    //   fileEntry.file(function(file) {
-                    //     var reader = new FileReader();
-                    //     reader.onloadend = onSuccessCallback;
-                    //     reader.readAsText(file);
-                    //   },
+                    function(file) {
+                      var reader = new FileReader();
+                      reader.onloadend = function(e) {
+                        onSuccessCallback(this.result);
+                      }
+                      reader.readAsText(file);
+                    },
 
-                    //   function(e) {
-                    //     onErrorCallback(getError(e, "while getting file " + entry.fullPath));
-                    //   });
-                    // });
+                    function(e) {
+                      onErrorCallback(getError(e, "while reading file " + entry.fullPath));
+                    });
                     break;
 
                   case REMOVE_FILE:
-                    // getFileEntryAndDoAction(entry.fullPath, dontCreate,
+                    getFileEntryAndDoAction(entry.fullPath, dontCreate,
 
-                    // function(fileEntry) {
-                    //   fileEntry.remove(function() {
-                    //     onSuccessCallback();
-                    //   },
-
-                    //   function(e) {
-                    //     onErrorCallback(getError(e, "while removing file " + entry.fullPath));
-                    //   });
-                    //   );
-                    // });
+                    function(fileEntry) {
+                      fileEntry.remove(onSuccessCallback, function(e) {
+                        onErrorCallback(getError(e, " while removing file " + entry.fullPath));
+                      });
+                    });
                     break;
 
                   default:
@@ -133,44 +135,45 @@ angular.module('platen.services').factory('fileManager', function() {
         blob = new Blob([fileBody], DEFAULT_FILE_TYPE);
       }
 
-      // getFileEntryAndDoAction(filePath, doCreate,
+      getFileEntryAndDoAction(filePath, doCreate,
 
-      // function(fileEntry) {
-      //   fileEntry.createWriter(function(fileWriter) {
-      //     fileWriter.onerror = onError;
-      //     fileWriter.onwriteend = function() {
-      //       fileWriter.onwriteend = null;
-      //       fileWriter.write(blob);
-      //       onSuccessCallback(fileEntry);
-      //     }
+      function(fileEntry) {
+        fileEntry.createWriter(function(fileWriter) {
+          fileWriter.onerror = onErrorCallback;
+          fileWriter.onwriteend = function() {
+            fileWriter.onwriteend = null;
+            fileWriter.write(blob);
+            onSuccessCallback(fileEntry);
+          }
 
-      //     // a call to truncate() is apparently required if a file is being overriden
-      //     // without this call, there may be extra bits in the newly written file
-      //     fileWriter.truncate(blob.size);
+          // a call to truncate() is apparently required if a file is being overriden
+          // without this call, there may be extra bits in the newly written file
+          fileWriter.truncate(blob.size);
 
-      //   }, function(e) {
-      //     onErrorCallback(getError(e, " while creating fileWriter for " + filePath));
-      //   });
-      // },
+        }, function(e) {
+          onErrorCallback(getError(e, " while creating fileWriter for " + filePath));
+        });
+      });
     },
 
     readFile: function(filePath, asText, onSuccessCallback, onErrorCallback) {
-      getFileEntryAndDoAction(filePath, dontCreate,
 
-      function(fileEntry) {
-        fileEntry.file(function(file) {
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            onSuccessCallback(e.target.result);
-          };
-          if (asText) {
-            reader.readAsText(file);
-          } else {
-            reader.readAsBinaryString(file);
-          }
-        }, function(e) {
-          onErrorCallback(getError(e, " while reading file " + filePath));
-        });
+      processFile(filePath, dontCreate,
+
+      function(file) {
+        var reader = new FileReader();
+        reader.onloadend = function(e) {
+          onSuccessCallback(this.result);
+        }
+        if (asText) {
+          reader.readAsText(file);
+        } else {
+          reader.readAsBinaryString(file);
+        }
+      },
+
+      function(e) {
+        onErrorCallback(getError(e, "while reading file " + filePath));
       });
     },
 

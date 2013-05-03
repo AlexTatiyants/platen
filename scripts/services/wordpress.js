@@ -163,6 +163,12 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
   return {
     login: l,
 
+    initialize: function(onSuccessCallback, onErrorCallback) {
+      if (!wp) {
+        initialize(onSuccessCallback, onErrorCallback);
+      }
+    },
+
     resetCredentials: function() {
       localStorage['url'] = '';
       localStorage['username'] = '';

@@ -6,7 +6,6 @@ function($q, resources, fileManager, wordpress, logger) {
   var data = {};
   var STATUS_DRAFT = 'draft';
   var STATUS_PUBLISH = 'publish';
-  var IMAGE_TYPE = 'image/png';
 
   var getFilePath = function(postId) {
     return "/" + resources.POST_DIRECTORY_PATH + '/' + postId;
@@ -41,7 +40,6 @@ function($q, resources, fileManager, wordpress, logger) {
 
   var savePost = function(onSuccessCallback, onErrorCallback) {
     var postToSave = JSON.parse(JSON.stringify(data));
-
     // since there are 4 different representations of the same content, we only need to save one of them
     postToSave.content = '';
     postToSave.contentHtmlPreview = '';
@@ -53,19 +51,30 @@ function($q, resources, fileManager, wordpress, logger) {
   var uploadImage = function(image) {
     var d = $q.defer();
 
-    fileManager.readFile(image.filePath, false, function(imageData) {
-      wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
+    fileManager.readFile(image.filePath, false,
+
+    function(imageData) {
+      // on success
+      wordpress.uploadFile(image.fileName, image.type, imageData,
+
+      function(id, url) {
+        // on success
         image.blogUrl = url;
         image.blogId = id;
         savePost();
-
-        // logger.log("uploaded image" + image.fileName, "Post module");
+        logger.log("uploaded image" + image.fileName, "Post module");
         d.resolve();
       },
 
       function(e) {
-        // logger.log("error uploading image " + image.fileName, "Post Module");
+        // on error
+        logger.log("error uploading image " + image.fileName, "Post Module");
       })
+    },
+
+    function(e) {
+      // on error
+      logger.log("error reading image " + image.fileName, "Post Module");
     });
 
     return d.promise;
@@ -92,6 +101,7 @@ function($q, resources, fileManager, wordpress, logger) {
       // load or create new
       if (postId === "0") {
         createPost();
+        onSuccessCallback(data);
       } else {
 
         fileManager.readFile(getFilePath(postId), true,
@@ -105,7 +115,6 @@ function($q, resources, fileManager, wordpress, logger) {
           onErrorCallback(error);
         })
       }
-      return data;
     },
 
     save: function(onSuccessCallback, onErrorCallback) {
@@ -116,6 +125,8 @@ function($q, resources, fileManager, wordpress, logger) {
     sync: function(onSuccessCallback, onErrorCallback) {
       data.content = marked(data.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
       try {
+        wordpress.initialize(onSuccessCallback, onErrorCallback);
+
         uploadImages(data.content, function() {
           var content = data.content;
 

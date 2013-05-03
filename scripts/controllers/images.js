@@ -7,17 +7,17 @@ var ImagesController = function($scope, fileManager, logger, resources) {
   if (!$scope.loaded) {
     fileManager.accessFilesInDirectory(
 
-    resources.POST_DIRECTORY_PATH,
-    fileManager.directoryAccessActions.READ_FILE,
+    resources.IMAGE_DIRECTORY_PATH,
+    fileManager.directoryAccessActions.LIST,
 
     function(file) {
       // on success
       var image = {};
 
-      image.name = entry.name;
-      image.url = entry.toURL();
-      image.id = entry.fullPath;
-      image.path = entry.fullPath;
+      image.name = file.name;
+      image.url = file.toURL();
+      image.id = file.fullPath;
+      image.path = file.fullPath;
 
       $scope.images[image.id] = image;
 

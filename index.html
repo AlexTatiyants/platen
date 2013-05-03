@@ -18,31 +18,40 @@
 
 <body data-ng-app="platen">
 	<div data-ng-controller="MainController" class="main-container">
+
 		<nav>
 			<ul>
-				<li class="logo-container">
-					<span class="loading-wheel"></span>
-					<div data-ng-class="{spinning: appStatus.isProcessing, logo: true, error: !appStatus.isSuccess}" 
-					title="{{appStatus.message}}"></div>				
-				</li>
 				<li><a data-ng-click="loginCredentials()"><i class="icon-settings"></i></a></li>
 				<li><a href="#/posts"><i class="icon-posts-list"></i></a></li>
 				<li><a href="#/posts/0"><i class="icon-new-post"></i></a></li>
 				<li><a href="#/logs"><i class="icon-logs"></i></a></li>
 				<li><a href="#/images"><i class="icon-images-list"></i></a></li>
+	<li>
+		<button data-ng-click="startProcessing()">start</button>
+		<button data-ng-click="stopProcessing()">stop</button>
+	</li>
 			</ul>
 		</nav>
-		<span data-ng-show="appStatus.message && !appStatus.isProcessing" data-ng-animate="{event: 'mycss-animation'}" class="error-message">
-			<span data-ng-bind="appStatus.message"></span>
-			<span class="icon-close" data-ng-click="resetError()"></span>
-		</span>	
+
+
+		<div class="status-bar">
+			<div class="spinner-container">
+				<span class="spinner"></span>
+				<div data-ng-class="{spinning: appStatus.isProcessing, status: true, error: !appStatus.isSuccess, success: appStatus.isSuccess}"
+				title="{{appStatus.message}}"></div>
+		</div>
+		<!-- data-ng-show="appStatus.message && !appStatus.isProcessing" data-ng-animate="{event: 'mycss-animation'}"  -->
+			<span data-ng-show="appStatus.showMessage"
+					data-ng-class="{'status-message': true, error: !appStatus.isSuccess, success: appStatus.isSuccess}">
+					<span data-ng-bind="appStatus.message"></span>
+					<span class="icon-close" data-ng-click="resetError()"></span>
+			</span>
+		</div>
+
+
 
 
 	<section data-ng-view id="main-panel"></section>
-	<div>
-		<button data-ng-click="startProcessing()">start</button>
-		<button data-ng-click="stopProcessing()">stop</button>
-	</div>
 </div>
 </body>
 </html>

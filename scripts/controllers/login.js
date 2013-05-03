@@ -1,5 +1,6 @@
 var LoginController = function($scope, dialog, wordpress) {
   $scope.login = wordpress.login;
+  console.log("in login controller");
 
   $scope.submit = function() {
     dialog.close('ok');

@@ -8,14 +8,30 @@ var PostsController = function($scope, $location, fileManager, logger, resources
     fileManager.accessFilesInDirectory(
 
     resources.POST_DIRECTORY_PATH,
-    fileManager.directoryAccessActions.READ_FILE,
+    fileManager.directoryAccessActions.READ,
 
     function(file) {
       // on success
-      var post = JSON.parse(this.result);
-      $scope.posts[post.id] = post;
-      $scope.loaded = true;
-      $scope.$apply();
+      try {
+        var post = JSON.parse(file);
+        $scope.posts[post.id] = post;
+        $scope.loaded = true;
+
+        $scope.$emit(resources.events.PROCESSING_FINISHED, {
+          message: "loaded posts",
+          success: true
+        });
+
+        $scope.$apply();
+
+      } catch (error) {
+        logger.log("error reading file [" + file + "]: " + error, "PostsController");
+        $scope.$emit(resources.events.PROCESSING_FINISHED, {
+          message: "loading posts failed",
+          success: false
+        });
+        $scope.$apply();
+      }
     },
 
     function(error) {
@@ -62,6 +78,32 @@ var PostsController = function($scope, $location, fileManager, logger, resources
 
   $scope.editPost = function(post) {
     $location.path('posts/' + post.id);
+  };
+
+  $scope.deleteAll = function() {
+    fileManager.accessFilesInDirectory(
+
+    resources.POST_DIRECTORY_PATH,
+    fileManager.directoryAccessActions.REMOVE,
+
+    function(file) {
+      logger.log("deleted all posts", "PostsController");
+      $scope.posts = {};
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "all posts removed",
+        success: true
+      });
+    },
+
+    function(error) {
+      // on error
+      logger.log("error removing all posts: " + error, "PostsController");
+
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "removing posts failed",
+        success: false
+      });
+    });
   };
 };
 

@@ -7,27 +7,12 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   var POST_EXCERPT = 'post-excerpt';
   var POST_TAGS = 'post-tags';
   var POST_CATEGORIES = 'post-categories';
-
+  var EDITABLE_ELEMENTS = [POST_TITLE_ID, POST_CONTENT_ID, POST_EXCERPT, POST_TAGS, POST_CATEGORIES];
   var INSERTED_IMAGE_PLACEHOLDER = '[[!@#IMAGE_PLACEHOLDER#@!]]';
   var MESSAGE_PREVIEW_HTML = 'Preview as HTML';
   var MESSAGE_PREVIEW_MARKDOWN = 'View Markdown';
+  var IMAGE_TYPE = 'image/png';
 
-  var savePost = function() {
-    Post.save(
-
-    function() {
-      // on success 
-      $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
-      $scope.$apply();
-      logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
-    },
-
-    function(e) {
-      // on error
-      logger.log("erorr saving post '" + $scope.post.title + ": " + e, "EditorController");
-      $scope.$emit(resources.events.PROCESSING_FINISHED, "error saving post", false);
-    });
-  };
 
   Post.initialize($routeParams.postId,
 
@@ -43,7 +28,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
     logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
     $('#post-title').focus();
-    $scope.$apply();
+    $scope.safeApply();
   },
 
   function(e) {
@@ -52,17 +37,32 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.$emit(resources.events.PROCESSING_FINISHED, "error loading post", false);
   });
 
-  $scope.$on('elementEdited', function(event, elementId) {
-    if (elementId === POST_TITLE_ID || elementId === POST_CONTENT_ID || elementId === POST_EXCERPT || elementId === POST_TAGS || elementId || POST_CATEGORIES) {
 
+  var savePost = function() {
+    Post.save(
+
+    function() {
+      // on success
+      $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
+      $scope.$apply();
+      logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
+    },
+
+    function(e) {
+      // on error
+      logger.log("erorr saving post '" + $scope.post.title + ": " + e, "EditorController");
+      $scope.$emit(resources.events.PROCESSING_FINISHED, "error saving post", false);
+    });
+  };
+
+  $scope.$on('elementEdited', function(event, elementId) {
+    if (_.contains(EDITABLE_ELEMENTS, elementId)) {
       savePost();
     }
   });
 
   var addImage = function(imageName, imageBlob, onSuccessCallback, onErrorCallback) {
-
     // TODO: handle images pasted as text/html
-
     var fileName = imageName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     if (fileName.indexOf('.png') === -1) {
       fileName += '.png';
@@ -75,7 +75,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName
     };
 
-    var contentMarkdownHtml = data.contentMarkdownHtml;
+    var contentMarkdownHtml = $scope.post.contentMarkdownHtml;
 
     fileManager.writeFile(image.filePath, imageBlob,
 
@@ -86,8 +86,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       image.localUrl = fileEntry.toURL();
       image.markdownUrl = '![' + image.fileName + '](' + image.localUrl + ')';
 
-      data.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
-      data.images[image.id] = image;
+      $scope.post.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
+      $scope.post.images[image.id] = image;
 
       savePost(onSuccessCallback, onErrorCallback);
       image = {};
@@ -104,7 +104,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     });
   };
 
-
   var insertImage = function(blob) {
     $scope.imageToInsert = {};
     $scope.imageToInsert.blob = blob;
@@ -112,14 +111,16 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     // need to insert a temporary token into the body of the post
     // which will be replaced (or removed) once the user enters file name
     document.execCommand('insertHtml', false, INSERTED_IMAGE_PLACEHOLDER);
-
     $scope.insertImageDialogOpen = true;
   };
 
+  $scope.$on('imageInserted', function(event, blob) {
+    insertImage(blob);
+  });
+
   $scope.proceedWithImageInsert = function() {
     $scope.insertImageDialogOpen = false;
-
-    Post.addImage($scope.imageToInsert.fileName, $scope.imageToInsert.blob,
+    addImage($scope.imageToInsert.fileName, $scope.imageToInsert.blob,
 
     function() {
       // on success
@@ -222,7 +223,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     function(result) {
       // on success
       $scope.categories = result;
-
     },
 
     function(errorMessage) {
@@ -280,9 +280,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     });
   };
 
-  $scope.$on('imageInserted', function(event, blob) {
-    insertImage(blob);
-  });
 };
 
 EditorController.$inject = ['Post', '$scope', '$routeParams', '$filter', 'fileManager', 'logger', 'resources'];
