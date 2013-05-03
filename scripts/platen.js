@@ -531,19 +531,26 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
     };
     var uploadImage = function(image) {
         var d = $q.defer();
-        fileManager.readFile(image.filePath, false, function(imageData) {
-            wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
-                image.blogUrl = url;
-                image.blogId = id;
-                savePost();
-                logger.log("uploaded image" + image.fileName, "Post module");
-                d.resolve();
+        try {
+            fileManager.readFile(image.filePath, false, function(imageData) {
+                wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
+                    image.blogUrl = url;
+                    image.blogId = id;
+                    savePost();
+                    logger.log("uploaded image" + image.fileName, "Post module");
+                    d.resolve();
+                }, function(e) {
+                    d.reject();
+                    logger.log("error uploading image " + image.fileName, "Post Module");
+                });
             }, function(e) {
-                logger.log("error uploading image " + image.fileName, "Post Module");
+                d.reject();
+                logger.log("error reading image " + image.fileName, "Post Module");
             });
-        }, function(e) {
-            logger.log("error reading image " + image.fileName, "Post Module");
-        });
+        } catch (e) {
+            d.reject();
+            logger.log("error uploading image " + image.fileName, "Post Module");
+        }
         return d.promise;
     };
     var uploadImages = function(content, onCompletionCallback) {
@@ -576,7 +583,6 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
         sync: function(onSuccessCallback, onErrorCallback) {
             data.content = marked(data.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
             try {
-                wordpress.initialize(onSuccessCallback, onErrorCallback);
                 uploadImages(data.content, function() {
                     var content = data.content;
                     _.each(data.images, function(image) {
@@ -845,7 +851,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
             processResponse(result, post, function() {
                 logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
-                onSuccessCallback();
+                onSuccessCallback(result.concat());
             }, onErrorCallback);
         } else {
             result = wp.newPost(DEFAULT_BLOG_ID, data);

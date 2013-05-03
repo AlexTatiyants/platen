@@ -83,7 +83,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
       processResponse(result, post, function() {
         logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
-        onSuccessCallback();
+        onSuccessCallback(result.concat());
       }, onErrorCallback);
 
     } else {

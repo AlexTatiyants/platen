@@ -51,31 +51,34 @@ function($q, resources, fileManager, wordpress, logger) {
   var uploadImage = function(image) {
     var d = $q.defer();
 
-    fileManager.readFile(image.filePath, false,
+    try {
+      fileManager.readFile(image.filePath, false,
 
-    function(imageData) {
-      // on success
-      wordpress.uploadFile(image.fileName, image.type, imageData,
+      function(imageData) {
+        wordpress.uploadFile(image.fileName, image.type, imageData,
 
-      function(id, url) {
-        // on success
-        image.blogUrl = url;
-        image.blogId = id;
-        savePost();
-        logger.log("uploaded image" + image.fileName, "Post module");
-        d.resolve();
+        function(id, url) {
+          image.blogUrl = url;
+          image.blogId = id;
+          savePost();
+          logger.log("uploaded image" + image.fileName, "Post module");
+          d.resolve();
+        },
+
+        function(e) {
+          d.reject();
+          logger.log("error uploading image " + image.fileName, "Post Module");
+        })
       },
 
       function(e) {
-        // on error
-        logger.log("error uploading image " + image.fileName, "Post Module");
-      })
-    },
-
-    function(e) {
-      // on error
-      logger.log("error reading image " + image.fileName, "Post Module");
-    });
+        d.reject();
+        logger.log("error reading image " + image.fileName, "Post Module");
+      });
+    } catch (e) {
+      d.reject();
+      logger.log("error uploading image " + image.fileName, "Post Module");
+    }
 
     return d.promise;
   };
@@ -124,12 +127,14 @@ function($q, resources, fileManager, wordpress, logger) {
 
     sync: function(onSuccessCallback, onErrorCallback) {
       data.content = marked(data.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
       try {
-        wordpress.initialize(onSuccessCallback, onErrorCallback);
+        // wordpress.initialize(onSuccessCallback, onErrorCallback);
 
-        uploadImages(data.content, function() {
+        uploadImages(data.content,
+
+        function() {
           var content = data.content;
-
           _.each(data.images, function(image) {
             content = content.replace(image.localUrl, image.blogUrl);
           });
