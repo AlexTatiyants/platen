@@ -2,8 +2,9 @@
 
 angular.module('platen.directives', []);
 angular.module('platen.services', []);
+angular.module('platen.models', []);
 
-var platen = angular.module('platen', ['platen.directives', 'platen.services', 'ui.bootstrap', 'ui'])
+var platen = angular.module('platen', ['platen.models', 'platen.directives', 'platen.services', 'ui.bootstrap', 'ui'])
 	.config(['$routeProvider', function($routeProvider) {
 
 	$routeProvider.when('/posts', {
@@ -17,7 +18,7 @@ var platen = angular.module('platen', ['platen.directives', 'platen.services', '
 	$routeProvider.when('/images', {
 		templateUrl: 'views/images.html'
 	});
-	
+
 	$routeProvider.when('/logs', {
 		templateUrl: 'views/logs.html'
 	});

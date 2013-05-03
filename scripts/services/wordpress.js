@@ -148,7 +148,6 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       logger.log("uploaded file " + file.fileName + "' to blog '" + l.url, "wordpress service");
       onSuccessCallback(result.id.concat(), result.url.concat());
     }
-
   };
 
   var runCommand = function(runAction, args, onSuccessCallback, onErrorCallback) {
@@ -175,9 +174,9 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       logger.log("reset credentials", "wordpress service");
     },
 
-    getPost: function(postId) {
-      if (!wp) initialize();
-    },
+    // getPost: function(postId, onSuccessCallback, onErrorCallback) {
+    //   if (!wp) initialize();
+    // },
 
     savePost: function(post, onSuccessCallback, onErrorCallback) {
       runCommand(save, post, onSuccessCallback, onErrorCallback);

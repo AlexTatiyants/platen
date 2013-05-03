@@ -1,6 +1,9 @@
 angular.module('platen.services').factory('fileManager', function() {
   var fs;
   var SIZE = 10 * 1024 * 1024; // 10 megabytes
+  var LIST_FILE = 1;
+  var READ_FILE = 2;
+  var REMOVE_FILE = 3;
 
   var doCreate = {
     create: true
@@ -14,8 +17,8 @@ angular.module('platen.services').factory('fileManager', function() {
     type: 'text/plain'
   };
 
-  var onError = function(e, step) {
-    console.log('Error ' + e.code + ': ' + e.name, step);
+  var getError = function(e, step) {
+    return 'Error ' + e.code + ': ' + e.name + ' ' + step;
   };
 
   // add "name" property to FileError prototype for easier error reporting
@@ -29,107 +32,94 @@ angular.module('platen.services').factory('fileManager', function() {
     return 'Unknown Error';
   });
 
-  var getFileEntryAndDoAction = function(filePath, createParam, action) {
+  var getFileEntryAndDoAction = function(filePath, createParam, actionCallback, onErrorCallback) {
     if (fs) {
-      fs.root.getFile(filePath, createParam, action, function(e) {
-        onError(e, "in getFileEntryAndDoAction(), while getting file entry for " + filePath);
-      });
+      fs.root.getFile(filePath, createParam, actionCallback, onErrorCallback);
     }
   };
 
   return {
-    initialize: function() {
-      window.webkitRequestFileSystem(PERSISTENT, SIZE, function(fileSystem) {
+    directoryAccessActions: function() {
+      return {
+        LIST: LIST_FILE,
+        READ: READ_FILE,
+        REMOVE: REMOVE_FILE
+      };
+    },
+
+    initialize: function(onErrorCallback) {
+      window.webkitRequestFileSystem(PERSISTENT, SIZE,
+
+      function(fileSystem) {
         fs = fileSystem;
-      }, onError);
-    },
+      },
 
-    listFilesinDirectory: function(directoryPath, onSuccessCallback) {
-      if (fs) {
-        fs.root.getDirectory(directoryPath, doCreate, function(dirEntry) {
-          var dirReader = dirEntry.createReader();
-          dirReader.readEntries(function(entries) {
-            _.each(entries, function(entry) {
-              if (entry.isFile) {
-                onSuccessCallback(entry);
-              }
-            })
-          }, function(e) {
-            onError(e, "in readFilesInDirectory, while reading entries from " + directoryPath);
-          });
-        }, function(e) {
-          onError(e, "in readFilesInDirectory, while getting directory " + directoryPath);
-        });
-      }      
-    },
-
-    readFilesInDirectory: function(directoryPath, onSuccessCallback) {
-      if (fs) {
-        fs.root.getDirectory(directoryPath, doCreate, function(dirEntry) {
-
-          var dirReader = dirEntry.createReader();
-
-          dirReader.readEntries(function(entries) {
-
-            _.each(entries, function(entry) {
-              if (entry.isFile) {
-                getFileEntryAndDoAction(entry.fullPath, dontCreate, function(fileEntry) {
-                  fileEntry.file(function(file) {
-                    var reader = new FileReader();
-                    reader.onloadend = onSuccessCallback;
-                    reader.readAsText(file);
-                  }, function(e) {
-                    onError(e, "in readFilesInDirectory, while getting file " + entry.fullPath);
-                  });
-                });
-              }
-            })
-          }, function(e) {
-            onError(e, "in readFilesInDirectory, while reading entries from " + directoryPath);
-          });
-        }, function(e) {
-          onError(e, "in readFilesInDirectory, while getting directory " + directoryPath);
-        });
-      }
-    },
-
-    readRootDirectory: function() {
-      var dirReader = fs.root.createReader();
-
-      dirReader.readEntries(function(entries) {
-        var imgReader = entries[2].createReader();
-
-        imgReader.readEntries(function(images) {
-          console.log(images);
-          _.each(images, function(image) {
-            console.log(image.toURL());
-          })
-        })
+      function(e) {
+        onErrorCallback(getError(e, "while initializing file system"));
       });
-
     },
 
-    clearDirectory: function(directoryPath) {
+    accessFilesInDirectory: function(directoryPath, accessAction, onSuccessCallback, onErrorCallback) {
       if (fs) {
-        fs.root.getDirectory(directoryPath, {}, function(dirEntry) {
+        fs.root.getDirectory(directoryPath, doCreate,
+
+        function(dirEntry) {
           var dirReader = dirEntry.createReader();
           dirReader.readEntries(function(entries) {
             _.each(entries, function(entry) {
               if (entry.isFile) {
-                getFileEntryAndDoAction(entry.fullPath, false, function(fileEntry) {
-                  fileEntry.remove(function() {
-                    console.log("removed file " + entry.fullPath);
-                  }, function(e) {
-                    onError(e, "while removing file " + entry.fullPath);
-                  });
-                });
+
+                switch (accessAction) {
+                  case LIST_FILE:
+                    onSuccessCallback(entry);
+                    break;
+
+                  case READ_FILE:
+                    // getFileEntryAndDoAction(entry.fullPath, dontCreate,
+
+                    // function(fileEntry) {
+                    //   fileEntry.file(function(file) {
+                    //     var reader = new FileReader();
+                    //     reader.onloadend = onSuccessCallback;
+                    //     reader.readAsText(file);
+                    //   },
+
+                    //   function(e) {
+                    //     onErrorCallback(getError(e, "while getting file " + entry.fullPath));
+                    //   });
+                    // });
+                    break;
+
+                  case REMOVE_FILE:
+                    // getFileEntryAndDoAction(entry.fullPath, dontCreate,
+
+                    // function(fileEntry) {
+                    //   fileEntry.remove(function() {
+                    //     onSuccessCallback();
+                    //   },
+
+                    //   function(e) {
+                    //     onErrorCallback(getError(e, "while removing file " + entry.fullPath));
+                    //   });
+                    //   );
+                    // });
+                    break;
+
+                  default:
+                    onSuccessCallback(entry);
+                    break;
+                }
               }
             })
-          }, function(e) {
-            onError(e, "in clearDirectory, while reading entries for " + directoryPath);
+          },
+
+          function(e) {
+            onErrorCallback(getError(e, "while reading entries in " + directoryPath));
           });
-        }, function(e) {
-          onError(e, "in clearDirectory(), while getting directory " + directoryPath);
+        },
+
+        function(e) {
+          onErrorCallback(getError(e, "while reading getting directory " + directoryPath));
         });
       }
     },
@@ -143,32 +133,35 @@ angular.module('platen.services').factory('fileManager', function() {
         blob = new Blob([fileBody], DEFAULT_FILE_TYPE);
       }
 
-      getFileEntryAndDoAction(filePath, doCreate, function(fileEntry) {
-        fileEntry.createWriter(function(fileWriter) {
-          fileWriter.onerror = onError;
-          fileWriter.onwriteend = function() {
-            fileWriter.onwriteend = null;
-            fileWriter.write(blob);
-            onSuccessCallback(fileEntry);
-          }
+      // getFileEntryAndDoAction(filePath, doCreate,
 
-          // a call to truncate() is apparently required if a file is being overriden
-          // without this call, there may be extra bits in the newly written file
-          fileWriter.truncate(blob.size);
+      // function(fileEntry) {
+      //   fileEntry.createWriter(function(fileWriter) {
+      //     fileWriter.onerror = onError;
+      //     fileWriter.onwriteend = function() {
+      //       fileWriter.onwriteend = null;
+      //       fileWriter.write(blob);
+      //       onSuccessCallback(fileEntry);
+      //     }
 
-        }, function(e) {
-          onError(e, "in writeFile(), while creating fileWriter for " + filePath + "/" + fileName);
-          onErrorCallback();
-        });
-      });
+      //     // a call to truncate() is apparently required if a file is being overriden
+      //     // without this call, there may be extra bits in the newly written file
+      //     fileWriter.truncate(blob.size);
+
+      //   }, function(e) {
+      //     onErrorCallback(getError(e, " while creating fileWriter for " + filePath));
+      //   });
+      // },
     },
 
-    readFile: function(filePath, asText, getResultCallback) {
-      getFileEntryAndDoAction(filePath, dontCreate, function(fileEntry) {
+    readFile: function(filePath, asText, onSuccessCallback, onErrorCallback) {
+      getFileEntryAndDoAction(filePath, dontCreate,
+
+      function(fileEntry) {
         fileEntry.file(function(file) {
           var reader = new FileReader();
           reader.onload = function(e) {
-            getResultCallback(e.target.result);
+            onSuccessCallback(e.target.result);
           };
           if (asText) {
             reader.readAsText(file);
@@ -176,15 +169,17 @@ angular.module('platen.services').factory('fileManager', function() {
             reader.readAsBinaryString(file);
           }
         }, function(e) {
-          onError(e, "in readingFile(), while reading file " + filePath);
+          onErrorCallback(getError(e, " while reading file " + filePath));
         });
       });
     },
 
-    removeFile: function(filePath, onSuccess) {
-      getFileEntryAndDoAction(filePath, dontCreate, function(fileEntry) {
-        fileEntry.remove(onSuccess, function(e) {
-          onError(e, "in removeFile(), while reading file " + filePath);
+    removeFile: function(filePath, onSuccessCallback, onErrorCallback) {
+      getFileEntryAndDoAction(filePath, dontCreate,
+
+      function(fileEntry) {
+        fileEntry.remove(onSuccessCallback, function(e) {
+          onErrorCallback(getError(e, " while removing file " + filePath));
         });
       });
     }

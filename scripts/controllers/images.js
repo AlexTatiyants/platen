@@ -5,7 +5,13 @@ var ImagesController = function($scope, fileManager, logger, resources) {
   $scope.imageToDelete = {};
 
   if (!$scope.loaded) {
-    fileManager.listFilesinDirectory(resources.IMAGE_DIRECTORY_PATH, function(entry) {
+    fileManager.accessFilesInDirectory(
+
+    resources.POST_DIRECTORY_PATH,
+    fileManager.directoryAccessActions.READ_FILE,
+
+    function(file) {
+      // on success
       var image = {};
 
       image.name = entry.name;
@@ -16,6 +22,15 @@ var ImagesController = function($scope, fileManager, logger, resources) {
       $scope.images[image.id] = image;
 
       $scope.$apply();
+    },
+
+    function(error) {
+      // on error
+      logger.log(error, "ImagesController");
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "loading images failed",
+        success: false
+      });
     });
   };
 
@@ -31,18 +46,22 @@ var ImagesController = function($scope, fileManager, logger, resources) {
 
   $scope.proceedWithDelete = function() {
     $scope.deleteImageConfirmOpen = false;
-    fileManager.removeFile($scope.imageToDelete.path, function() {
+    fileManager.removeFile($scope.imageToDelete.path,
+
+    function() {
+      // on success
       delete $scope.images[$scope.imageToDelete.id];
-      logger.log("deleted image  '" + $scope.imageToDelete.title + "'", "ImagesController");
+      logger.log("deleted image '" + $scope.imageToDelete.title + "'", "ImagesController");
       $scope.imageToDelete = {};
       $scope.$apply();
-    });
-  };
+    },
 
-  $scope.deleteAll = function() {
-    fileManager.clearDirectory(resources.IMAGE_DIRECTORY_PATH, function() {
-      logger.log("deleted all images", "ImagesController");
-      $scope.images = {};
+    function(error) {
+      // on error
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "failed to deleted image '" + $scope.postToDelete.title + "'",
+        success: false
+      });
     });
   };
 };
