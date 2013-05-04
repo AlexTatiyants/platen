@@ -35,6 +35,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources)
     $scope.appStatus.message = args.message;
     $scope.appStatus.isSuccess = args.success;
     $scope.appStatus.showMessage = true;
+    $scope.safeApply();
 
     $timeout(function(e) {
       $scope.appStatus.showMessage = false;

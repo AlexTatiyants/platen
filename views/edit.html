@@ -56,19 +56,16 @@
           <label>associated images</label>
           <ul>
             <li class="thumbnail" data-ng-repeat="image in post.images">
-              <span class="image-controls">
-                <span class="icon-insert" data-ng-click="insertImage(image)"></span>
-                <span class="icon-delete" data-ng-click="deleteImage(image)"></span>
-              </span>
+              <span class="caption" data-ng-bind="image.name"></span>
               <img data-ng-src="{{image.localUrl}}"></img>
-              <span class="caption">
-                <span data-ng-bind="image.fileName"></span>
-                <br>
-                [<span data-ng-bind="image.id"></span>]
+              <span class="image-controls">
+                <span class="icon-insert" data-ng-click="addImageToPost(image)"></span>
+                <span class="icon-delete" data-ng-click="initiateImageDelete(image)"></span>
               </span>
             </li>
           </ul>
         </div>
+        <div class="field-group full">wordpress id: <span data-ng-bind="post.wordPressId"></span></div>
       </section>
     </div>
   </aside>

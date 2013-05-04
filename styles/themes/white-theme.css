@@ -336,9 +336,9 @@
   margin-top: 10px;
 }
 .image-controls {
-  position: relative;
-  top: 100px;
-  left: 30px;
+  position: absolute;
+  top: 30px;
+  right: 20px;
   background-color: #4d4d4d;
   opacity: 0.9;
   padding: 6px;
@@ -356,6 +356,9 @@
   margin-right: 20px;
   margin-bottom: 10px;
   width: 120px;
+  height: 120px;
+  position: relative;
+  overflow: hidden;
 }
 .thumbnail img {
   float: left;
@@ -365,7 +368,11 @@
   box-shadow: 1px 1px 1px #000000;
 }
 .thumbnail .caption {
-  margin-top: 10px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 110px;
+  margin-bottom: 10px;
   float: left;
   font-size: 12.8px;
 }

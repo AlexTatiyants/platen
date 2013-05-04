@@ -113,9 +113,9 @@
 }
 
 .image-controls {
-    position: relative;
-    top: @pad-unit * 5;
-    left: @pad-unit * 1.5;
+    position: absolute;
+    top: @pad-unit * 1.5;
+    right: @pad-unit;
     background-color: @alt-base-color;
     opacity: 0.9;
     padding: @pad-unit * 0.3;
@@ -135,6 +135,9 @@
     margin-right: @pad-unit;
     margin-bottom: @pad-unit * 0.5;
     width: @pad-unit * 6;
+    height: @pad-unit * 6;
+    position: relative;
+    overflow: hidden;
 
     img {        
         float: left;
@@ -145,7 +148,11 @@
     }
 
     .caption {
-        margin-top: @pad-unit * 0.5;
+        white-space: nowrap;
+        text-overflow: ellipsis;   
+        overflow: hidden;
+        width: @pad-unit * 5.5;        
+        margin-bottom: @pad-unit * 0.5;
         float: left;
         font-size: @base-font-size * 0.8;
     }

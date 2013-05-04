@@ -1,13 +1,23 @@
 var LoginController = function($scope, dialog, wordpress) {
-  $scope.login = wordpress.login;
-  console.log("in login controller");
+
+  $scope.login = {
+    url: wordpress.login.url,
+    username: wordpress.login.username,
+    password: wordpress.login.password,
+    rememberCredentials: wordpress.login.rememberCredentials
+  };
 
   $scope.submit = function() {
-    dialog.close('ok');
+    wordpress.saveCredentials($scope.login);
+    dialog.close();
   };
 
   $scope.resetCredentials = function() {
-    wordpress.resetCredentials();
+    $scope.login.url = '';
+    $scope.login.username = '';
+    $scope.login.password = '';
+
+    wordpress.saveCredentials($scope.login);
     dialog.close();
   };
 

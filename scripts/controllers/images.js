@@ -64,6 +64,32 @@ var ImagesController = function($scope, fileManager, logger, resources) {
       });
     });
   };
+
+   $scope.deleteAll = function() {
+    fileManager.accessFilesInDirectory(
+
+    resources.IMAGE_DIRECTORY_PATH,
+    fileManager.directoryAccessActions.REMOVE,
+
+    function(file) {
+      logger.log("deleted all images", "ImagesController");
+      $scope.images = {};
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "all images removed",
+        success: true
+      });
+    },
+
+    function(error) {
+      // on error
+      logger.log("error removing all images: " + error, "ImagesController");
+
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "removing images failed",
+        success: false
+      });
+    });
+  };
 };
 
 ImagesController.$inject = ['$scope', 'fileManager', 'logger', 'resources'];

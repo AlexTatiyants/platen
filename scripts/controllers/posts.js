@@ -16,12 +16,6 @@ var PostsController = function($scope, $location, fileManager, logger, resources
         var post = JSON.parse(file);
         $scope.posts[post.id] = post;
         $scope.loaded = true;
-
-        $scope.$emit(resources.events.PROCESSING_FINISHED, {
-          message: "loaded posts",
-          success: true
-        });
-
         $scope.$apply();
 
       } catch (error) {

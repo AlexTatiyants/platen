@@ -60,7 +60,6 @@ function($q, resources, fileManager, wordpress, logger) {
         function(id, url) {
           image.blogUrl = url;
           image.blogId = id;
-          savePost();
           logger.log("uploaded image" + image.fileName, "Post module");
           d.resolve();
         },
@@ -129,11 +128,10 @@ function($q, resources, fileManager, wordpress, logger) {
       data.content = marked(data.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
       try {
-        // wordpress.initialize(onSuccessCallback, onErrorCallback);
+        // before uploading the post to WordPress, we need to 
+        // extract and upload any images which haven't already been uploaded
+        uploadImages(data.content, function() {
 
-        uploadImages(data.content,
-
-        function() {
           var content = data.content;
           _.each(data.images, function(image) {
             content = content.replace(image.localUrl, image.blogUrl);
@@ -142,10 +140,13 @@ function($q, resources, fileManager, wordpress, logger) {
           data.content = content;
 
           wordpress.savePost(data, function(result) {
-            data.wordPressId = result;
-            savePost(onSuccessCallback, onErrorCallback);
-
-          }, onSuccessCallback, onErrorCallback);
+            // if this is the first time the post is being uploaded
+            // we'll get a WordPress id which should be saved locally
+            if (!data.wordPressId) {
+              data.wordPressId = result;
+              savePost(onSuccessCallback, onErrorCallback);
+            }
+          }, onErrorCallback);
         });
       } catch (e) {
         onErrorCallback(e);

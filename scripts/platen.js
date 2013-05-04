@@ -1,4 +1,4 @@
-/*! platen 2013-05-03 */
+/*! platen 2013-05-04 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -28,7 +28,7 @@ var platen = angular.module("platen", [ "platen.models", "platen.directives", "p
     });
 } ]);
 
-var EditorController = function(Post, $scope, $routeParams, $filter, fileManager, logger, resources) {
+var EditorController = function(Post, $scope, $routeParams, $filter, fileManager, wordpress, logger, resources) {
     var AUTOSAVE_INTERVAL = 12e3;
     var STATUS_DRAFT = "draft";
     var STATUS_PUBLISH = "publish";
@@ -39,9 +39,20 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     var POST_CATEGORIES = "post-categories";
     var EDITABLE_ELEMENTS = [ POST_TITLE_ID, POST_CONTENT_ID, POST_EXCERPT, POST_TAGS, POST_CATEGORIES ];
     var INSERTED_IMAGE_PLACEHOLDER = "[[!@#IMAGE_PLACEHOLDER#@!]]";
+    var DELETED_IMAGE_PLACEHOLDER = "!! IMAGE DELETED !!";
     var MESSAGE_PREVIEW_HTML = "Preview as HTML";
     var MESSAGE_PREVIEW_MARKDOWN = "View Markdown";
     var IMAGE_TYPE = "image/png";
+    var notify = function(message, error, isSuccess) {
+        if (error) {
+            message += ": " + error;
+        }
+        logger.log(message, "EditorController");
+        $scope.$emit(resources.events.PROCESSING_FINISHED, {
+            message: message,
+            success: isSuccess
+        });
+    };
     Post.initialize($routeParams.postId, function(post) {
         $scope.post = post;
         $scope.status = {};
@@ -52,18 +63,16 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
         $("#post-title").focus();
         $scope.safeApply();
-    }, function(e) {
-        logger.log("error loading post: " + e, "EditorController");
-        $scope.$emit(resources.events.PROCESSING_FINISHED, "error loading post", false);
+    }, function(error) {
+        notify("error loading post", error, false);
     });
     var savePost = function() {
         Post.save(function() {
             $scope.status.autoSaveTime = $filter("date")(new Date(), "shortTime");
             $scope.$apply();
             logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
-        }, function(e) {
-            logger.log("erorr saving post '" + $scope.post.title + ": " + e, "EditorController");
-            $scope.$emit(resources.events.PROCESSING_FINISHED, "error saving post", false);
+        }, function(error) {
+            notify("erorr saving post", error, false);
         });
     };
     $scope.$on("elementEdited", function(event, elementId) {
@@ -79,34 +88,28 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         var image = {
             id: new Date().getTime(),
             type: IMAGE_TYPE,
+            name: imageName,
             fileName: fileName,
             filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName
         };
         var contentMarkdownHtml = $scope.post.contentMarkdownHtml;
         fileManager.writeFile(image.filePath, imageBlob, function(fileEntry) {
-            logger.log("saved image " + image.fileName, "EditorController");
             image.localUrl = fileEntry.toURL();
-            image.markdownUrl = "![" + image.fileName + "](" + image.localUrl + ")";
+            image.markdownUrl = "![" + image.name + "](" + image.localUrl + ")";
             $scope.post.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
             $scope.post.images[image.id] = image;
             savePost(onSuccessCallback, onErrorCallback);
             image = {};
-        }, function(e) {
-            logger.log("could not save image " + image.fileName + ": e", "EditorController");
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "could not save image",
-                success: false
-            });
+            notify("image saved", null, true);
+        }, function(error) {
+            notify("error saving image", error, false);
         });
     };
-    var insertImage = function(blob) {
+    $scope.$on("imageInserted", function(event, blob) {
         $scope.imageToInsert = {};
         $scope.imageToInsert.blob = blob;
         document.execCommand("insertHtml", false, INSERTED_IMAGE_PLACEHOLDER);
         $scope.insertImageDialogOpen = true;
-    };
-    $scope.$on("imageInserted", function(event, blob) {
-        insertImage(blob);
     });
     $scope.proceedWithImageInsert = function() {
         $scope.insertImageDialogOpen = false;
@@ -114,9 +117,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             $scope.status.autoSaveTime = $filter("date")(new Date(), "shortTime");
             $scope.$apply();
             logger.log("updated post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
-        }, function(e) {
-            logger.log("erorr updating post '" + $scope.post.title + ": " + e, "EditorController");
-            $scope.$emit(resources.events.PROCESSING_FINISHED, "error saving post", false);
+        }, function(error) {
+            notify("erorr updating post '" + $scope.post.title, error, false);
         });
     };
     $scope.cancelImageInsert = function() {
@@ -146,27 +148,18 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         savePost();
     };
     $scope.sync = function() {
-        $scope.$emit(resources.events.PROCESSING_STARTED, "uploading post to WordPress");
+        notify("starting WordPress upload", null, true);
         Post.sync(function() {
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "upload to WordPress complete",
-                success: true
-            });
-        }, function(e) {
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "upload to WordPress failed",
-                success: false
-            });
+            notify("finished upload to WordPress", null, false);
+        }, function(error) {
+            notify("error uploading post '" + $scope.post.title, error, false);
         });
     };
     $scope.getTags = function() {
         wordpress.getTags(function(result) {
             $scope.tags = result;
-        }, function(errorMessage) {
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "could not load WordPress tags",
-                success: false
-            });
+        }, function(error) {
+            notify("error loading tags from WordPress", error, false);
         });
     };
     $scope.addTag = function(tag) {
@@ -181,11 +174,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.getCategories = function() {
         wordpress.getCategories(function(result) {
             $scope.categories = result;
-        }, function(errorMessage) {
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "could not load WordPress categories",
-                success: false
-            });
+        }, function(error) {
+            notify("error loading categories from WordPress", error, false);
         });
     };
     $scope.addCategory = function(category) {
@@ -200,7 +190,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.imagesAvailable = function() {
         return !$.isEmptyObject($scope.post.images);
     };
-    $scope.deleteImage = function(image) {
+    $scope.initiateImageDelete = function(image) {
         $scope.imageToDelete = image;
         $scope.deleteImageConfirmOpen = true;
     };
@@ -210,21 +200,21 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     };
     $scope.proceedWithImageDelete = function() {
         $scope.deleteImageConfirmOpen = false;
+        var imageToDelete = $scope.imageToDelete;
         fileManager.removeFile($scope.imageToDelete.filePath, function() {
-            delete $scope.post.images[$scope.imageToDelete.id];
+            $scope.post.contentMarkdownHtml = $scope.post.contentMarkdownHtml.replace(imageToDelete.localUrl, DELETED_IMAGE_PLACEHOLDER);
+            delete $scope.post.images[imageToDelete.id];
             savePost();
-            logger.log("deleted image '" + $scope.imageToDelete.fileName + "'", "EditorController");
+            logger.log("deleted image '" + imageToDelete.fileName + "'", "EditorController");
             $scope.imageToDelete = {};
-        }, function() {
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "could not delete image",
-                success: false
-            });
+        }, function(error) {
+            notify("error deleting image", error, false);
         });
     };
+    $scope.addImageToPost = function(image) {};
 };
 
-EditorController.$inject = [ "Post", "$scope", "$routeParams", "$filter", "fileManager", "logger", "resources" ];
+EditorController.$inject = [ "Post", "$scope", "$routeParams", "$filter", "fileManager", "wordpress", "logger", "resources" ];
 
 var ImagesController = function($scope, fileManager, logger, resources) {
     $scope.images = {};
@@ -270,18 +260,42 @@ var ImagesController = function($scope, fileManager, logger, resources) {
             });
         });
     };
+    $scope.deleteAll = function() {
+        fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
+            logger.log("deleted all images", "ImagesController");
+            $scope.images = {};
+            $scope.$emit(resources.events.PROCESSING_FINISHED, {
+                message: "all images removed",
+                success: true
+            });
+        }, function(error) {
+            logger.log("error removing all images: " + error, "ImagesController");
+            $scope.$emit(resources.events.PROCESSING_FINISHED, {
+                message: "removing images failed",
+                success: false
+            });
+        });
+    };
 };
 
 ImagesController.$inject = [ "$scope", "fileManager", "logger", "resources" ];
 
 var LoginController = function($scope, dialog, wordpress) {
-    $scope.login = wordpress.login;
-    console.log("in login controller");
+    $scope.login = {
+        url: wordpress.login.url,
+        username: wordpress.login.username,
+        password: wordpress.login.password,
+        rememberCredentials: wordpress.login.rememberCredentials
+    };
     $scope.submit = function() {
-        dialog.close("ok");
+        wordpress.saveCredentials($scope.login);
+        dialog.close();
     };
     $scope.resetCredentials = function() {
-        wordpress.resetCredentials();
+        $scope.login.url = "";
+        $scope.login.username = "";
+        $scope.login.password = "";
+        wordpress.saveCredentials($scope.login);
         dialog.close();
     };
     $scope.cancel = function() {
@@ -327,6 +341,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources)
         $scope.appStatus.message = args.message;
         $scope.appStatus.isSuccess = args.success;
         $scope.appStatus.showMessage = true;
+        $scope.safeApply();
         $timeout(function(e) {
             $scope.appStatus.showMessage = false;
         }, FADE_DURATION);
@@ -371,10 +386,6 @@ var PostsController = function($scope, $location, fileManager, logger, resources
                 var post = JSON.parse(file);
                 $scope.posts[post.id] = post;
                 $scope.loaded = true;
-                $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                    message: "loaded posts",
-                    success: true
-                });
                 $scope.$apply();
             } catch (error) {
                 logger.log("error reading file [" + file + "]: " + error, "PostsController");
@@ -536,7 +547,6 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                 wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
                     image.blogUrl = url;
                     image.blogId = id;
-                    savePost();
                     logger.log("uploaded image" + image.fileName, "Post module");
                     d.resolve();
                 }, function(e) {
@@ -590,9 +600,11 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                     });
                     data.content = content;
                     wordpress.savePost(data, function(result) {
-                        data.wordPressId = result;
-                        savePost(onSuccessCallback, onErrorCallback);
-                    }, onSuccessCallback, onErrorCallback);
+                        if (!data.wordPressId) {
+                            data.wordPressId = result;
+                            savePost(onSuccessCallback, onErrorCallback);
+                        }
+                    }, onErrorCallback);
                 });
             } catch (e) {
                 onErrorCallback(e);
@@ -789,9 +801,22 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         url: localStorage["url"] || "",
         username: localStorage["username"] || "",
         password: localStorage["password"] || "",
-        shouldStoreCredentials: false
+        rememberCredentials: localStorage["rememberCredentials"] === "true" ? true : false
     };
     var wp = null;
+    var saveCredentials = function(login) {
+        l.url = login.url;
+        l.username = login.username;
+        l.password = login.password;
+        l.rememberCredentials = login.rememberCredentials;
+        if (l.rememberCredentials) {
+            localStorage["url"] = l.url;
+            localStorage["username"] = l.username;
+            localStorage["password"] = l.password;
+            localStorage["rememberCredentials"] = l.rememberCredentials;
+        }
+        logger.log("saved login credentials for blog + '" + login.url + "'", "wordpress service");
+    };
     var initialize = function(onSuccessCallback, onErrorCallback) {
         if (l.url.trim() === "" || l.username.trim() === "" || l.password.trim() === "") {
             var d = $dialog.dialog({
@@ -813,12 +838,6 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         try {
             wp = new WordPress(fullUrl, l.username, l.password);
             logger.log("logged into blog '" + l.url + "'", "wordpress service");
-            if (l.shouldStoreCredentials) {
-                localStorage["url"] = l.url;
-                localStorage["username"] = l.username;
-                localStorage["password"] = l.password;
-                logger.log("saved login credentials for blog + '" + l.url + "'", "wordpress service");
-            }
         } catch (e) {
             logger.log("unable to log into blog '" + l.url + "': " + e.message, "wordpress service");
             onErrorCallback(e.message);
@@ -827,7 +846,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             onSuccessCallback();
         }
     };
-    var save = function(post, onSuccessCallback, onErrorCallback) {
+    var uploadPost = function(post, onSuccessCallback, onErrorCallback) {
         var result;
         var terms = {};
         var data = {
@@ -851,7 +870,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
             processResponse(result, post, function() {
                 logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
-                onSuccessCallback(result.concat());
+                onSuccessCallback();
             }, onErrorCallback);
         } else {
             result = wp.newPost(DEFAULT_BLOG_ID, data);
@@ -922,17 +941,11 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
                 initialize(onSuccessCallback, onErrorCallback);
             }
         },
-        resetCredentials: function() {
-            localStorage["url"] = "";
-            localStorage["username"] = "";
-            localStorage["password"] = "";
-            l.url = "";
-            l.username = "";
-            l.password = "";
-            logger.log("reset credentials", "wordpress service");
+        saveCredentials: function(login) {
+            saveCredentials(login);
         },
         savePost: function(post, onSuccessCallback, onErrorCallback) {
-            runCommand(save, post, onSuccessCallback, onErrorCallback);
+            runCommand(uploadPost, post, onSuccessCallback, onErrorCallback);
         },
         getTags: function(onSuccessCallback, onErrorCallback) {
             runCommand(getTerms, TAG_TYPE, onSuccessCallback, onErrorCallback);

@@ -9,13 +9,30 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     url: localStorage['url'] || '',
     username: localStorage['username'] || '',
     password: localStorage['password'] || '',
-    shouldStoreCredentials: false
+    rememberCredentials: (localStorage['rememberCredentials'] === 'true') ? true : false
   }
 
   var wp = null;
 
+  var saveCredentials = function(login) {
+    l.url = login.url;
+    l.username = login.username;
+    l.password = login.password;
+    l.rememberCredentials = login.rememberCredentials;
+
+    if (l.rememberCredentials) {
+      localStorage['url'] = l.url;
+      localStorage['username'] = l.username;
+      localStorage['password'] = l.password;
+      localStorage['rememberCredentials'] = l.rememberCredentials;
+    }
+
+    logger.log("saved login credentials for blog + '" + login.url + "'", "wordpress service");
+  };
+
   var initialize = function(onSuccessCallback, onErrorCallback) {
     if (l.url.trim() === '' || l.username.trim() === '' || l.password.trim() === '') {
+
       var d = $dialog.dialog({
         backdrop: true,
         keyboard: true,
@@ -38,13 +55,6 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     try {
       wp = new WordPress(fullUrl, l.username, l.password);
       logger.log("logged into blog '" + l.url + "'", "wordpress service");
-
-      if (l.shouldStoreCredentials) {
-        localStorage['url'] = l.url;
-        localStorage['username'] = l.username;
-        localStorage['password'] = l.password;
-        logger.log("saved login credentials for blog + '" + l.url + "'", "wordpress service");
-      }
     } catch (e) {
       logger.log("unable to log into blog '" + l.url + "': " + e.message, "wordpress service");
       onErrorCallback(e.message);
@@ -54,7 +64,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     }
   };
 
-  var save = function(post, onSuccessCallback, onErrorCallback) {
+  var uploadPost = function(post, onSuccessCallback, onErrorCallback) {
     var result;
     var terms = {};
 
@@ -83,7 +93,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
       processResponse(result, post, function() {
         logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
-        onSuccessCallback(result.concat());
+        onSuccessCallback();
       }, onErrorCallback);
 
     } else {
@@ -169,15 +179,8 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       }
     },
 
-    resetCredentials: function() {
-      localStorage['url'] = '';
-      localStorage['username'] = '';
-      localStorage['password'] = '';
-
-      l.url = '';
-      l.username = '';
-      l.password = '';
-      logger.log("reset credentials", "wordpress service");
+    saveCredentials: function(login) {
+      saveCredentials(login);
     },
 
     // getPost: function(postId, onSuccessCallback, onErrorCallback) {
@@ -185,7 +188,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     // },
 
     savePost: function(post, onSuccessCallback, onErrorCallback) {
-      runCommand(save, post, onSuccessCallback, onErrorCallback);
+      runCommand(uploadPost, post, onSuccessCallback, onErrorCallback);
     },
 
     getTags: function(onSuccessCallback, onErrorCallback) {
