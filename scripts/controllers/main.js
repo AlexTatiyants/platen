@@ -1,6 +1,14 @@
 var MainController = function($scope, $dialog, $timeout, fileManager, resources) {
-
   var FADE_DURATION = 3000;
+  $scope.optionsPanelVisible = false;
+
+  var THEMES = {
+    white: 'white',
+    dark: 'dark'
+  }
+
+  $scope.currentTheme = THEMES.white;
+
   $scope.appStatus = {
     isProcessing: false,
     isSuccess: true,
@@ -22,6 +30,24 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources)
     });
 
     d.open();
+  };
+
+  $scope.switchTheme = function(themeName) {
+    console.log("theme name", themeName);
+    _.each($('link'), function(link) {
+      console.log("title: " + link.title + ", disabled: " + link.disabled + ", match? " + (link.title !== themeName));
+      if (link.title !== themeName) {
+        link.disabled = true;
+      } else {
+        link.disabled = false;
+      }
+      console.log("now, link " + link.title + " disabled = " + link.disabled);
+    });
+    $scope.currentTheme = themeName;
+  };
+
+  $scope.toggleOptionsPanel = function() {
+    $scope.optionsPanelVisible = !$scope.optionsPanelVisible;
   };
 
   $scope.$on(resources.events.PROCESSING_STARTED, function(event, message) {

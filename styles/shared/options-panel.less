@@ -1,0 +1,85 @@
+#options-panel {
+  width: 0;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: linear-gradient(to right, @alt-base-color 94%, @alt-base-color-strong 100%);
+  color: @alt-text-color;
+  transition: width 0.3s ease;
+  font-size: @base-font-size * 0.9;
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 0;
+    margin-left: @pad-unit * -0.5;
+    border-style: solid;
+    border-width: @pad-unit * 0.5;
+    border-left: right;
+    border-color: transparent transparent transparent @alt-base-color-strong;
+  }
+
+  .btn {
+    text-decoration: none;
+    margin: auto;
+    display: block;
+    text-align: center;
+    width: 60%;
+  }
+
+  h3 {
+    padding: @pad-unit * 0.5;
+    color: @alt-base-color;
+  background: linear-gradient(to right, @alt-text-color 94%, @alt-text-color-strong 100%);
+    border-bottom: 1 px solid @alt-line-color;
+  }
+}
+
+.option-container {
+  padding: @pad-unit * 0.3;
+  margin: @pad-unit * 0.5;
+  font-size: @base-font-size * 0.9;
+  border-bottom: 1px solid @alt-line-color;
+
+  label {
+    margin-bottom: @pad-unit * 0.5;
+    display: block;
+  }
+
+  .selected {
+    border: 1px solid @alt-line-color;
+    background-color: @alt-text-color;
+    color: @alt-base-color;
+    border-radius: @border-radius;
+
+    &:hover {
+      color: @alt-text-color;
+      background-color: @alt-base-color;
+    }
+  }
+  ul {
+    list-style: none;
+  }
+}
+
+#options-panel.options-visible {
+  width: 20%;
+}
+
+#main-panel {
+  width: 100%;
+}
+
+#main-panel.options-visible {
+  width: 80%;
+  margin-left: 20%;
+}
+
+.theme-option {
+  padding: @pad-unit * 0.3;
+  display: block;
+  cursor: pointer;
+}

@@ -14,7 +14,7 @@
 
 #metadata-container {
     padding: @pad-unit * 0.3;
-    border-radius: @pad-unit * 0.5 @pad-unit * 0.5 0 0;
+    border-radius: @border-radius @border-radius 0 0;
     background-color: @alt-base-color;
     color: @alt-text-color;
     border: 1px solid @alt-line-color;
@@ -45,8 +45,7 @@
 
     .input {
         border: 1px solid @alt-line-color;
-        border-radius: @pad-unit * 0.2;
-        color: @alt-text-color;
+        border-radius: @border-radius;
         padding: @pad-unit * 0.2;
         padding-right: @pad-unit;
         width: 100%;
@@ -63,7 +62,7 @@
 
 #metadata-collapser {
     display: block;
-    border-radius: @pad-unit * 0.2;
+    border-radius: @border-radius;
     text-align: center;
     width: 95%;
     margin: auto;
@@ -79,7 +78,7 @@
     li {
         width: 43%;
         border: 1px solid @alt-line-color;
-        border-radius: @pad-unit * 0.3;
+        border-radius: @border-radius;
         float: left;
         list-style: none;
         font-size: @base-font-size * 0.8;
@@ -105,7 +104,7 @@
     ul {
         padding: @pad-unit * 0.5;
         border: 1px solid @alt-line-color;
-        border-radius: @pad-unit * 0.3;
+        border-radius: @border-radius;
         height: @pad-unit * 9;
         overflow-y: auto;
         margin-top: @pad-unit * 0.5;
@@ -120,7 +119,7 @@
     opacity: 0.9;
     padding: @pad-unit * 0.3;
     border: 1px solid @alt-line-color;
-    border-radius: @pad-unit * 0.2;
+    border-radius: @border-radius;
 
     span {
         display: inline;
@@ -139,19 +138,19 @@
     position: relative;
     overflow: hidden;
 
-    img {        
+    img {
         float: left;
         width: @pad-unit * 5;
-        border-radius: @pad-unit * 0.3;
+        border-radius: @border-radius;
         border: 1px solid @alt-line-color;
         box-shadow: 1px 1px 1px @alt-shadow-color;
     }
 
     .caption {
         white-space: nowrap;
-        text-overflow: ellipsis;   
+        text-overflow: ellipsis;
         overflow: hidden;
-        width: @pad-unit * 5.5;        
+        width: @pad-unit * 5.5;
         margin-bottom: @pad-unit * 0.5;
         float: left;
         font-size: @base-font-size * 0.8;

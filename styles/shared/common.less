@@ -2,16 +2,17 @@
 @import 'lists.less';
 @import 'editor.less';
 @import 'metadata-panel.less';
+@import 'options-panel.less';
 @import 'icons.less';
 @import 'modal.less';
-@import 'error-bar.less';
+@import 'status-panel.less';
 
 @sans-font: 'Ubuntu', sans-serif;
 @pad-unit: 20px;
 @base-font-size: 16px;
 @base-line-height: 25px;
-
 @main-menu-height: 300px;
+@border-radius: 3px;
 
 html {
   height: 100%;
@@ -28,12 +29,14 @@ body {
   background-color: @base-color;
   width: 100%;
   height: 100%;
+  overflow-x: hidden;
 }
 
 body, input, textarea, button {
   font-family: @sans-font;
   color: @text-color;
 }
+
 
 .main-container {
   height: 100%;
@@ -55,12 +58,9 @@ nav {
   }
 }
 
-#main-panel {
-  height: 88%;
-}
 
 .btn {
-  border-radius: @pad-unit * 0.2;
+  border-radius: @border-radius;
   padding: @pad-unit * 0.2 @pad-unit @pad-unit * 0.2 @pad-unit;
   line-height: @base-font-size * 1.8;
   box-shadow:inset 0px 1px 3px 0px #91b8b3;
@@ -101,7 +101,7 @@ h2 {
 .input-box {
   background-color: @base-color;
   border: 1px solid @line-color;
-  border-radius: @pad-unit * 0.1;
+  border-radius: @border-radius;
   padding: @pad-unit * 0.2;
   padding-right: @pad-unit;
   font-size: @base-font-size * 0.8;

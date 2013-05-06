@@ -1,8 +1,9 @@
 @base-color: #262626;
 @base-color-weak: darken(@base-color, 5%);
-@base-color-rgba-transparent: rgba(255, 255, 255, 0.6);
+@base-color-rgba-transparent: rgba(38, 38, 38, 0.6);
 
 @text-color: lighten(@base-color, 60%);
+@text-color-strong: lighten(@text-color, 80%);
 @text-color-weak: darken(@text-color, 20%);
 @text-color-very-weak: darken(@text-color, 50%);
 
@@ -18,6 +19,7 @@
 @alt-base-color-strong: lighten(@alt-base-color, 15%);
 
 @alt-text-color: #fff - @alt-base-color;
+@alt-text-color-strong: lighten(@alt-text-color, 30%);
 @alt-line-color: lighten(@alt-base-color, 10%);
 
 @alt-shadow-color: darken(@alt-base-color, 50%);
