@@ -24,6 +24,10 @@
       <section id="post-metadata" data-ng-show="showMetadata" data-ng-animate>
 
         <div class="field-group full">
+          <span>status</span>: <span data-ng-bind="post.status"></span>
+        </div>
+
+        <div class="field-group full">
           <label>excerpt</label>
           <span class="icon-reload" data-ng-click="updateExcerpt()" title="set excerpt to post's first paragraph"></span>
           <div class="input" contenteditable="true" data-editable-text="true" data-ng-model="post.excerpt" id="post-excerpt"></div>

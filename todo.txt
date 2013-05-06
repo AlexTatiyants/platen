@@ -15,5 +15,4 @@ WP integration
 - add loading draft posts
 
 Images
-- add image removal if it gets deleted from post
 - add checking for duplicate image names
