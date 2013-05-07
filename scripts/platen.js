@@ -28,8 +28,7 @@ var platen = angular.module("platen", [ "platen.models", "platen.directives", "p
     });
 } ]);
 
-var EditorController = function(Post, $scope, $routeParams, $filter, fileManager, wordpress, logger, resources) {
-    var AUTOSAVE_INTERVAL = 12e3;
+var EditorController = function(Post, $scope, $routeParams, $filter, fileManager, wordpress, logger, resources, settings) {
     var STATUS_DRAFT = "draft";
     var STATUS_PUBLISH = "publish";
     var POST_TITLE_ID = "post-title";
@@ -219,7 +218,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     };
 };
 
-EditorController.$inject = [ "Post", "$scope", "$routeParams", "$filter", "fileManager", "wordpress", "logger", "resources" ];
+EditorController.$inject = [ "Post", "$scope", "$routeParams", "$filter", "fileManager", "wordpress", "logger", "resources", "settings" ];
 
 var ImagesController = function($scope, fileManager, logger, resources) {
     $scope.images = {};
@@ -347,38 +346,45 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
         $scope.currentTheme = settings.getSetting(settings.THEME);
     };
     $scope.currentTheme = settings.getSetting(settings.THEME);
+    $scope.autoSaveInterval = settings.getSetting(settings.AUTOSAVE_INTERVAL);
     $scope.switchTheme($scope.currentTheme);
     $scope.toggleOptionsPanel = function() {
         $scope.optionsPanelVisible = !$scope.optionsPanelVisible;
     };
+    $scope.showMessage = function() {
+        $scope.appStatus.showMessage = true;
+        $timeout(function(e) {
+            $scope.appStatus.showMessage = false;
+        }, FADE_DURATION);
+    };
     $scope.$on(resources.events.PROCESSING_STARTED, function(event, message) {
         $scope.appStatus.isProcessing = true;
-        $scope.appStatus.isSuccess = true;
+        $scope.appStatus.showMessage = false;
         $scope.appStatus.message = message;
     });
     $scope.$on(resources.events.PROCESSING_FINISHED, function(event, args) {
         $scope.appStatus.isProcessing = false;
         $scope.appStatus.message = args.message;
         $scope.appStatus.isSuccess = args.success;
-        $scope.appStatus.showMessage = true;
+        $scope.showMessage();
         $scope.safeApply();
-        $timeout(function(e) {
-            $scope.appStatus.showMessage = false;
-        }, FADE_DURATION);
     });
     $scope.startProcessing = function() {
         $scope.$emit(resources.events.PROCESSING_STARTED, "starting something");
     };
-    $scope.stopProcessing = function() {
+    $scope.stopProcessingWithFail = function() {
         $scope.$emit(resources.events.PROCESSING_FINISHED, {
             message: "bad things happened",
             success: false
         });
     };
-    $scope.resetError = function() {
-        $scope.appStatus.message = "";
-        $scope.appStatus.isProcessing = false;
-        $scope.appStatus.isSuccess = true;
+    $scope.stopProcessingwithSuccess = function() {
+        $scope.$emit(resources.events.PROCESSING_FINISHED, {
+            message: "good things happened",
+            success: true
+        });
+    };
+    $scope.dismissMessage = function() {
         $scope.appStatus.showMessage = false;
     };
     $scope.safeApply = function(fn) {
@@ -828,7 +834,6 @@ angular.module("platen.services").factory("settings", function() {
         white: "white",
         dark: "dark"
     };
-    var AUTOSAVE_INTERVAL = 12e3;
     var getSetting = function(key) {
         return localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key];
     };

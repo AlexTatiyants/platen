@@ -25,10 +25,10 @@
 
         <div class="field-group full">
           <span>status</span>: <span data-ng-bind="post.status"></span>
-          <button data-ng-show="post.status === 'draft'" data-ng-click="togglePublishStatus()">publish</button>
+          <button class="btn small" data-ng-show="post.status === 'draft'" data-ng-click="togglePublishStatus()">publish</button>
           <span data-ng-show="post.state.toBePublished">
             <em>(this post will be published next time you upload it)</em>
-            <button data-ng-click="togglePublishStatus()">undo</button>
+            <button class="btn small" data-ng-click="togglePublishStatus()">undo</button>
           </span>
         </div>
 

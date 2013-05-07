@@ -36,15 +36,23 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
 
   // initialize theme
   $scope.currentTheme = settings.getSetting(settings.THEME);
+  $scope.autoSaveInterval = settings.getSetting(settings.AUTOSAVE_INTERVAL);
   $scope.switchTheme($scope.currentTheme);
 
   $scope.toggleOptionsPanel = function() {
     $scope.optionsPanelVisible = !$scope.optionsPanelVisible;
   };
 
+  $scope.showMessage = function() {
+    $scope.appStatus.showMessage = true;
+    $timeout(function(e) {
+      $scope.appStatus.showMessage = false;
+    }, FADE_DURATION);
+  };
+
   $scope.$on(resources.events.PROCESSING_STARTED, function(event, message) {
     $scope.appStatus.isProcessing = true;
-    $scope.appStatus.isSuccess = true;
+    $scope.appStatus.showMessage = false;
     $scope.appStatus.message = message;
   });
 
@@ -52,29 +60,30 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
     $scope.appStatus.isProcessing = false;
     $scope.appStatus.message = args.message;
     $scope.appStatus.isSuccess = args.success;
-    $scope.appStatus.showMessage = true;
-    $scope.safeApply();
+    $scope.showMessage();
 
-    $timeout(function(e) {
-      $scope.appStatus.showMessage = false;
-    }, FADE_DURATION);
+    $scope.safeApply();
   });
 
   $scope.startProcessing = function() {
     $scope.$emit(resources.events.PROCESSING_STARTED, "starting something");
   };
 
-  $scope.stopProcessing = function() {
+  $scope.stopProcessingWithFail = function() {
     $scope.$emit(resources.events.PROCESSING_FINISHED, {
       message: "bad things happened",
       success: false
     });
   };
 
-  $scope.resetError = function() {
-    $scope.appStatus.message = '';
-    $scope.appStatus.isProcessing = false;
-    $scope.appStatus.isSuccess = true;
+  $scope.stopProcessingwithSuccess = function() {
+    $scope.$emit(resources.events.PROCESSING_FINISHED, {
+      message: "good things happened",
+      success: true
+    });
+  };
+
+  $scope.dismissMessage = function() {
     $scope.appStatus.showMessage = false;
   };
 

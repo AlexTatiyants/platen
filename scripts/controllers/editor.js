@@ -1,5 +1,4 @@
-var EditorController = function(Post, $scope, $routeParams, $filter, fileManager, wordpress, logger, resources) {
-  var AUTOSAVE_INTERVAL = 12000;
+var EditorController = function(Post, $scope, $routeParams, $filter, fileManager, wordpress, logger, resources, settings) {
   var STATUS_DRAFT = 'draft';
   var STATUS_PUBLISH = 'publish';
   var POST_TITLE_ID = 'post-title';
@@ -234,4 +233,4 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   }
 };
 
-EditorController.$inject = ['Post', '$scope', '$routeParams', '$filter', 'fileManager', 'wordpress', 'logger', 'resources'];
+EditorController.$inject = ['Post', '$scope', '$routeParams', '$filter', 'fileManager', 'wordpress', 'logger', 'resources', 'settings'];

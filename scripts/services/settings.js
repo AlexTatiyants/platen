@@ -1,12 +1,12 @@
 angular.module('platen.services').factory('settings', function() {
   var LOCAL_STORAGE_OPTIONS_KEY = 'platen.settings';
+
   var SETTING_THEME = 'theme';
 
   var THEMES = {
     white: 'white',
     dark: 'dark'
   };
-  var AUTOSAVE_INTERVAL = 12000;
 
   var getSetting = function(key) {
     return localStorage[LOCAL_STORAGE_OPTIONS_KEY + '.' + key];

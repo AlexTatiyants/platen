@@ -33,7 +33,7 @@
 }
 .list {
   padding: 0;
-  width: 90%;
+  max-width: 800px;
   margin-top: 20px;
   list-style: none;
   overflow: hidden;
@@ -48,7 +48,6 @@
   padding: 14px;
   border-radius: 3px;
   list-style: none;
-  width: 90%;
   margin: 0 0 6px 0;
 }
 .list-item-line h3 {
@@ -377,7 +376,6 @@
 }
 #options-panel {
   width: 0;
-  overflow: hidden;
   position: fixed;
   top: 0;
   left: 0;
@@ -389,52 +387,96 @@
 #options-panel:after {
   content: '';
   position: absolute;
-  top: 20%;
-  left: 0;
+  top: 20px;
+  right: -20px;
   margin-left: -10px;
   border-style: solid;
   border-width: 10px;
-  border-left: right;
   border-color: transparent transparent transparent #ffffff;
 }
 #options-panel .btn {
   text-decoration: none;
   margin: auto;
+  width: 90%;
   display: block;
   text-align: center;
-  width: 60%;
 }
 #options-panel h3 {
-  padding: 10px;
+  margin-top: 10px;
+  border-bottom: 2px solid #f2f2f2;
+  padding-bottom: 10px;
+  position: relative;
+}
+#options-panel h3:after {
+  content: ".";
   color: #d9d9d9;
-  background: linear-gradient(to right, #272727 94%, #737373 100%);
-  border-bottom: 1 px solid #f2f2f2;
+  border-bottom: 1px solid #b2b2b2;
+  position: absolute;
+  bottom: -3px;
+  left: 0px;
+  width: 100%;
+}
+#options-panel h3 span {
+  padding: 10px;
+  font-size: 19.2px;
+  text-shadow: 2px 0px #f2f2f2;
 }
 #options-panel h3 .icon-close {
-  color: #d9d9d9;
+  font-size: 16px;
+  color: #272727;
+  margin-top: -5px;
+  margin-right: 5px;
+  text-shadow: 0 0 0;
+}
+#options-panel h3 .icon-close:hover {
+  color: #272727;
 }
 .option-container {
-  padding: 6px;
-  margin: 10px;
+  padding: 10px;
   font-size: 14.4px;
   border-bottom: 1px solid #f2f2f2;
+  position: relative;
+}
+.option-container:after {
+  content: ".";
+  color: #d9d9d9;
+  border-bottom: 1px solid #b2b2b2;
+  position: absolute;
+  bottom: -2px;
+  left: 0px;
+  width: 100%;
 }
 .option-container label {
   margin-bottom: 10px;
+  color: #0d0d0d;
   display: block;
+  text-shadow: 1px 0px #f2f2f2;
+}
+.option-container .input-box {
+  width: 80%;
+  border: 1px inset #f2f2f2;
+  color: #272727;
+  background-color: #b2b2b2;
 }
 .option-container .selected {
-  border: 1px solid #f2f2f2;
-  background-color: #272727;
-  color: #d9d9d9;
-  border-radius: 3px;
-}
-.option-container .selected:hover {
+  background-color: #737373;
   color: #272727;
-  background-color: #d9d9d9;
 }
 .option-container ul {
   list-style: none;
+}
+.theme-option {
+  padding: 6px;
+  display: block;
+  cursor: pointer;
+  border-radius: 3px;
+  width: 80%;
+  margin-bottom: 4px;
+  margin-left: 10px;
+}
+.theme-option:hover {
+  color: #d9d9d9;
+  background-color: #272727;
 }
 #options-panel.options-visible {
   width: 20%;
@@ -445,11 +487,6 @@
 #main-panel.options-visible {
   width: 80%;
   margin-left: 20%;
-}
-.theme-option {
-  padding: 6px;
-  display: block;
-  cursor: pointer;
 }
 .slideout-setup {
   transition: width 1s ease;
@@ -637,6 +674,7 @@ nav [class*=" icon-"] {
   height: 30px;
   margin: auto;
   background-color: #262626;
+  cursor: pointer;
 }
 .error {
   background-color: #f26a57;
@@ -657,7 +695,6 @@ nav [class*=" icon-"] {
   color: #262626;
   z-index: 2;
   border-radius: 3px;
-  transition: width 1s;
 }
 .status-message-after-common {
   content: '';
@@ -679,7 +716,6 @@ nav [class*=" icon-"] {
   color: #262626;
   z-index: 2;
   border-radius: 3px;
-  transition: width 1s;
 }
 .status-message.error:after {
   content: '';
@@ -702,7 +738,6 @@ nav [class*=" icon-"] {
   color: #262626;
   z-index: 2;
   border-radius: 3px;
-  transition: width 1s;
 }
 .status-message.success:after {
   content: '';
@@ -823,7 +858,7 @@ nav ul li {
   border-radius: 3px;
   padding: 4px 20px 4px 20px;
   line-height: 28.8px;
-  box-shadow: inset 0px 1px 3px 0px #91b8b3;
+  box-shadow: inset 0px 1px 3px 0px #404040;
   background: linear-gradient(to bottom, #bfbfbf 5%, #a6a6a6 100%);
   background-color: #bfbfbf;
   border: 1px solid #bfbfbf;
@@ -833,6 +868,9 @@ nav ul li {
 .btn:hover {
   background: linear-gradient(to bottom, #a6a6a6 5%, #bfbfbf 100%);
   background-color: #a6a6a6;
+}
+.btn.small {
+  padding: 10px;
 }
 .pull-right {
   float: right;

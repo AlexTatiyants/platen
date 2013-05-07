@@ -59,12 +59,11 @@ nav {
   }
 }
 
-
 .btn {
   border-radius: @border-radius;
   padding: @pad-unit * 0.2 @pad-unit @pad-unit * 0.2 @pad-unit;
   line-height: @base-font-size * 1.8;
-  box-shadow:inset 0px 1px 3px 0px #91b8b3;
+  box-shadow:inset 0px 1px 3px 0px @line-color;
   background:linear-gradient(to bottom, @button-color 5%, @button-color-secondary 100%);
   background-color: @button-color;
   border:1px solid @text-color;
@@ -75,6 +74,10 @@ nav {
     background:linear-gradient(to bottom, @button-color-secondary 5%, @button-color 100%);
     background-color: @button-color-secondary;
   }
+}
+
+.btn.small {
+  padding: @pad-unit/2;
 }
 
 .pull-right {
