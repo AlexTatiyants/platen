@@ -2,11 +2,8 @@ Posts
 
 Editor
 - add keyboard shortcut for preview
-- add status (draft, published) to metadata
 
 Config
-- add config panel
-- add themes
 - add font selection
 
 WP integration

@@ -1,13 +1,6 @@
-var MainController = function($scope, $dialog, $timeout, fileManager, resources) {
+var MainController = function($scope, $dialog, $timeout, fileManager, resources, settings) {
   var FADE_DURATION = 3000;
   $scope.optionsPanelVisible = false;
-
-  var THEMES = {
-    white: 'white',
-    dark: 'dark'
-  }
-
-  $scope.currentTheme = THEMES.white;
 
   $scope.appStatus = {
     isProcessing: false,
@@ -18,33 +11,32 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources)
 
   fileManager.initialize();
 
-  var d;
-
   $scope.loginCredentials = function() {
-    d = $dialog.dialog({
+    $dialog.dialog({
       backdrop: true,
       keyboard: true,
       backdropClick: true,
       controller: 'LoginController',
       templateUrl: 'views/modals/login.html'
-    });
-
-    d.open();
+    }).open();
   };
 
   $scope.switchTheme = function(themeName) {
-    console.log("theme name", themeName);
     _.each($('link'), function(link) {
-      console.log("title: " + link.title + ", disabled: " + link.disabled + ", match? " + (link.title !== themeName));
       if (link.title !== themeName) {
         link.disabled = true;
       } else {
         link.disabled = false;
       }
-      console.log("now, link " + link.title + " disabled = " + link.disabled);
     });
-    $scope.currentTheme = themeName;
+
+    settings.setSetting(settings.THEME, themeName);
+    $scope.currentTheme = settings.getSetting(settings.THEME);
   };
+
+  // initialize theme
+  $scope.currentTheme = settings.getSetting(settings.THEME);
+  $scope.switchTheme($scope.currentTheme);
 
   $scope.toggleOptionsPanel = function() {
     $scope.optionsPanelVisible = !$scope.optionsPanelVisible;
@@ -98,4 +90,4 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources)
   };
 };
 
-MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'resources'];
+MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'resources', 'settings'];

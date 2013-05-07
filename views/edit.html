@@ -1,7 +1,7 @@
 <section id="editor" data-ng-controller="EditorController">
   <section id="edit-panel">
     <span id="status-panel">
-      <span>last saved <strong><span data-ng-bind="post.state.lastSavedAt | date:'short'"></span></strong></span>
+      <span>last saved <strong><span data-ng-bind="post.state.lastSaveDate | date:'short'"></span></strong></span>
     </span>
 
     <h1 class="input-box" id="post-title" contenteditable="true" data-editable-text="true" data-ng-model="post.title"></h1>
@@ -76,7 +76,7 @@
         </div>
         <div class="field-group ">
           <span>wordpress id: <span data-ng-bind="post.wordPressId"></span></span>
-          <span>last uploaded: <span data-ng-bind="post.state.lastUploadedAt | date:'short'"></span></span>
+          <span>last uploaded: <span data-ng-bind="post.state.lastUploadDate | date:'short'"></span></span>
         </div>
       </section>
     </div>

@@ -7,7 +7,7 @@
             <h3 data-ng-bind="post.title"  data-ng-click="editPost(post)" class="clickable-title"></h3>
 
             <span class="item-date">created on
-                <strong data-ng-bind="post.createdDate | date:'short'"></strong>
+                <strong data-ng-bind="post.state.createDate | date:'short'"></strong>
             </span>
         </li>
     </ul>

@@ -34,7 +34,9 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
     logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
     $('#post-title').focus();
+
     $scope.safeApply();
+
   }, function(error) {
     notify("error loading post", error, false);
   });
@@ -42,7 +44,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   var savePost = function() {
     Post.save(function() {
       $scope.$apply();
-      logger.log("saved post '" + $scope.post.title + "' on " + $scope.post.state.lastSavedAt, "EditorController");
+      logger.log("saved post '" + $scope.post.title + "' on " + $scope.post.state.lastSaveDate, "EditorController");
     },
 
     function(error) {

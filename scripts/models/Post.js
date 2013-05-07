@@ -30,15 +30,15 @@ function($q, resources, fileManager, wordpress, logger) {
     data.wordPressId = 0;
 
     data.excerpt = '';
-    data.createdDate = new Date();
-    data.lastUpdatedDate = '';
 
     data.images = {};
     data.tags = '';
     data.categories = '';
+
     data.state = {
-      lastSavedAt: '',
-      lastUploadedAt: '',
+      createDate: new Date(),
+      lastSaveDate: '',
+      lastUploadDate: '',
       toBePublished: false
     };
   };
@@ -50,7 +50,7 @@ function($q, resources, fileManager, wordpress, logger) {
     postToSave.contentHtmlPreview = '';
 
     fileManager.writeFile(getFilePath(data.id), JSON.stringify(postToSave), function() {
-      data.state.lastSavedAt = new Date();
+      data.state.lastSaveDate = new Date();
       onSuccessCallback();
     }, onErrorCallback);
   };
@@ -135,7 +135,7 @@ function($q, resources, fileManager, wordpress, logger) {
       data.content = marked(data.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
       try {
-        // before uploading the post to WordPress, we need to 
+        // before uploading the post to WordPress, we need to
         // extract and upload any images which haven't already been uploaded
         uploadImages(data.content, function() {
 
@@ -149,7 +149,7 @@ function($q, resources, fileManager, wordpress, logger) {
           wordpress.savePost(data, function(result) {
             // if this is the first time the post is being uploaded
             // we'll get a WordPress id which should be saved locally
-            data.state.lastUploadedAt = new Date();
+            data.state.lastUploadDate = new Date();
             if (data.state.toBePublished) {
               data.state.toBePublished = false;
             }

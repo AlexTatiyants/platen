@@ -120,7 +120,7 @@
 }
 #edit-panel {
   margin: auto;
-  max-width: 700px;
+  max-width: 800px;
   width: 80%;
 }
 .post-common {
@@ -256,6 +256,7 @@
   position: relative;
   margin: auto;
   width: 80%;
+  max-width: 780px;
   overflow: hidden;
   box-shadow: 2px 2px 2px #808080;
 }
@@ -383,7 +384,6 @@
   height: 100%;
   background: linear-gradient(to right, #4d4d4d 94%, #262626 100%);
   color: #b3b3b3;
-  transition: width 0.3s ease;
   font-size: 14.4px;
 }
 #options-panel:after {
@@ -409,6 +409,9 @@
   color: #4d4d4d;
   background: linear-gradient(to right, #b3b3b3 94%, #666666 100%);
   border-bottom: 1 px solid #333333;
+}
+#options-panel h3 .icon-close {
+  color: #4d4d4d;
 }
 .option-container {
   padding: 6px;
@@ -447,6 +450,13 @@
   padding: 6px;
   display: block;
   cursor: pointer;
+}
+.slideout-setup {
+  transition: width 1s ease;
+  opacity: 0;
+}
+.slideout-start {
+  opacity: 1;
 }
 @font-face {
   font-family: 'icons';

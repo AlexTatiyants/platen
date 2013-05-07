@@ -7,7 +7,6 @@
   height: 100%;
   background: linear-gradient(to right, @alt-base-color 94%, @alt-base-color-strong 100%);
   color: @alt-text-color;
-  transition: width 0.3s ease;
   font-size: @base-font-size * 0.9;
 
   &:after {
@@ -33,8 +32,12 @@
   h3 {
     padding: @pad-unit * 0.5;
     color: @alt-base-color;
-  background: linear-gradient(to right, @alt-text-color 94%, @alt-text-color-strong 100%);
+    background: linear-gradient(to right, @alt-text-color 94%, @alt-text-color-strong 100%);
     border-bottom: 1 px solid @alt-line-color;
+
+    .icon-close {
+      color: @alt-base-color;
+    }
   }
 }
 
@@ -82,4 +85,13 @@
   padding: @pad-unit * 0.3;
   display: block;
   cursor: pointer;
+}
+
+.slideout-setup {
+  transition: width 1s ease;
+  opacity: 0;
+}
+
+.slideout-start {
+  opacity: 1;
 }

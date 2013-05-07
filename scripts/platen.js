@@ -1,4 +1,4 @@
-/*! platen 2013-05-06 */
+/*! platen 2013-05-07 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -67,7 +67,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     var savePost = function() {
         Post.save(function() {
             $scope.$apply();
-            logger.log("saved post '" + $scope.post.title + "' on " + $scope.post.state.lastSavedAt, "EditorController");
+            logger.log("saved post '" + $scope.post.title + "' on " + $scope.post.state.lastSaveDate, "EditorController");
         }, function(error) {
             notify("erorr saving post", error, false);
         });
@@ -316,14 +316,9 @@ var LogsController = function($scope, logger) {
 
 LogsController.$inject = [ "$scope", "logger" ];
 
-var MainController = function($scope, $dialog, $timeout, fileManager, resources) {
+var MainController = function($scope, $dialog, $timeout, fileManager, resources, settings) {
     var FADE_DURATION = 3e3;
     $scope.optionsPanelVisible = false;
-    var THEMES = {
-        white: "white",
-        dark: "dark"
-    };
-    $scope.currentTheme = THEMES.white;
     $scope.appStatus = {
         isProcessing: false,
         isSuccess: true,
@@ -331,30 +326,28 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources)
         showMessage: false
     };
     fileManager.initialize();
-    var d;
     $scope.loginCredentials = function() {
-        d = $dialog.dialog({
+        $dialog.dialog({
             backdrop: true,
             keyboard: true,
             backdropClick: true,
             controller: "LoginController",
             templateUrl: "views/modals/login.html"
-        });
-        d.open();
+        }).open();
     };
     $scope.switchTheme = function(themeName) {
-        console.log("theme name", themeName);
         _.each($("link"), function(link) {
-            console.log("title: " + link.title + ", disabled: " + link.disabled + ", match? " + (link.title !== themeName));
             if (link.title !== themeName) {
                 link.disabled = true;
             } else {
                 link.disabled = false;
             }
-            console.log("now, link " + link.title + " disabled = " + link.disabled);
         });
-        $scope.currentTheme = themeName;
+        settings.setSetting(settings.THEME, themeName);
+        $scope.currentTheme = settings.getSetting(settings.THEME);
     };
+    $scope.currentTheme = settings.getSetting(settings.THEME);
+    $scope.switchTheme($scope.currentTheme);
     $scope.toggleOptionsPanel = function() {
         $scope.optionsPanelVisible = !$scope.optionsPanelVisible;
     };
@@ -400,7 +393,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources)
     };
 };
 
-MainController.$inject = [ "$scope", "$dialog", "$timeout", "fileManager", "resources" ];
+MainController.$inject = [ "$scope", "$dialog", "$timeout", "fileManager", "resources", "settings" ];
 
 var PostsController = function($scope, $location, fileManager, logger, resources) {
     $scope.posts = {};
@@ -554,14 +547,13 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
         data.contentHtmlPreview = "";
         data.wordPressId = 0;
         data.excerpt = "";
-        data.createdDate = new Date();
-        data.lastUpdatedDate = "";
         data.images = {};
         data.tags = "";
         data.categories = "";
         data.state = {
-            lastSavedAt: "",
-            lastUploadedAt: "",
+            createDate: new Date(),
+            lastSaveDate: "",
+            lastUploadDate: "",
             toBePublished: false
         };
     };
@@ -570,7 +562,7 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
         postToSave.content = "";
         postToSave.contentHtmlPreview = "";
         fileManager.writeFile(getFilePath(data.id), JSON.stringify(postToSave), function() {
-            data.state.lastSavedAt = new Date();
+            data.state.lastSaveDate = new Date();
             onSuccessCallback();
         }, onErrorCallback);
     };
@@ -634,7 +626,7 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                     });
                     data.content = content;
                     wordpress.savePost(data, function(result) {
-                        data.state.lastUploadedAt = new Date();
+                        data.state.lastUploadDate = new Date();
                         if (data.state.toBePublished) {
                             data.state.toBePublished = false;
                         }
@@ -827,6 +819,34 @@ angular.module("platen.services").value("resources", {
         PROCESSING_STARTED: "processingStarted",
         PROCESSING_FINISHED: "processingFinished"
     }
+});
+
+angular.module("platen.services").factory("settings", function() {
+    var LOCAL_STORAGE_OPTIONS_KEY = "platen.settings";
+    var SETTING_THEME = "theme";
+    var THEMES = {
+        white: "white",
+        dark: "dark"
+    };
+    var AUTOSAVE_INTERVAL = 12e3;
+    var getSetting = function(key) {
+        return localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key];
+    };
+    var saveSetting = function(key, value) {
+        localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key] = value;
+    };
+    if (!getSetting(SETTING_THEME)) {
+        saveSetting(SETTING_THEME, THEMES.white);
+    }
+    return {
+        getSetting: function(key) {
+            return getSetting(key);
+        },
+        setSetting: function(key, value) {
+            saveSetting(key, value);
+        },
+        THEME: SETTING_THEME
+    };
 });
 
 angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", function($dialog, logger) {

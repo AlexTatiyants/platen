@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" type="text/css" title="white" href="styles/themes/white-theme.css" />
-	<link rel="stylesheet" type="text/css" title="dark" href="styles/themes/dark-theme.css" />
+	<link rel="stylesheet" type="text/css" title="dark" disabled="true" href="styles/themes/dark-theme.css" />
 	<script src="vendor/jquery-1.9.1.min.js"></script>
 	<script src="vendor/mimic.js"></script>
 	<script src="vendor/wordpress.min.js"></script>
@@ -19,8 +19,10 @@
 <body data-ng-app="platen">
 	<div data-ng-controller="MainController" class="main-container">
 
-		<aside id="options-panel" data-ng-class="{'options-visible': optionsPanelVisible}" data-ng-show="optionsPanelVisible">
-			<h3>Options</h3>
+		<aside id="options-panel"
+					data-ng-class="{'options-visible': optionsPanelVisible}"
+					data-ng-show="optionsPanelVisible">
+			<h3>Options <span class="icon-close" data-ng-click="toggleOptionsPanel()"></span></h3>
 			<div class="option-container">
 				<label>theme</label>
 				<ul>
@@ -37,16 +39,15 @@
 				<div class="option-container">
 					<span data-ng-click="loginCredentials()">set login credentials</span>
 				</div>
-				<button class="btn" data-ng-click="toggleOptionsPanel()">done</button>
 			</aside>
 			<section id="main-panel"  data-ng-class="{'options-visible': optionsPanelVisible}" >
 				<nav>
 					<ul>
 						<li><span data-ng-click="toggleOptionsPanel()"><i class="icon-settings"></i></span></li>
-						<li><a href="#/posts"><i class="icon-posts-list"></i></a></li>
-						<li><a href="#/posts/0"><i class="icon-new-post"></i></a></li>
-						<li><a href="#/logs"><i class="icon-logs"></i></a></li>
-						<li><a href="#/images"><i class="icon-images-list"></i></a></li>
+						<li><a href="#/posts"><i class="icon-posts-list" title="view posts"></i></a></li>
+						<li><a href="#/posts/0"><i class="icon-new-post" title="create post"></i></a></li>
+						<li><a href="#/images"><i class="icon-images-list" title="view images"></i></a></li>
+						<li><a href="#/logs"><i class="icon-logs" title="view logs"></i></a></li>
 						<li>
 							<button data-ng-click="startProcessing()">start</button>
 							<button data-ng-click="stopProcessing()">stop</button>
