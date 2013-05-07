@@ -1,7 +1,7 @@
 <section id="editor" data-ng-controller="EditorController">
   <section id="edit-panel">
     <span id="status-panel">
-      <span>last saved <strong><span data-ng-bind="status.autoSaveTime"></span></strong></span>
+      <span>last saved <strong><span data-ng-bind="post.state.lastSavedAt | date:'short'"></span></strong></span>
     </span>
 
     <h1 class="input-box" id="post-title" contenteditable="true" data-editable-text="true" data-ng-model="post.title"></h1>
@@ -14,7 +14,7 @@
 
   <ul class="edit-controls">
     <li data-ng-click="togglePreview()" title="{{previewMessage}}"
-      data-ng-class="{'edit-control': true, 'icon-view-markdown': previewOn, 'icon-view-html': !previewOn}"></li>
+    data-ng-class="{'edit-control': true, 'icon-view-markdown': previewOn, 'icon-view-html': !previewOn}"></li>
     <li data-ng-click="sync()" class="edit-control icon-sync-wordpress" title="sync to blog"></li>
   </ul>
 
@@ -25,6 +25,11 @@
 
         <div class="field-group full">
           <span>status</span>: <span data-ng-bind="post.status"></span>
+          <button data-ng-show="post.status === 'draft'" data-ng-click="togglePublishStatus()">publish</button>
+          <span data-ng-show="post.state.toBePublished">
+            <em>(this post will be published next time you upload it)</em>
+            <button data-ng-click="togglePublishStatus()">undo</button>
+          </span>
         </div>
 
         <div class="field-group full">
@@ -69,7 +74,10 @@
             </li>
           </ul>
         </div>
-        <div class="field-group full">wordpress id: <span data-ng-bind="post.wordPressId"></span></div>
+        <div class="field-group ">
+          <span>wordpress id: <span data-ng-bind="post.wordPressId"></span></span>
+          <span>last uploaded: <span data-ng-bind="post.state.lastUploadedAt | date:'short'"></span></span>
+        </div>
       </section>
     </div>
   </aside>
@@ -96,8 +104,8 @@
       </div>
       <div class="modal-body">
         <div class="field-group full">
-            <label>Enter image name</label>
-            <input id="inserted-image-name" type="text" class="input-box" data-ng-model="imageToInsert.fileName"></input>
+          <label>Enter image name</label>
+          <input id="inserted-image-name" type="text" class="input-box" data-ng-model="imageToInsert.fileName"></input>
         </div>
       </div>
       <div class="modal-footer">

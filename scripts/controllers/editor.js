@@ -14,7 +14,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   var MESSAGE_PREVIEW_MARKDOWN = 'View Markdown';
   var IMAGE_TYPE = 'image/png';
 
-
   var notify = function(message, error, isSuccess) {
     if (error) {
       message += ": " + error;
@@ -29,9 +28,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
   Post.initialize($routeParams.postId, function(post) {
     $scope.post = post;
-    $scope.status = {};
     $scope.previewOn = false;
-    $scope.status.autoSaveTime = "unsaved";
     $scope.showMetadata = false;
     $scope.previewMessage = MESSAGE_PREVIEW_HTML;
 
@@ -44,9 +41,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
   var savePost = function() {
     Post.save(function() {
-      $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
       $scope.$apply();
-      logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
+      logger.log("saved post '" + $scope.post.title + "' on " + $scope.post.state.lastSavedAt, "EditorController");
     },
 
     function(error) {
@@ -84,7 +80,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       $scope.post.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
       $scope.post.images[image.id] = image;
 
-      savePost(onSuccessCallback, onErrorCallback);
+      savePost();
       image = {};
       notify("image saved", null, true);
     },
@@ -107,9 +103,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   $scope.proceedWithImageInsert = function() {
     $scope.insertImageDialogOpen = false;
     addImage($scope.imageToInsert.fileName, $scope.imageToInsert.blob, function() {
-      $scope.status.autoSaveTime = $filter('date')(new Date(), 'shortTime');
-      $scope.$apply();
-      logger.log("updated post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
+      savePost();
     }, function(error) {
       notify("erorr updating post '" + $scope.post.title, error, false);
     });
@@ -225,6 +219,17 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   };
 
   $scope.addImageToPost = function(image) {};
+
+  $scope.togglePublishStatus = function() {
+    if ($scope.post.status === STATUS_DRAFT) {
+      $scope.post.status = STATUS_PUBLISH;
+      $scope.post.state.toBePublished = true;
+    } else {
+      $scope.post.status = STATUS_DRAFT;
+      $scope.post.state.toBePublished = false;
+    }
+    savePost();
+  }
 };
 
 EditorController.$inject = ['Post', '$scope', '$routeParams', '$filter', 'fileManager', 'wordpress', 'logger', 'resources'];

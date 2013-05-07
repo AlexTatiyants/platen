@@ -36,6 +36,11 @@ function($q, resources, fileManager, wordpress, logger) {
     data.images = {};
     data.tags = '';
     data.categories = '';
+    data.state = {
+      lastSavedAt: '',
+      lastUploadedAt: '',
+      toBePublished: false
+    };
   };
 
   var savePost = function(onSuccessCallback, onErrorCallback) {
@@ -43,9 +48,11 @@ function($q, resources, fileManager, wordpress, logger) {
     // since there are 4 different representations of the same content, we only need to save one of them
     postToSave.content = '';
     postToSave.contentHtmlPreview = '';
-    postToSave.lastUpdatedDate = new Date();
 
-    fileManager.writeFile(getFilePath(data.id), JSON.stringify(postToSave), onSuccessCallback, onErrorCallback);
+    fileManager.writeFile(getFilePath(data.id), JSON.stringify(postToSave), function() {
+      data.state.lastSavedAt = new Date();
+      onSuccessCallback();
+    }, onErrorCallback);
   };
 
   var uploadImage = function(image) {
@@ -142,6 +149,10 @@ function($q, resources, fileManager, wordpress, logger) {
           wordpress.savePost(data, function(result) {
             // if this is the first time the post is being uploaded
             // we'll get a WordPress id which should be saved locally
+            data.state.lastUploadedAt = new Date();
+            if (data.state.toBePublished) {
+              data.state.toBePublished = false;
+            }
             if (!data.wordPressId) {
               data.wordPressId = result;
               savePost(onSuccessCallback, onErrorCallback);
