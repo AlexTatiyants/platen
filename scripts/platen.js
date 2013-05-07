@@ -1,4 +1,4 @@
-/*! platen 2013-05-04 */
+/*! platen 2013-05-06 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -55,9 +55,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     };
     Post.initialize($routeParams.postId, function(post) {
         $scope.post = post;
-        $scope.status = {};
         $scope.previewOn = false;
-        $scope.status.autoSaveTime = "unsaved";
         $scope.showMetadata = false;
         $scope.previewMessage = MESSAGE_PREVIEW_HTML;
         logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
@@ -68,9 +66,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     });
     var savePost = function() {
         Post.save(function() {
-            $scope.status.autoSaveTime = $filter("date")(new Date(), "shortTime");
             $scope.$apply();
-            logger.log("saved post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
+            logger.log("saved post '" + $scope.post.title + "' on " + $scope.post.state.lastSavedAt, "EditorController");
         }, function(error) {
             notify("erorr saving post", error, false);
         });
@@ -98,7 +95,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             image.markdownUrl = "![" + image.name + "](" + image.localUrl + ")";
             $scope.post.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
             $scope.post.images[image.id] = image;
-            savePost(onSuccessCallback, onErrorCallback);
+            savePost();
             image = {};
             notify("image saved", null, true);
         }, function(error) {
@@ -114,9 +111,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.proceedWithImageInsert = function() {
         $scope.insertImageDialogOpen = false;
         addImage($scope.imageToInsert.fileName, $scope.imageToInsert.blob, function() {
-            $scope.status.autoSaveTime = $filter("date")(new Date(), "shortTime");
-            $scope.$apply();
-            logger.log("updated post '" + $scope.post.title + "' on " + $scope.status.autoSaveTime, "EditorController");
+            savePost();
         }, function(error) {
             notify("erorr updating post '" + $scope.post.title, error, false);
         });
@@ -212,6 +207,16 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         });
     };
     $scope.addImageToPost = function(image) {};
+    $scope.togglePublishStatus = function() {
+        if ($scope.post.status === STATUS_DRAFT) {
+            $scope.post.status = STATUS_PUBLISH;
+            $scope.post.state.toBePublished = true;
+        } else {
+            $scope.post.status = STATUS_DRAFT;
+            $scope.post.state.toBePublished = false;
+        }
+        savePost();
+    };
 };
 
 EditorController.$inject = [ "Post", "$scope", "$routeParams", "$filter", "fileManager", "wordpress", "logger", "resources" ];
@@ -532,13 +537,20 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
         data.images = {};
         data.tags = "";
         data.categories = "";
+        data.state = {
+            lastSavedAt: "",
+            lastUploadedAt: "",
+            toBePublished: false
+        };
     };
     var savePost = function(onSuccessCallback, onErrorCallback) {
         var postToSave = JSON.parse(JSON.stringify(data));
         postToSave.content = "";
         postToSave.contentHtmlPreview = "";
-        postToSave.lastUpdatedDate = new Date();
-        fileManager.writeFile(getFilePath(data.id), JSON.stringify(postToSave), onSuccessCallback, onErrorCallback);
+        fileManager.writeFile(getFilePath(data.id), JSON.stringify(postToSave), function() {
+            data.state.lastSavedAt = new Date();
+            onSuccessCallback();
+        }, onErrorCallback);
     };
     var uploadImage = function(image) {
         var d = $q.defer();
@@ -600,6 +612,10 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                     });
                     data.content = content;
                     wordpress.savePost(data, function(result) {
+                        data.state.lastUploadedAt = new Date();
+                        if (data.state.toBePublished) {
+                            data.state.toBePublished = false;
+                        }
                         if (!data.wordPressId) {
                             data.wordPressId = result;
                             savePost(onSuccessCallback, onErrorCallback);
