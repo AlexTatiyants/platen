@@ -33,7 +33,7 @@ body {
   overflow-x: hidden;
 }
 
-body, input, textarea, button {
+body, input, textarea, button, select {
   font-family: @sans-font;
   color: @text-color;
 }
@@ -74,6 +74,11 @@ nav {
     background:linear-gradient(to bottom, @button-color-secondary 5%, @button-color 100%);
     background-color: @button-color-secondary;
   }
+}
+
+select {
+  border-radius: @border-radius;
+  border: 1px solid @line-color;
 }
 
 .btn.small {

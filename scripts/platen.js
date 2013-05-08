@@ -1,4 +1,4 @@
-/*! platen 2013-05-07 */
+/*! platen 2013-05-08 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -32,11 +32,12 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     var STATUS_DRAFT = "draft";
     var STATUS_PUBLISH = "publish";
     var POST_TITLE_ID = "post-title";
-    var POST_CONTENT_ID = "post-content";
+    var POST_BODY_ID = "post-content";
+    var POST_HTML_ID = "post-content-preview";
     var POST_EXCERPT = "post-excerpt";
     var POST_TAGS = "post-tags";
     var POST_CATEGORIES = "post-categories";
-    var EDITABLE_ELEMENTS = [ POST_TITLE_ID, POST_CONTENT_ID, POST_EXCERPT, POST_TAGS, POST_CATEGORIES ];
+    var EDITABLE_ELEMENTS = [ POST_TITLE_ID, POST_BODY_ID, POST_EXCERPT, POST_TAGS, POST_CATEGORIES ];
     var INSERTED_IMAGE_PLACEHOLDER = "[[!@#IMAGE_PLACEHOLDER#@!]]";
     var DELETED_IMAGE_PLACEHOLDER = "!! IMAGE DELETED !!";
     var MESSAGE_PREVIEW_HTML = "Preview as HTML";
@@ -58,11 +59,20 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         $scope.showMetadata = false;
         $scope.previewMessage = MESSAGE_PREVIEW_HTML;
         logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
-        $("#post-title").focus();
+        setFonts();
+        $("#" + POST_TITLE_ID).focus();
         $scope.safeApply();
     }, function(error) {
         notify("error loading post", error, false);
     });
+    var setFonts = function() {
+        $("#" + POST_TITLE_ID).css("font-family", settings.getSetting(settings.keys.postTitleFont));
+        $("#" + POST_TITLE_ID).css("font-size", settings.getSetting(settings.keys.postTitleFontSize) + "px");
+        $("#" + POST_BODY_ID).css("font-family", settings.getSetting(settings.keys.postBodyFont));
+        $("#" + POST_BODY_ID).css("font-size", settings.getSetting(settings.keys.postBodyFontSize) + "px");
+        $("#" + POST_HTML_ID).css("font-family", settings.getSetting(settings.keys.postHtmlFont));
+        $("#" + POST_HTML_ID).css("font-size", settings.getSetting(settings.keys.postHtmlFontSize) + "px");
+    };
     var savePost = function() {
         Post.save(function() {
             $scope.$apply();
@@ -71,10 +81,13 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             notify("erorr saving post", error, false);
         });
     };
-    $scope.$on("elementEdited", function(event, elementId) {
+    $scope.$on(resources.events.ELEMENT_EDITED, function(event, elementId) {
         if (_.contains(EDITABLE_ELEMENTS, elementId)) {
             savePost();
         }
+    });
+    $scope.$on(resources.events.FONT_CHANGED, function(event) {
+        setFonts();
     });
     var addImage = function(imageName, imageBlob, onSuccessCallback, onErrorCallback) {
         var fileName = imageName.replace(/[^a-z0-9]/gi, "_").toLowerCase();
@@ -101,7 +114,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             notify("error saving image", error, false);
         });
     };
-    $scope.$on("imageInserted", function(event, blob) {
+    $scope.$on(resources.events.IMAGE_INSERTED, function(event, blob) {
         $scope.imageToInsert = {};
         $scope.imageToInsert.blob = blob;
         document.execCommand("insertHtml", false, INSERTED_IMAGE_PLACEHOLDER);
@@ -318,6 +331,8 @@ LogsController.$inject = [ "$scope", "logger" ];
 var MainController = function($scope, $dialog, $timeout, fileManager, resources, settings) {
     var FADE_DURATION = 3e3;
     $scope.optionsPanelVisible = false;
+    $scope.fonts = [];
+    $scope.settings = {};
     $scope.appStatus = {
         isProcessing: false,
         isSuccess: true,
@@ -325,6 +340,22 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
         showMessage: false
     };
     fileManager.initialize();
+    $scope.fonts.push("economica");
+    $scope.fonts.push("inconsolata");
+    $scope.fonts.push("goudy");
+    $scope.fonts.push("merriweather");
+    chrome.fontSettings.getFontList(function(fonts) {
+        _.each(fonts, function(font) {
+            $scope.fonts.push(font.fontId);
+        });
+    });
+    $scope.settingsKeys = settings.keys;
+    $scope.settings.postTitleFont = settings.getSetting(settings.keys.postTitleFont);
+    $scope.settings.postTitleFontSize = settings.getSetting(settings.keys.postTitleFontSize);
+    $scope.settings.postBodyFont = settings.getSetting(settings.keys.postBodyFont);
+    $scope.settings.postBodyFontSize = settings.getSetting(settings.keys.postTitleFontSize);
+    $scope.settings.postHtmlFont = settings.getSetting(settings.keys.postHtmlFont);
+    $scope.settings.postHtmlFontSize = settings.getSetting(settings.keys.postHtmlFontSize);
     $scope.loginCredentials = function() {
         $dialog.dialog({
             backdrop: true,
@@ -336,18 +367,28 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
     };
     $scope.switchTheme = function(themeName) {
         _.each($("link"), function(link) {
-            if (link.title !== themeName) {
-                link.disabled = true;
-            } else {
-                link.disabled = false;
-            }
+            link.disabled = link.title !== themeName;
         });
         settings.setSetting(settings.THEME, themeName);
-        $scope.currentTheme = settings.getSetting(settings.THEME);
+        $scope.settings.currentTheme = settings.getSetting(settings.THEME);
     };
-    $scope.currentTheme = settings.getSetting(settings.THEME);
+    $scope.saveFont = function(font, item) {
+        settings.setSetting(item, font);
+        $scope.$broadcast(resources.events.FONT_CHANGED);
+    };
+    $scope.increaseFontSize = function(fontSize) {
+        var currentSize = parseFloat(settings.getSetting(fontSize));
+        settings.setSetting(fontSize, currentSize + 1);
+        $scope.$broadcast(resources.events.FONT_CHANGED);
+    };
+    $scope.decreaseFontSize = function(fontSize) {
+        var currentSize = parseFloat(settings.getSetting(fontSize));
+        settings.setSetting(fontSize, currentSize - 1);
+        $scope.$broadcast(resources.events.FONT_CHANGED);
+    };
+    $scope.settings.currentTheme = settings.getSetting(settings.THEME);
     $scope.autoSaveInterval = settings.getSetting(settings.AUTOSAVE_INTERVAL);
-    $scope.switchTheme($scope.currentTheme);
+    $scope.switchTheme($scope.settings.currentTheme);
     $scope.toggleOptionsPanel = function() {
         $scope.optionsPanelVisible = !$scope.optionsPanelVisible;
     };
@@ -823,13 +864,33 @@ angular.module("platen.services").value("resources", {
     IMAGE_DIRECTORY_PATH: "images",
     events: {
         PROCESSING_STARTED: "processingStarted",
-        PROCESSING_FINISHED: "processingFinished"
+        PROCESSING_FINISHED: "processingFinished",
+        ELEMENT_EDITED: "elementEdited",
+        FONT_CHANGED: "fontChanged",
+        IMAGE_INSERTED: "imageInserted"
     }
 });
 
 angular.module("platen.services").factory("settings", function() {
     var LOCAL_STORAGE_OPTIONS_KEY = "platen.settings";
-    var SETTING_THEME = "theme";
+    var SETTINGS = {
+        theme: "theme",
+        postTitleFont: "postTitleFont",
+        postTitleFontSize: "postTitleFontSize",
+        postBodyFont: "postBodyFont",
+        postBodyFontSize: "postBodyFontSize",
+        postHtmlFont: "postHtmlFont",
+        postHtmlFontSize: "postHtmlFontSize"
+    };
+    var DEFAULTS = {
+        theme: "white",
+        postTitleFont: "economica",
+        postTitleFontSize: 30,
+        postBodyFont: "inconsolata",
+        postBodyFontSize: 16,
+        postHtmlFont: "goudy",
+        postHtmlFontSize: 16
+    };
     var THEMES = {
         white: "white",
         dark: "dark"
@@ -840,9 +901,11 @@ angular.module("platen.services").factory("settings", function() {
     var saveSetting = function(key, value) {
         localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key] = value;
     };
-    if (!getSetting(SETTING_THEME)) {
-        saveSetting(SETTING_THEME, THEMES.white);
-    }
+    _.each(SETTINGS, function(setting) {
+        if (!getSetting(setting)) {
+            saveSetting(setting, DEFAULTS[setting]);
+        }
+    });
     return {
         getSetting: function(key) {
             return getSetting(key);
@@ -850,7 +913,8 @@ angular.module("platen.services").factory("settings", function() {
         setSetting: function(key, value) {
             saveSetting(key, value);
         },
-        THEME: SETTING_THEME
+        THEME: SETTINGS.theme,
+        keys: SETTINGS
     };
 });
 

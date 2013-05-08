@@ -1,7 +1,25 @@
 angular.module('platen.services').factory('settings', function() {
   var LOCAL_STORAGE_OPTIONS_KEY = 'platen.settings';
 
-  var SETTING_THEME = 'theme';
+  var SETTINGS = {
+    theme: 'theme',
+    postTitleFont: 'postTitleFont',
+    postTitleFontSize: 'postTitleFontSize',
+    postBodyFont: 'postBodyFont',
+    postBodyFontSize: 'postBodyFontSize',
+    postHtmlFont: 'postHtmlFont',
+    postHtmlFontSize: 'postHtmlFontSize'
+  };
+
+  var DEFAULTS = {
+    theme: 'white',
+    postTitleFont: 'economica',
+    postTitleFontSize: 30,
+    postBodyFont: 'inconsolata',
+    postBodyFontSize: 16,
+    postHtmlFont: 'goudy',
+    postHtmlFontSize: 16
+  };
 
   var THEMES = {
     white: 'white',
@@ -16,9 +34,12 @@ angular.module('platen.services').factory('settings', function() {
     localStorage[LOCAL_STORAGE_OPTIONS_KEY + '.' + key] = value;
   };
 
-  if (!getSetting(SETTING_THEME)) {
-    saveSetting(SETTING_THEME, THEMES.white);
-  }
+  // initialize settings to defaults if empty
+  _.each(SETTINGS, function(setting) {
+    if (!getSetting(setting)) {
+      saveSetting(setting, DEFAULTS[setting]);
+    }
+  });
 
   return {
     getSetting: function(key) {
@@ -29,6 +50,7 @@ angular.module('platen.services').factory('settings', function() {
       saveSetting(key, value);
     },
 
-    THEME: SETTING_THEME
+    THEME: SETTINGS.theme,
+    keys: SETTINGS
   }
 });

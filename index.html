@@ -19,65 +19,90 @@
 <body data-ng-app="platen">
 	<div data-ng-controller="MainController" class="main-container">
 
-		<aside id="options-panel"
-					data-ng-class="{'options-visible': optionsPanelVisible}"
-					data-ng-show="optionsPanelVisible">
-			<h3>
-				<span>options</span>
-				<span class="icon-close" data-ng-click="toggleOptionsPanel()"></span>
-			</h3>
-			<div class="option-container">
-				<label>theme</label>
-				<ul>
-					<li>
-						<span data-ng-class="{'theme-option':true, white:true, selected: currentTheme === 'white'}"
-						data-ng-click="switchTheme('white')">white</span>
-					</li>
-						<li>
-							<span data-ng-class="{'theme-option':true, dark:true, selected: currentTheme === 'dark'}"
-							data-ng-click="switchTheme('dark')">dark</span>
-						</li>
-					</ul>
-				</div>
-				<div class="option-container">
-					<label>login credentials</label>
-					<button class="btn" data-ng-click="loginCredentials()">edit</button>
-				</div>
-			</aside>
-			<section id="main-panel"  data-ng-class="{'options-visible': optionsPanelVisible}" >
-				<nav>
-					<ul>
-						<li><span data-ng-click="toggleOptionsPanel()"><i class="icon-settings"></i></span></li>
-						<li><a href="#/posts"><i class="icon-posts-list" title="view posts"></i></a></li>
-						<li><a href="#/posts/0"><i class="icon-new-post" title="create post"></i></a></li>
-						<li><a href="#/images"><i class="icon-images-list" title="view images"></i></a></li>
-						<li><a href="#/logs"><i class="icon-logs" title="view logs"></i></a></li>
-						<li>
-							<button data-ng-click="startProcessing()">start</button>
-							<button data-ng-click="stopProcessingWithFail()">fail</button>
-							<button data-ng-click="stopProcessingwithSuccess()">success</button>
-						</li>
-					</ul>
-				</nav>
-
-				<div class="status-bar">
-					<div class="spinner-container">
-						<span class="spinner"></span>
-						<div
-						data-ng-click="showMessage()"
-						data-ng-class="{spinning: appStatus.isProcessing, status: true, error: !appStatus.isSuccess, success: appStatus.isSuccess}"
-						title="{{appStatus.message}}"></div>
-					</div>
-					<span data-ng-show="appStatus.showMessage"
-					data-ng-class="{'status-message': true, error: !appStatus.isSuccess, success: appStatus.isSuccess}">
-					<span data-ng-bind="appStatus.message"></span>
-					<span class="icon-close" data-ng-click="dismissMessage()"></span>
-				</span>
-			</div>
-
-			<section data-ng-view></section>
+		<aside id="options-panel" data-ng-class="{'options-visible': optionsPanelVisible}" data-ng-show="optionsPanelVisible">
+		<header class="options-panel-header">
+			<span>options</span>
+			<span class="icon-close" data-ng-click="toggleOptionsPanel()"></span>
+		</header>
+		<section class="option-container">
+			<header>theme</header>
+			<ul>
+				<li>
+					<span data-ng-class="{'theme-option':true, white:true, selected: settings.currentTheme === 'white'}"
+					data-ng-click="switchTheme('white')">white</span>
+				</li>
+				<li>
+					<span data-ng-class="{'theme-option':true, dark:true, selected: settings.currentTheme === 'dark'}"
+					data-ng-click="switchTheme('dark')">dark</span>
+				</li>
+			</ul>
 		</section>
+
+		<section class="option-container">
+			<header>login credentials</header>
+			<button class="btn" data-ng-click="loginCredentials()">edit</button>
+		</section>
+
+		<section class="option-container">
+			<header>fonts</header>
+			<div class="option-group">
+				<label>post title</label>
+				<select data-ng-options="font for font in fonts" data-ng-model="settings.postTitleFont"
+				data-ng-change="saveFont(settings.postTitleFont, settingsKeys.postTitleFont)"></select>
+				<span class="font-size-control" data-ng-click=increaseFontSize(settingsKeys.postTitleFontSize)>+</span>
+				<span class="font-size-control" data-ng-click=decreaseFontSize(settingsKeys.postTitleFontSize)>-</span>
+			</div>
+			<div class="option-group">
+				<label>post body</label>
+				<select data-ng-options="font for font in fonts" data-ng-model="settings.postBodyFont"
+				data-ng-change="saveFont(settings.postBodyFont, settingsKeys.postBodyFont)"></select>
+				<span class="font-size-control" data-ng-click=increaseFontSize(settingsKeys.postBodyFontSize)>+</span>
+				<span class="font-size-control" data-ng-click=decreaseFontSize(settingsKeys.postBodyFontSize)>-</span>
+			</div>
+			<div class="option-group">
+				<label>post html</label>
+				<select data-ng-options="font for font in fonts" data-ng-model="settings.postHtmlFont"
+				data-ng-change="saveFont(settings.postHtmlFont, settingsKeys.postHtmlFont)"></select>
+				<span class="font-size-control" data-ng-click=increaseFontSize(settingsKeys.postHtmlFontSize)>+</span>
+				<span class="font-size-control" data-ng-click=decreaseFontSize(settingsKeys.postHtmlFontSize)>-</span>
+			</div>
+		</section>
+	</aside>
+
+	<section id="main-panel"  data-ng-class="{'options-visible': optionsPanelVisible}" >
+		<nav>
+			<ul>
+				<li><span data-ng-click="toggleOptionsPanel()"><i class="icon-settings"></i></span></li>
+				<li><a href="#/posts"><i class="icon-posts-list" title="view posts"></i></a></li>
+				<li><a href="#/posts/0"><i class="icon-new-post" title="create post"></i></a></li>
+				<li><a href="#/images"><i class="icon-images-list" title="view images"></i></a></li>
+				<li><a href="#/logs"><i class="icon-logs" title="view logs"></i></a></li>
+				<li>
+					<button data-ng-click="startProcessing()">start</button>
+					<button data-ng-click="stopProcessingWithFail()">fail</button>
+					<button data-ng-click="stopProcessingwithSuccess()">success</button>
+				</li>
+			</ul>
+		</nav>
+
+		<div class="status-bar">
+			<div class="spinner-container">
+				<span class="spinner"></span>
+				<div
+				data-ng-click="showMessage()"
+				data-ng-class="{spinning: appStatus.isProcessing, status: true, error: !appStatus.isSuccess, success: appStatus.isSuccess}"
+				title="{{appStatus.message}}"></div>
+			</div>
+			<span data-ng-show="appStatus.showMessage"
+			data-ng-class="{'status-message': true, error: !appStatus.isSuccess, success: appStatus.isSuccess}">
+			<span data-ng-bind="appStatus.message"></span>
+			<span class="icon-close" data-ng-click="dismissMessage()"></span>
+		</span>
 	</div>
+
+	<section data-ng-view></section>
+</section>
+</div>
 </body>
 </html>
 

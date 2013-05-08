@@ -136,8 +136,6 @@
   outline: none;
   overflow-y: auto;
   height: 85%;
-  font-family: 'inconsolata';
-  font-size: 16px;
   line-height: 25px;
 }
 #post-title {
@@ -151,13 +149,11 @@
   border-left: 0px;
   border-right: 0px;
   border-bottom: 1px dotted #e6e6e6;
-  font-family: 'economica';
   padding-top: 12px;
   padding-bottom: 12px;
   padding-left: 12px;
   margin-bottom: 10px;
   font-weight: 300;
-  font-size: 32px;
   overflow: hidden;
   white-space: nowrap;
 }
@@ -168,8 +164,6 @@
   outline: none;
   overflow-y: auto;
   height: 85%;
-  font-family: 'inconsolata';
-  font-size: 16px;
   line-height: 25px;
   padding: 12px;
   border: 0px;
@@ -182,8 +176,6 @@
   outline: none;
   overflow-y: auto;
   height: 85%;
-  font-family: 'inconsolata';
-  font-size: 16px;
   line-height: 25px;
   padding: 30px 30px 30px 30px;
   border: 1px dotted #cccccc;
@@ -374,6 +366,16 @@
   float: left;
   font-size: 12.8px;
 }
+#options-panel.options-visible {
+  width: 30%;
+}
+#main-panel {
+  width: 100%;
+}
+#main-panel.options-visible {
+  width: 70%;
+  margin-left: 30%;
+}
 #options-panel {
   width: 0;
   position: fixed;
@@ -398,17 +400,16 @@
 #options-panel .btn {
   text-decoration: none;
   margin: auto;
-  width: 90%;
   display: block;
   text-align: center;
 }
-#options-panel h3 {
+#options-panel .options-panel-header {
   margin-top: 10px;
   border-bottom: 2px solid #333333;
   padding-bottom: 10px;
   position: relative;
 }
-#options-panel h3:after {
+#options-panel .options-panel-header:after {
   content: ".";
   color: #4d4d4d;
   border-bottom: 1px solid #737373;
@@ -417,28 +418,28 @@
   left: 0px;
   width: 100%;
 }
-#options-panel h3 span {
+#options-panel .options-panel-header span {
   padding: 10px;
   font-size: 19.2px;
   text-shadow: 2px 0px #333333;
 }
-#options-panel h3 .icon-close {
+#options-panel .options-panel-header .icon-close {
   font-size: 16px;
   color: #b3b3b3;
   margin-top: -5px;
   margin-right: 5px;
   text-shadow: 0 0 0;
 }
-#options-panel h3 .icon-close:hover {
+#options-panel .options-panel-header .icon-close:hover {
   color: #b3b3b3;
 }
-.option-container {
+section.option-container {
   padding: 10px;
   font-size: 14.4px;
   border-bottom: 1px solid #333333;
   position: relative;
 }
-.option-container:after {
+section.option-container:after {
   content: ".";
   color: #4d4d4d;
   border-bottom: 1px solid #737373;
@@ -447,31 +448,40 @@
   left: 0px;
   width: 100%;
 }
-.option-container label {
+section.option-container input,
+section.option-container select {
+  width: 70%;
+}
+section.option-container header {
   margin-bottom: 10px;
   color: #cccccc;
   display: block;
   text-shadow: 1px 0px #333333;
 }
-.option-container .input-box {
-  width: 80%;
+section.option-container .input-box {
   border: 1px inset #333333;
   color: #b3b3b3;
   background-color: #737373;
 }
-.option-container .selected {
+section.option-container .selected {
   background-color: #666666;
   color: #b3b3b3;
 }
-.option-container ul {
+section.option-container ul {
   list-style: none;
+}
+.option-group {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+.option-group label {
+  display: block;
 }
 .theme-option {
   padding: 6px;
   display: block;
   cursor: pointer;
   border-radius: 3px;
-  width: 80%;
   margin-bottom: 4px;
   margin-left: 10px;
 }
@@ -479,22 +489,23 @@
   color: #4d4d4d;
   background-color: #b3b3b3;
 }
-#options-panel.options-visible {
-  width: 20%;
+.font-size-control {
+  margin-right: 5px;
+  font-size: 17.6px;
+  padding: 5px;
+  float: right;
+  cursor: pointer;
+  background-color: #b3b3b3;
+  color: #4d4d4d;
+  border-radius: 50%;
+  height: 10px;
+  width: 10px;
+  line-height: 10px;
+  text-align: center;
 }
-#main-panel {
-  width: 100%;
-}
-#main-panel.options-visible {
-  width: 80%;
-  margin-left: 20%;
-}
-.slideout-setup {
-  transition: width 1s ease;
-  opacity: 0;
-}
-.slideout-start {
-  opacity: 1;
+.font-size-control:hover {
+  background-color: #666666;
+  color: #262626;
 }
 @font-face {
   font-family: 'icons';
@@ -834,7 +845,8 @@ body {
 body,
 input,
 textarea,
-button {
+button,
+select {
   font-family: 'Ubuntu', sans-serif;
   color: #666666;
 }
@@ -869,6 +881,10 @@ nav ul li {
 .btn:hover {
   background: linear-gradient(to bottom, #666666 5%, #808080 100%);
   background-color: #666666;
+}
+select {
+  border-radius: 3px;
+  border: 1px solid #e6e6e6;
 }
 .btn.small {
   padding: 10px;

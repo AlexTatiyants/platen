@@ -2,11 +2,12 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   var STATUS_DRAFT = 'draft';
   var STATUS_PUBLISH = 'publish';
   var POST_TITLE_ID = 'post-title';
-  var POST_CONTENT_ID = 'post-content';
+  var POST_BODY_ID = 'post-content';
+  var POST_HTML_ID = 'post-content-preview';
   var POST_EXCERPT = 'post-excerpt';
   var POST_TAGS = 'post-tags';
   var POST_CATEGORIES = 'post-categories';
-  var EDITABLE_ELEMENTS = [POST_TITLE_ID, POST_CONTENT_ID, POST_EXCERPT, POST_TAGS, POST_CATEGORIES];
+  var EDITABLE_ELEMENTS = [POST_TITLE_ID, POST_BODY_ID, POST_EXCERPT, POST_TAGS, POST_CATEGORIES];
   var INSERTED_IMAGE_PLACEHOLDER = '[[!@#IMAGE_PLACEHOLDER#@!]]';
   var DELETED_IMAGE_PLACEHOLDER = "!! IMAGE DELETED !!";
   var MESSAGE_PREVIEW_HTML = 'Preview as HTML';
@@ -32,13 +33,26 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.previewMessage = MESSAGE_PREVIEW_HTML;
 
     logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
-    $('#post-title').focus();
+
+    setFonts();
+    $('#' + POST_TITLE_ID).focus();
 
     $scope.safeApply();
 
   }, function(error) {
     notify("error loading post", error, false);
   });
+
+  var setFonts = function() {
+    $('#' + POST_TITLE_ID).css('font-family', settings.getSetting(settings.keys.postTitleFont));
+    $('#' + POST_TITLE_ID).css('font-size', settings.getSetting(settings.keys.postTitleFontSize) + 'px');
+
+    $('#' + POST_BODY_ID).css('font-family', settings.getSetting(settings.keys.postBodyFont));
+    $('#' + POST_BODY_ID).css('font-size', settings.getSetting(settings.keys.postBodyFontSize) + 'px');
+
+    $('#' + POST_HTML_ID).css('font-family', settings.getSetting(settings.keys.postHtmlFont));
+    $('#' + POST_HTML_ID).css('font-size', settings.getSetting(settings.keys.postHtmlFontSize) + 'px');
+  };
 
   var savePost = function() {
     Post.save(function() {
@@ -51,10 +65,14 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     });
   };
 
-  $scope.$on('elementEdited', function(event, elementId) {
+  $scope.$on(resources.events.ELEMENT_EDITED, function(event, elementId) {
     if (_.contains(EDITABLE_ELEMENTS, elementId)) {
       savePost();
     }
+  });
+
+  $scope.$on(resources.events.FONT_CHANGED, function(event) {
+    setFonts();
   });
 
   var addImage = function(imageName, imageBlob, onSuccessCallback, onErrorCallback) {
@@ -91,7 +109,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     });
   };
 
-  $scope.$on('imageInserted', function(event, blob) {
+  $scope.$on(resources.events.IMAGE_INSERTED, function(event, blob) {
     $scope.imageToInsert = {};
     $scope.imageToInsert.blob = blob;
 

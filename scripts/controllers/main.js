@@ -1,6 +1,8 @@
 var MainController = function($scope, $dialog, $timeout, fileManager, resources, settings) {
   var FADE_DURATION = 3000;
   $scope.optionsPanelVisible = false;
+  $scope.fonts = [];
+  $scope.settings = {};
 
   $scope.appStatus = {
     isProcessing: false,
@@ -10,6 +12,31 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
   };
 
   fileManager.initialize();
+
+  /* initialize font list */
+
+  // add local fonts installed by the app
+  $scope.fonts.push('economica');
+  $scope.fonts.push('inconsolata');
+  $scope.fonts.push('goudy');
+  $scope.fonts.push('merriweather');
+
+  chrome.fontSettings.getFontList(function(fonts) {
+    // add available system fonts
+    _.each(fonts, function(font) {
+      $scope.fonts.push(font.fontId);
+    });
+  });
+
+  $scope.settingsKeys = settings.keys;
+
+  $scope.settings.postTitleFont = settings.getSetting(settings.keys.postTitleFont);
+  $scope.settings.postTitleFontSize = settings.getSetting(settings.keys.postTitleFontSize);
+  $scope.settings.postBodyFont = settings.getSetting(settings.keys.postBodyFont);
+  $scope.settings.postBodyFontSize = settings.getSetting(settings.keys.postTitleFontSize);
+  $scope.settings.postHtmlFont = settings.getSetting(settings.keys.postHtmlFont);
+  $scope.settings.postHtmlFontSize = settings.getSetting(settings.keys.postHtmlFontSize);
+
 
   $scope.loginCredentials = function() {
     $dialog.dialog({
@@ -23,21 +50,34 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
 
   $scope.switchTheme = function(themeName) {
     _.each($('link'), function(link) {
-      if (link.title !== themeName) {
-        link.disabled = true;
-      } else {
-        link.disabled = false;
-      }
+      link.disabled = (link.title !== themeName);
     });
 
     settings.setSetting(settings.THEME, themeName);
-    $scope.currentTheme = settings.getSetting(settings.THEME);
+    $scope.settings.currentTheme = settings.getSetting(settings.THEME);
+  };
+
+  $scope.saveFont = function(font, item) {
+    settings.setSetting(item, font);
+    $scope.$broadcast(resources.events.FONT_CHANGED);
+  };
+
+  $scope.increaseFontSize = function(fontSize) {
+    var currentSize = parseFloat(settings.getSetting(fontSize));
+    settings.setSetting(fontSize, currentSize + 1);
+    $scope.$broadcast(resources.events.FONT_CHANGED);
+  };
+
+  $scope.decreaseFontSize = function(fontSize) {
+    var currentSize = parseFloat(settings.getSetting(fontSize));
+    settings.setSetting(fontSize, currentSize - 1);
+    $scope.$broadcast(resources.events.FONT_CHANGED);
   };
 
   // initialize theme
-  $scope.currentTheme = settings.getSetting(settings.THEME);
+  $scope.settings.currentTheme = settings.getSetting(settings.THEME);
   $scope.autoSaveInterval = settings.getSetting(settings.AUTOSAVE_INTERVAL);
-  $scope.switchTheme($scope.currentTheme);
+  $scope.switchTheme($scope.settings.currentTheme);
 
   $scope.toggleOptionsPanel = function() {
     $scope.optionsPanelVisible = !$scope.optionsPanelVisible;

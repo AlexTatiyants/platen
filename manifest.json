@@ -16,6 +16,7 @@
       "fileSystem",
       "unlimitedStorage",
       "clipboardRead",
+      "fontSettings",
       "http://*/",
       "https://*/"
     ],
