@@ -380,7 +380,8 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(to right, #4d4d4d 94%, #262626 100%);
+  background: linear-gradient(to right, #4d4d4d 96%, #262626 100%);
+  background: -webkit-linear-gradient(left, #4d4d4d 96%, #262626 100%);
   color: #b3b3b3;
   font-size: 14.4px;
 }
@@ -841,7 +842,7 @@ button {
   height: 100%;
 }
 nav {
-  width: 5%;
+  width: 60px;
   float: left;
   position: fixed;
   padding: 10px;
