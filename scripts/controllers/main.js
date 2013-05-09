@@ -1,6 +1,7 @@
-var MainController = function($scope, $dialog, $timeout, fileManager, resources, settings) {
+var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings) {
   var FADE_DURATION = 3000;
   $scope.optionsPanelVisible = false;
+  $scope.aboutDialogOpen = false;
   $scope.fonts = [];
   $scope.settings = {};
 
@@ -11,7 +12,34 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
     showMessage: false
   };
 
-  fileManager.initialize();
+  var notify = function(message, error, isSuccess) {
+    if (error) {
+      message += ": " + error;
+    }
+    logger.log(message, "EditorController");
+
+    $scope.$emit(resources.events.PROCESSING_FINISHED, {
+      message: message,
+      success: isSuccess
+    });
+  };
+
+  fileManager.initialize(function(e) {
+    fileManager.createDirectory(resources.POST_DIRECTORY_PATH, function() {
+      logger.log("created posts directory", "MainController");
+    }, function(error) {
+      notify("error creating posts directory", error, false);
+    });
+
+    fileManager.createDirectory(resources.IMAGE_DIRECTORY_PATH, function() {
+      logger.log("created images directory", "MainController");
+    }, function(error) {
+      notify("error creating images directory", error, false);
+    });
+  }, function(error) {
+    notify("error initializing file system", error, false);
+  });
+
 
   /* initialize font list */
 
@@ -140,6 +168,14 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
     $scope.appStatus.showMessage = false;
   };
 
+  $scope.showAboutDialog = function() {
+    $scope.aboutDialogOpen = true;
+  };
+
+  $scope.closeAboutDialog = function() {
+    $scope.aboutDialogOpen = false;
+  };
+
   $scope.safeApply = function(fn) {
     var phase = this.$root.$$phase;
     if (phase == '$apply' || phase == '$digest') {
@@ -152,4 +188,4 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
   };
 };
 
-MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'resources', 'settings'];
+MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'logger', 'resources', 'settings'];

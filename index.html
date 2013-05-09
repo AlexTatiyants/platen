@@ -81,11 +81,12 @@
 				<li><a href="#/posts/0"><i class="icon-new-post" title="create post"></i></a></li>
 				<li><a href="#/images"><i class="icon-images-list" title="view images"></i></a></li>
 				<li><a href="#/logs"><i class="icon-logs" title="view logs"></i></a></li>
-				<li>
+				<li><span data-ng-click="showAboutDialog()"><i class="icon-help" title="about"></i></a></li>
+<!-- 				<li>
 					<button data-ng-click="startProcessing()">start</button>
 					<button data-ng-click="stopProcessingWithFail()">fail</button>
 					<button data-ng-click="stopProcessingwithSuccess()">success</button>
-				</li>
+				</li> -->
 			</ul>
 		</nav>
 
@@ -105,6 +106,21 @@
 	</div>
 
 	<section data-ng-view></section>
+
+<div id="about-dialog">
+    <div modal="aboutDialogOpen" close="closeAboutDialog()" options="opts">
+      <div class="modal-header">
+        <h2>About</h2>
+      </div>
+      <div class="modal-body">
+      	<p>Platen is written by Alex Tatiyants
+      	</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning cancel" ng-click="closeAboutDialog()">Ok</button>
+      </div>
+    </div>
+  </div>
 </section>
 </div>
 </body>

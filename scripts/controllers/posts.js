@@ -5,12 +5,7 @@ var PostsController = function($scope, $location, fileManager, logger, resources
   $scope.postToDelete = {};
 
   if (!$scope.loaded) {
-    fileManager.accessFilesInDirectory(
-
-    resources.POST_DIRECTORY_PATH,
-    fileManager.directoryAccessActions.READ,
-
-    function(file) {
+    fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.READ, function(file) {
       // on success
       try {
         var post = JSON.parse(file);
@@ -26,9 +21,7 @@ var PostsController = function($scope, $location, fileManager, logger, resources
         });
         $scope.$apply();
       }
-    },
-
-    function(error) {
+    }, function(error) {
       // on error
       logger.log(error, "PostsController");
 

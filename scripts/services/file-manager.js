@@ -40,9 +40,7 @@ angular.module('platen.services').factory('fileManager', function() {
 
   var processFile = function(filePath, createParam, onSuccessCallback, onErrorCallback) {
     if (fs) {
-      fs.root.getFile(filePath, createParam,
-
-      function(fileEntry) {
+      fs.root.getFile(filePath, createParam, function(fileEntry) {
         fileEntry.file(onSuccessCallback, onErrorCallback)
       }, onErrorCallback);
     }
@@ -55,23 +53,18 @@ angular.module('platen.services').factory('fileManager', function() {
       REMOVE: REMOVE_FILE
     },
 
-    initialize: function(onErrorCallback) {
-      window.webkitRequestFileSystem(PERSISTENT, SIZE,
-
-      function(fileSystem) {
+    initialize: function(onSuccessCallback, onErrorCallback) {
+      window.webkitRequestFileSystem(PERSISTENT, SIZE, function(fileSystem) {
         fs = fileSystem;
-      },
-
-      function(e) {
+        onSuccessCallback();
+      }, function(e) {
         onErrorCallback(getError(e, "while initializing file system"));
       });
     },
 
     accessFilesInDirectory: function(directoryPath, accessAction, onSuccessCallback, onErrorCallback) {
       if (fs) {
-        fs.root.getDirectory(directoryPath, doCreate,
-
-        function(dirEntry) {
+        fs.root.getDirectory(directoryPath, doCreate, function(dirEntry) {
           dirEntry.createReader().readEntries(function(entries) {
             _.each(entries, function(entry) {
               if (entry.isFile) {
@@ -113,14 +106,10 @@ angular.module('platen.services').factory('fileManager', function() {
                 }
               }
             })
-          },
-
-          function(e) {
+          }, function(e) {
             onErrorCallback(getError(e, "while reading entries in " + directoryPath));
           });
-        },
-
-        function(e) {
+        }, function(e) {
           onErrorCallback(getError(e, "while reading getting directory " + directoryPath));
         });
       }
@@ -135,9 +124,7 @@ angular.module('platen.services').factory('fileManager', function() {
         blob = new Blob([fileBody], DEFAULT_FILE_TYPE);
       }
 
-      getFileEntryAndDoAction(filePath, doCreate,
-
-      function(fileEntry) {
+      getFileEntryAndDoAction(filePath, doCreate, function(fileEntry) {
         fileEntry.createWriter(function(fileWriter) {
           fileWriter.onerror = onErrorCallback;
           fileWriter.onwriteend = function() {
@@ -152,15 +139,14 @@ angular.module('platen.services').factory('fileManager', function() {
 
         }, function(e) {
           onErrorCallback(getError(e, " while creating fileWriter for " + filePath));
+        }, function(e) {
+          onErrorCallback(getError(e, " while creating fileWriter for " + filePath));
         });
       });
     },
 
     readFile: function(filePath, asText, onSuccessCallback, onErrorCallback) {
-
-      processFile(filePath, dontCreate,
-
-      function(file) {
+      processFile(filePath, dontCreate, function(file) {
         var reader = new FileReader();
         reader.onloadend = function(e) {
           onSuccessCallback(this.result);
@@ -170,21 +156,23 @@ angular.module('platen.services').factory('fileManager', function() {
         } else {
           reader.readAsBinaryString(file);
         }
-      },
-
-      function(e) {
+      }, function(e) {
         onErrorCallback(getError(e, "while reading file " + filePath));
       });
     },
 
     removeFile: function(filePath, onSuccessCallback, onErrorCallback) {
-      getFileEntryAndDoAction(filePath, dontCreate,
-
-      function(fileEntry) {
+      getFileEntryAndDoAction(filePath, dontCreate, function(fileEntry) {
         fileEntry.remove(onSuccessCallback, function(e) {
           onErrorCallback(getError(e, " while removing file " + filePath));
         });
       });
-    }
+    },
+
+    createDirectory: function(directoryPath, onSuccessCallback, onErrorCallback) {
+      fs.root.getDirectory(directoryPath, doCreate, onSuccessCallback, function(e) {
+        onErrorCallback(getError(e, " while creating directory " + directoryPath));
+      });
+    },
   };
 });

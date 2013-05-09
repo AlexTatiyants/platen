@@ -585,6 +585,9 @@ nav [class*=" icon-"] {
 .icon-close:before {
   content: '\e003';
 }
+.icon-help:before {
+  content: '\e003';
+}
 .icon-larger-font:before {
   content: '\f067';
 }

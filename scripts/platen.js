@@ -1,4 +1,4 @@
-/*! platen 2013-05-08 */
+/*! platen 2013-05-09 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -34,15 +34,17 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     var POST_TITLE_ID = "post-title";
     var POST_BODY_ID = "post-content";
     var POST_HTML_ID = "post-content-preview";
-    var POST_EXCERPT = "post-excerpt";
-    var POST_TAGS = "post-tags";
-    var POST_CATEGORIES = "post-categories";
-    var EDITABLE_ELEMENTS = [ POST_TITLE_ID, POST_BODY_ID, POST_EXCERPT, POST_TAGS, POST_CATEGORIES ];
+    var POST_EXCERPT_ID = "post-excerpt";
+    var POST_TAGS_ID = "post-tags";
+    var POST_CATEGORIES_ID = "post-categories";
+    var EDITABLE_ELEMENTS = [ POST_TITLE_ID, POST_BODY_ID, POST_EXCERPT_ID, POST_TAGS_ID, POST_CATEGORIES_ID ];
     var INSERTED_IMAGE_PLACEHOLDER = "[[!@#IMAGE_PLACEHOLDER#@!]]";
     var DELETED_IMAGE_PLACEHOLDER = "!! IMAGE DELETED !!";
     var MESSAGE_PREVIEW_HTML = "Preview as HTML";
     var MESSAGE_PREVIEW_MARKDOWN = "View Markdown";
     var IMAGE_TYPE = "image/png";
+    $scope.insertImageDialogOpen = false;
+    $scope.deleteImageConfirmOpen = false;
     var notify = function(message, error, isSuccess) {
         if (error) {
             message += ": " + error;
@@ -52,6 +54,16 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             message: message,
             success: isSuccess
         });
+    };
+    var setFonts = function() {
+        $("#" + POST_TITLE_ID).css("font-family", settings.getSetting(settings.keys.postTitleFont));
+        $("#" + POST_TITLE_ID).css("font-size", settings.getSetting(settings.keys.postTitleFontSize) + "px");
+        $("#" + POST_BODY_ID).css("font-family", settings.getSetting(settings.keys.postBodyFont));
+        $("#" + POST_BODY_ID).css("font-size", settings.getSetting(settings.keys.postBodyFontSize) + "px");
+        $("#" + POST_BODY_ID).css("line-height", settings.getSetting(settings.keys.postBodyLineHeight) + "px");
+        $("#" + POST_HTML_ID).css("font-family", settings.getSetting(settings.keys.postHtmlFont));
+        $("#" + POST_HTML_ID).css("font-size", settings.getSetting(settings.keys.postHtmlFontSize) + "px");
+        $("#" + POST_HTML_ID).css("line-height", settings.getSetting(settings.keys.postHtmlLineHeight) + "px");
     };
     Post.initialize($routeParams.postId, function(post) {
         $scope.post = post;
@@ -65,16 +77,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     }, function(error) {
         notify("error loading post", error, false);
     });
-    var setFonts = function() {
-        $("#" + POST_TITLE_ID).css("font-family", settings.getSetting(settings.keys.postTitleFont));
-        $("#" + POST_TITLE_ID).css("font-size", settings.getSetting(settings.keys.postTitleFontSize) + "px");
-        $("#" + POST_BODY_ID).css("font-family", settings.getSetting(settings.keys.postBodyFont));
-        $("#" + POST_BODY_ID).css("font-size", settings.getSetting(settings.keys.postBodyFontSize) + "px");
-        $("#" + POST_BODY_ID).css("line-height", settings.getSetting(settings.keys.postBodyLineHeight) + "px");
-        $("#" + POST_HTML_ID).css("font-family", settings.getSetting(settings.keys.postHtmlFont));
-        $("#" + POST_HTML_ID).css("font-size", settings.getSetting(settings.keys.postHtmlFontSize) + "px");
-        $("#" + POST_HTML_ID).css("line-height", settings.getSetting(settings.keys.postHtmlLineHeight) + "px");
-    };
     var savePost = function() {
         Post.save(function() {
             $scope.$apply();
@@ -330,9 +332,10 @@ var LogsController = function($scope, logger) {
 
 LogsController.$inject = [ "$scope", "logger" ];
 
-var MainController = function($scope, $dialog, $timeout, fileManager, resources, settings) {
+var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings) {
     var FADE_DURATION = 3e3;
     $scope.optionsPanelVisible = false;
+    $scope.aboutDialogOpen = false;
     $scope.fonts = [];
     $scope.settings = {};
     $scope.appStatus = {
@@ -341,7 +344,30 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
         message: "",
         showMessage: false
     };
-    fileManager.initialize();
+    var notify = function(message, error, isSuccess) {
+        if (error) {
+            message += ": " + error;
+        }
+        logger.log(message, "EditorController");
+        $scope.$emit(resources.events.PROCESSING_FINISHED, {
+            message: message,
+            success: isSuccess
+        });
+    };
+    fileManager.initialize(function(e) {
+        fileManager.createDirectory(resources.POST_DIRECTORY_PATH, function() {
+            logger.log("created posts directory", "MainController");
+        }, function(error) {
+            notify("error creating posts directory", error, false);
+        });
+        fileManager.createDirectory(resources.IMAGE_DIRECTORY_PATH, function() {
+            logger.log("created images directory", "MainController");
+        }, function(error) {
+            notify("error creating images directory", error, false);
+        });
+    }, function(error) {
+        notify("error initializing file system", error, false);
+    });
     $scope.fonts.push("economica");
     $scope.fonts.push("inconsolata");
     $scope.fonts.push("goudy");
@@ -440,6 +466,12 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
     $scope.dismissMessage = function() {
         $scope.appStatus.showMessage = false;
     };
+    $scope.showAboutDialog = function() {
+        $scope.aboutDialogOpen = true;
+    };
+    $scope.closeAboutDialog = function() {
+        $scope.aboutDialogOpen = false;
+    };
     $scope.safeApply = function(fn) {
         var phase = this.$root.$$phase;
         if (phase == "$apply" || phase == "$digest") {
@@ -452,7 +484,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
     };
 };
 
-MainController.$inject = [ "$scope", "$dialog", "$timeout", "fileManager", "resources", "settings" ];
+MainController.$inject = [ "$scope", "$dialog", "$timeout", "fileManager", "logger", "resources", "settings" ];
 
 var PostsController = function($scope, $location, fileManager, logger, resources) {
     $scope.posts = {};
@@ -747,9 +779,10 @@ angular.module("platen.services").factory("fileManager", function() {
             READ: READ_FILE,
             REMOVE: REMOVE_FILE
         },
-        initialize: function(onErrorCallback) {
+        initialize: function(onSuccessCallback, onErrorCallback) {
             window.webkitRequestFileSystem(PERSISTENT, SIZE, function(fileSystem) {
                 fs = fileSystem;
+                onSuccessCallback();
             }, function(e) {
                 onErrorCallback(getError(e, "while initializing file system"));
             });
@@ -817,6 +850,8 @@ angular.module("platen.services").factory("fileManager", function() {
                     fileWriter.truncate(blob.size);
                 }, function(e) {
                     onErrorCallback(getError(e, " while creating fileWriter for " + filePath));
+                }, function(e) {
+                    onErrorCallback(getError(e, " while creating fileWriter for " + filePath));
                 });
             });
         },
@@ -840,6 +875,11 @@ angular.module("platen.services").factory("fileManager", function() {
                 fileEntry.remove(onSuccessCallback, function(e) {
                     onErrorCallback(getError(e, " while removing file " + filePath));
                 });
+            });
+        },
+        createDirectory: function(directoryPath, onSuccessCallback, onErrorCallback) {
+            fs.root.getDirectory(directoryPath, doCreate, onSuccessCallback, function(e) {
+                onErrorCallback(getError(e, " while creating directory " + directoryPath));
             });
         }
     };

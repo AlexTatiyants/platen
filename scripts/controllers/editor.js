@@ -1,18 +1,23 @@
 var EditorController = function(Post, $scope, $routeParams, $filter, fileManager, wordpress, logger, resources, settings) {
   var STATUS_DRAFT = 'draft';
   var STATUS_PUBLISH = 'publish';
+
   var POST_TITLE_ID = 'post-title';
   var POST_BODY_ID = 'post-content';
   var POST_HTML_ID = 'post-content-preview';
-  var POST_EXCERPT = 'post-excerpt';
-  var POST_TAGS = 'post-tags';
-  var POST_CATEGORIES = 'post-categories';
-  var EDITABLE_ELEMENTS = [POST_TITLE_ID, POST_BODY_ID, POST_EXCERPT, POST_TAGS, POST_CATEGORIES];
+  var POST_EXCERPT_ID = 'post-excerpt';
+  var POST_TAGS_ID = 'post-tags';
+  var POST_CATEGORIES_ID = 'post-categories';
+
+  var EDITABLE_ELEMENTS = [POST_TITLE_ID, POST_BODY_ID, POST_EXCERPT_ID, POST_TAGS_ID, POST_CATEGORIES_ID];
   var INSERTED_IMAGE_PLACEHOLDER = '[[!@#IMAGE_PLACEHOLDER#@!]]';
   var DELETED_IMAGE_PLACEHOLDER = "!! IMAGE DELETED !!";
   var MESSAGE_PREVIEW_HTML = 'Preview as HTML';
   var MESSAGE_PREVIEW_MARKDOWN = 'View Markdown';
   var IMAGE_TYPE = 'image/png';
+
+  $scope.insertImageDialogOpen = false;
+  $scope.deleteImageConfirmOpen = false;
 
   var notify = function(message, error, isSuccess) {
     if (error) {
@@ -24,6 +29,19 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       message: message,
       success: isSuccess
     });
+  };
+
+  var setFonts = function() {
+    $('#' + POST_TITLE_ID).css('font-family', settings.getSetting(settings.keys.postTitleFont));
+    $('#' + POST_TITLE_ID).css('font-size', settings.getSetting(settings.keys.postTitleFontSize) + 'px');
+
+    $('#' + POST_BODY_ID).css('font-family', settings.getSetting(settings.keys.postBodyFont));
+    $('#' + POST_BODY_ID).css('font-size', settings.getSetting(settings.keys.postBodyFontSize) + 'px');
+    $('#' + POST_BODY_ID).css('line-height', settings.getSetting(settings.keys.postBodyLineHeight) + 'px');
+
+    $('#' + POST_HTML_ID).css('font-family', settings.getSetting(settings.keys.postHtmlFont));
+    $('#' + POST_HTML_ID).css('font-size', settings.getSetting(settings.keys.postHtmlFontSize) + 'px');
+    $('#' + POST_HTML_ID).css('line-height', settings.getSetting(settings.keys.postHtmlLineHeight) + 'px');
   };
 
   Post.initialize($routeParams.postId, function(post) {
@@ -43,18 +61,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     notify("error loading post", error, false);
   });
 
-  var setFonts = function() {
-    $('#' + POST_TITLE_ID).css('font-family', settings.getSetting(settings.keys.postTitleFont));
-    $('#' + POST_TITLE_ID).css('font-size', settings.getSetting(settings.keys.postTitleFontSize) + 'px');
-
-    $('#' + POST_BODY_ID).css('font-family', settings.getSetting(settings.keys.postBodyFont));
-    $('#' + POST_BODY_ID).css('font-size', settings.getSetting(settings.keys.postBodyFontSize) + 'px');
-    $('#' + POST_BODY_ID).css('line-height', settings.getSetting(settings.keys.postBodyLineHeight) + 'px');
-
-    $('#' + POST_HTML_ID).css('font-family', settings.getSetting(settings.keys.postHtmlFont));
-    $('#' + POST_HTML_ID).css('font-size', settings.getSetting(settings.keys.postHtmlFontSize) + 'px');
-    $('#' + POST_HTML_ID).css('line-height', settings.getSetting(settings.keys.postHtmlLineHeight) + 'px');
-  };
 
   var savePost = function() {
     Post.save(function() {
