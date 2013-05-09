@@ -1,5 +1,8 @@
-#options-panel.options-visible {
+@settings-panel-width: 300px;
+
+#settings-panel.options-visible {
   width: 30%;
+  max-width: @settings-panel-width;
 }
 
 #main-panel {
@@ -11,7 +14,7 @@
   margin-left: 30%;
 }
 
-#options-panel {
+#settings-panel {
   width: 0;
   position: fixed;
   top: 0;
@@ -21,6 +24,8 @@
   background: -webkit-linear-gradient(left, @alt-base-color 96%, @alt-base-color-strong 100%);
   color: @alt-text-color;
   font-size: @base-font-size * 0.9;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   &:after {
     content: '';
@@ -35,12 +40,13 @@
 
   .btn {
     text-decoration: none;
-    margin: auto;
+    margin-left: @pad-unit/2;
     display: block;
     text-align: center;
+    width: 60%;
   }
 
-  .options-panel-header {
+  .settings-panel-header {
     margin-top: @pad-unit/2;
     border-bottom: 2px solid @alt-line-color;
     padding-bottom: @pad-unit/2;
@@ -77,7 +83,7 @@
 }
 
 section.option-container {
-  padding: @pad-unit/2;
+  padding: @pad-unit/2 @pad-unit @pad-unit/2 @pad-unit/2;
   font-size: @base-font-size * 0.9;
   border-bottom: 1px solid @alt-line-color;
   position: relative;
@@ -94,7 +100,8 @@ section.option-container {
 
   input, select {
     width: 70%;
-    // margin-left: @pad-unit;
+    background-color: @alt-base-color;
+    color: @alt-text-color;
   }
 
   header {
@@ -102,6 +109,7 @@ section.option-container {
     color: @alt-text-color-weak;
     display: block;
     text-shadow: 1px 0px @alt-line-color;
+    font-size: @base-font-size * 1.1;
   }
 
   .input-box {
@@ -126,6 +134,11 @@ section.option-container {
   label {
     display: block;
   }
+
+  [class^="icon-"] {
+    float: right;
+    margin-right: @pad-unit/4;
+  }
 }
 
 .theme-option {
@@ -135,6 +148,7 @@ section.option-container {
   border-radius: @border-radius;
   margin-bottom: @pad-unit/5;
   margin-left: @pad-unit/2;
+  width: 60%;
 
   &:hover {
     color: @alt-base-color;

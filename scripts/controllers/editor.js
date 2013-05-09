@@ -49,9 +49,11 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
     $('#' + POST_BODY_ID).css('font-family', settings.getSetting(settings.keys.postBodyFont));
     $('#' + POST_BODY_ID).css('font-size', settings.getSetting(settings.keys.postBodyFontSize) + 'px');
+    $('#' + POST_BODY_ID).css('line-height', settings.getSetting(settings.keys.postBodyLineHeight) + 'px');
 
     $('#' + POST_HTML_ID).css('font-family', settings.getSetting(settings.keys.postHtmlFont));
     $('#' + POST_HTML_ID).css('font-size', settings.getSetting(settings.keys.postHtmlFontSize) + 'px');
+    $('#' + POST_HTML_ID).css('line-height', settings.getSetting(settings.keys.postHtmlLineHeight) + 'px');
   };
 
   var savePost = function() {

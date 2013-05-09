@@ -74,6 +74,19 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
     $scope.$broadcast(resources.events.FONT_CHANGED);
   };
 
+  $scope.increaseLineHeight = function(lineHeight) {
+    var currentHeight = parseFloat(settings.getSetting(lineHeight));
+    settings.setSetting(lineHeight, currentHeight + 1);
+    $scope.$broadcast(resources.events.FONT_CHANGED);
+  };
+
+  $scope.decreaseLineHeight = function(lineHeight) {
+    var currentHeight = parseFloat(settings.getSetting(lineHeight));
+    settings.setSetting(lineHeight, currentHeight - 1);
+    $scope.$broadcast(resources.events.FONT_CHANGED);
+  };
+
+
   // initialize theme
   $scope.settings.currentTheme = settings.getSetting(settings.THEME);
   $scope.autoSaveInterval = settings.getSetting(settings.AUTOSAVE_INTERVAL);

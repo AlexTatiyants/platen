@@ -70,8 +70,10 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         $("#" + POST_TITLE_ID).css("font-size", settings.getSetting(settings.keys.postTitleFontSize) + "px");
         $("#" + POST_BODY_ID).css("font-family", settings.getSetting(settings.keys.postBodyFont));
         $("#" + POST_BODY_ID).css("font-size", settings.getSetting(settings.keys.postBodyFontSize) + "px");
+        $("#" + POST_BODY_ID).css("line-height", settings.getSetting(settings.keys.postBodyLineHeight) + "px");
         $("#" + POST_HTML_ID).css("font-family", settings.getSetting(settings.keys.postHtmlFont));
         $("#" + POST_HTML_ID).css("font-size", settings.getSetting(settings.keys.postHtmlFontSize) + "px");
+        $("#" + POST_HTML_ID).css("line-height", settings.getSetting(settings.keys.postHtmlLineHeight) + "px");
     };
     var savePost = function() {
         Post.save(function() {
@@ -384,6 +386,16 @@ var MainController = function($scope, $dialog, $timeout, fileManager, resources,
     $scope.decreaseFontSize = function(fontSize) {
         var currentSize = parseFloat(settings.getSetting(fontSize));
         settings.setSetting(fontSize, currentSize - 1);
+        $scope.$broadcast(resources.events.FONT_CHANGED);
+    };
+    $scope.increaseLineHeight = function(lineHeight) {
+        var currentHeight = parseFloat(settings.getSetting(lineHeight));
+        settings.setSetting(lineHeight, currentHeight + 1);
+        $scope.$broadcast(resources.events.FONT_CHANGED);
+    };
+    $scope.decreaseLineHeight = function(lineHeight) {
+        var currentHeight = parseFloat(settings.getSetting(lineHeight));
+        settings.setSetting(lineHeight, currentHeight - 1);
         $scope.$broadcast(resources.events.FONT_CHANGED);
     };
     $scope.settings.currentTheme = settings.getSetting(settings.THEME);
@@ -879,8 +891,10 @@ angular.module("platen.services").factory("settings", function() {
         postTitleFontSize: "postTitleFontSize",
         postBodyFont: "postBodyFont",
         postBodyFontSize: "postBodyFontSize",
+        postBodyLineHeight: "postBodyLineHeight",
         postHtmlFont: "postHtmlFont",
-        postHtmlFontSize: "postHtmlFontSize"
+        postHtmlFontSize: "postHtmlFontSize",
+        postHtmlLineHeight: "postHtmlLineHeight"
     };
     var DEFAULTS = {
         theme: "white",
@@ -888,8 +902,10 @@ angular.module("platen.services").factory("settings", function() {
         postTitleFontSize: 30,
         postBodyFont: "inconsolata",
         postBodyFontSize: 16,
+        postBodyLineHeight: 25,
         postHtmlFont: "goudy",
-        postHtmlFontSize: 16
+        postHtmlFontSize: 16,
+        postHtmlLineHeight: 25
     };
     var THEMES = {
         white: "white",

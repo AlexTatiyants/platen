@@ -7,8 +7,10 @@ angular.module('platen.services').factory('settings', function() {
     postTitleFontSize: 'postTitleFontSize',
     postBodyFont: 'postBodyFont',
     postBodyFontSize: 'postBodyFontSize',
+    postBodyLineHeight: 'postBodyLineHeight',
     postHtmlFont: 'postHtmlFont',
-    postHtmlFontSize: 'postHtmlFontSize'
+    postHtmlFontSize: 'postHtmlFontSize',
+    postHtmlLineHeight: 'postHtmlLineHeight'
   };
 
   var DEFAULTS = {
@@ -17,8 +19,10 @@ angular.module('platen.services').factory('settings', function() {
     postTitleFontSize: 30,
     postBodyFont: 'inconsolata',
     postBodyFontSize: 16,
+    postBodyLineHeight: 25,
     postHtmlFont: 'goudy',
-    postHtmlFontSize: 16
+    postHtmlFontSize: 16,
+    postHtmlLineHeight: 25
   };
 
   var THEMES = {

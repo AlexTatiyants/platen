@@ -366,8 +366,9 @@
   float: left;
   font-size: 12.8px;
 }
-#options-panel.options-visible {
+#settings-panel.options-visible {
   width: 30%;
+  max-width: 300px;
 }
 #main-panel {
   width: 100%;
@@ -376,7 +377,7 @@
   width: 70%;
   margin-left: 30%;
 }
-#options-panel {
+#settings-panel {
   width: 0;
   position: fixed;
   top: 0;
@@ -386,8 +387,10 @@
   background: -webkit-linear-gradient(left, #4d4d4d 96%, #262626 100%);
   color: #b3b3b3;
   font-size: 14.4px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
-#options-panel:after {
+#settings-panel:after {
   content: '';
   position: absolute;
   top: 20px;
@@ -397,19 +400,20 @@
   border-width: 10px;
   border-color: transparent transparent transparent #262626;
 }
-#options-panel .btn {
+#settings-panel .btn {
   text-decoration: none;
-  margin: auto;
+  margin-left: 10px;
   display: block;
   text-align: center;
+  width: 60%;
 }
-#options-panel .options-panel-header {
+#settings-panel .settings-panel-header {
   margin-top: 10px;
   border-bottom: 2px solid #333333;
   padding-bottom: 10px;
   position: relative;
 }
-#options-panel .options-panel-header:after {
+#settings-panel .settings-panel-header:after {
   content: ".";
   color: #4d4d4d;
   border-bottom: 1px solid #737373;
@@ -418,23 +422,23 @@
   left: 0px;
   width: 100%;
 }
-#options-panel .options-panel-header span {
+#settings-panel .settings-panel-header span {
   padding: 10px;
   font-size: 19.2px;
   text-shadow: 2px 0px #333333;
 }
-#options-panel .options-panel-header .icon-close {
+#settings-panel .settings-panel-header .icon-close {
   font-size: 16px;
   color: #b3b3b3;
   margin-top: -5px;
   margin-right: 5px;
   text-shadow: 0 0 0;
 }
-#options-panel .options-panel-header .icon-close:hover {
+#settings-panel .settings-panel-header .icon-close:hover {
   color: #b3b3b3;
 }
 section.option-container {
-  padding: 10px;
+  padding: 10px 20px 10px 10px;
   font-size: 14.4px;
   border-bottom: 1px solid #333333;
   position: relative;
@@ -451,12 +455,15 @@ section.option-container:after {
 section.option-container input,
 section.option-container select {
   width: 70%;
+  background-color: #4d4d4d;
+  color: #b3b3b3;
 }
 section.option-container header {
   margin-bottom: 10px;
   color: #cccccc;
   display: block;
   text-shadow: 1px 0px #333333;
+  font-size: 17.6px;
 }
 section.option-container .input-box {
   border: 1px inset #333333;
@@ -477,6 +484,10 @@ section.option-container ul {
 .option-group label {
   display: block;
 }
+.option-group [class^="icon-"] {
+  float: right;
+  margin-right: 5px;
+}
 .theme-option {
   padding: 6px;
   display: block;
@@ -484,6 +495,7 @@ section.option-container ul {
   border-radius: 3px;
   margin-bottom: 4px;
   margin-left: 10px;
+  width: 60%;
 }
 .theme-option:hover {
   color: #4d4d4d;
@@ -572,6 +584,18 @@ nav [class*=" icon-"] {
 }
 .icon-close:before {
   content: '\e003';
+}
+.icon-larger-font:before {
+  content: '\f067';
+}
+.icon-smaller-font:before {
+  content: '\f068';
+}
+.icon-larger-line-height:before {
+  content: '\e00c';
+}
+.icon-smaller-line-height:before {
+  content: '\e00d';
 }
 .modal-backdrop {
   position: fixed;
