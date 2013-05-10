@@ -1,4 +1,4 @@
-/*! platen 2013-05-09 */
+/*! platen 2013-05-10 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -98,6 +98,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         if (fileName.indexOf(".png") === -1) {
             fileName += ".png";
         }
+        fileName += "." + new Date().getTime();
         var image = {
             id: new Date().getTime(),
             type: IMAGE_TYPE,
@@ -161,9 +162,9 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.sync = function() {
         notify("starting WordPress upload", null, true);
         Post.sync(function() {
-            notify("finished upload to WordPress", null, false);
+            notify("finished upload to WordPress", null, true);
         }, function(error) {
-            notify("error uploading post '" + $scope.post.title, error, false);
+            notify("error uploading post '" + $scope.post.title + "'", error, false);
         });
     };
     $scope.getTags = function() {
@@ -612,9 +613,16 @@ angular.module("platen.directives").directive("pastableImage", function() {
         require: "?ngModel",
         link: function($scope, $element, attrs, $ngModel) {
             $element.on("paste", function(event) {
-                var item = event.originalEvent.clipboardData.items[0];
-                if (!item || item.type !== "image/png") return;
-                $scope.$emit("imageInserted", item.getAsFile());
+                var pastedImage;
+                _.each(event.originalEvent.clipboardData.items, function(item) {
+                    if (item.type === "image/png") {
+                        pastedImage = item;
+                    }
+                });
+                if (pastedImage) {
+                    event.preventDefault();
+                    $scope.$emit("imageInserted", pastedImage.getAsFile());
+                }
             });
         }
     };
@@ -661,14 +669,15 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
         var d = $q.defer();
         try {
             fileManager.readFile(image.filePath, false, function(imageData) {
-                wordpress.uploadFile(image.fileName, image.type, imageData, function(id, url) {
+                var cleanFileName = image.fileName.substr(0, image.fileName.lastIndexOf("."));
+                wordpress.uploadFile(cleanFileName, image.type, imageData, function(id, url) {
                     image.blogUrl = url;
                     image.blogId = id;
-                    logger.log("uploaded image" + image.fileName, "Post module");
+                    logger.log("processed image '" + image.fileName + "'", "Post module");
                     d.resolve();
                 }, function(e) {
                     d.reject();
-                    logger.log("error uploading image " + image.fileName, "Post Module");
+                    logger.log("error uploading image '" + image.fileName + "'", "Post Module");
                 });
             }, function(e) {
                 d.reject();
@@ -683,7 +692,7 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
     var uploadImages = function(content, onCompletionCallback) {
         var promises = [];
         _.each(data.images, function(image) {
-            if (!image.blogId || !image.blogId.trim() === "") {
+            if (!image.blogId || image.blogId.trim() === "") {
                 promises.push(uploadImage(image));
             }
         });
@@ -998,7 +1007,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
             localStorage["password"] = l.password;
             localStorage["rememberCredentials"] = l.rememberCredentials;
         }
-        logger.log("saved login credentials for blog + '" + login.url + "'", "wordpress service");
+        logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
     };
     var initialize = function(onSuccessCallback, onErrorCallback) {
         if (l.url.trim() === "" || l.username.trim() === "" || l.password.trim() === "") {
@@ -1101,10 +1110,10 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         });
         if (result.faultCode) {
             var err = result.faultString.concat();
-            logger.log("unable to upload file " + file.fileName + "' to blog '" + l.url + "': " + err, "wordpress service");
+            logger.log("unable to upload file '" + file.fileName + "' to blog '" + l.url + "': " + err, "wordpress service");
             onErrorCallback(err);
         } else {
-            logger.log("uploaded file " + file.fileName + "' to blog '" + l.url, "wordpress service");
+            logger.log("uploaded file '" + file.fileName + "' to blog '" + l.url, "wordpress service");
             onSuccessCallback(result.id.concat(), result.url.concat());
         }
     };

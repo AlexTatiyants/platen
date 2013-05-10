@@ -11,5 +11,5 @@ WP integration
 - add setting author
 - add loading draft posts
 
-Images
-- add checking for duplicate image names
+Pasting
+- automatically convert HTML to markdown

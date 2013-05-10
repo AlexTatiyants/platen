@@ -1,6 +1,4 @@
-angular.module('platen.models').factory('Post',
-
-['$q', 'resources', 'fileManager', 'wordpress', 'logger',
+angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager', 'wordpress', 'logger',
 
 function($q, resources, fileManager, wordpress, logger) {
   var data = {};
@@ -22,7 +20,7 @@ function($q, resources, fileManager, wordpress, logger) {
         contentMarkdownHTML - markdown text, HTMLified by the browswer (innerHTML property of the editor window)
         contentHTMLPreview - markdown text converted to HTML (innerHTML content of the preview window)
         content - markdown text converted to HTML and encoded (i.e. content of the post for Wordpress)
-        */
+    */
     data.content = '';
     data.contentMarkdown = ''; // set by editable-markdown directive
     data.contentMarkdownHtml = '';
@@ -59,25 +57,22 @@ function($q, resources, fileManager, wordpress, logger) {
     var d = $q.defer();
 
     try {
-      fileManager.readFile(image.filePath, false,
-
-      function(imageData) {
-        wordpress.uploadFile(image.fileName, image.type, imageData,
-
-        function(id, url) {
+      fileManager.readFile(image.filePath, false, function(imageData) {
+        // platen suffixes images with a unique identifier which has to be removed
+        // prior to uploading the file to WordPress
+        var cleanFileName = image.fileName.substr(0, image.fileName.lastIndexOf("."));
+        wordpress.uploadFile(cleanFileName, image.type, imageData, function(id, url) {
           image.blogUrl = url;
           image.blogId = id;
-          logger.log("uploaded image" + image.fileName, "Post module");
+          logger.log("processed image '" + image.fileName + "'", "Post module");
           d.resolve();
-        },
 
-        function(e) {
+        }, function(e) {
           d.reject();
-          logger.log("error uploading image " + image.fileName, "Post Module");
+          logger.log("error uploading image '" + image.fileName + "'", "Post Module");
         })
-      },
 
-      function(e) {
+      }, function(e) {
         d.reject();
         logger.log("error reading image " + image.fileName, "Post Module");
       });
@@ -93,7 +88,7 @@ function($q, resources, fileManager, wordpress, logger) {
     var promises = [];
 
     _.each(data.images, function(image) {
-      if (!image.blogId || !image.blogId.trim() === '') {
+      if (!image.blogId || image.blogId.trim() === '') {
         // for each image to be uploaded, initiate upload to wordpress
         // because this operation is asyncronous, we need to get a promise for it
         promises.push(uploadImage(image));
@@ -113,14 +108,10 @@ function($q, resources, fileManager, wordpress, logger) {
         onSuccessCallback(data);
       } else {
 
-        fileManager.readFile(getFilePath(postId), true,
-
-        function(postJson) {
+        fileManager.readFile(getFilePath(postId), true, function(postJson) {
           data = JSON.parse(postJson);
           onSuccessCallback(data);
-        },
-
-        function(error) {
+        }, function(error) {
           onErrorCallback(error);
         })
       }
@@ -139,11 +130,11 @@ function($q, resources, fileManager, wordpress, logger) {
         // extract and upload any images which haven't already been uploaded
         uploadImages(data.content, function() {
 
+          // replace references to images within the post body with WordPress urls
           var content = data.content;
           _.each(data.images, function(image) {
             content = content.replace(image.localUrl, image.blogUrl);
           });
-
           data.content = content;
 
           wordpress.savePost(data, function(result) {

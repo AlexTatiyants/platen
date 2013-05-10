@@ -27,7 +27,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       localStorage['rememberCredentials'] = l.rememberCredentials;
     }
 
-    logger.log("saved login credentials for blog + '" + login.url + "'", "wordpress service");
+    logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
   };
 
   var initialize = function(onSuccessCallback, onErrorCallback) {
@@ -152,10 +152,10 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
 
     if (result.faultCode) {
       var err = result.faultString.concat();
-      logger.log("unable to upload file " + file.fileName + "' to blog '" + l.url + "': " + err, "wordpress service");
+      logger.log("unable to upload file '" + file.fileName + "' to blog '" + l.url + "': " + err, "wordpress service");
       onErrorCallback(err);
     } else {
-      logger.log("uploaded file " + file.fileName + "' to blog '" + l.url, "wordpress service");
+      logger.log("uploaded file '" + file.fileName + "' to blog '" + l.url, "wordpress service");
       onSuccessCallback(result.id.concat(), result.url.concat());
     }
   };

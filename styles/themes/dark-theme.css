@@ -287,7 +287,7 @@
   margin: auto;
   cursor: pointer;
   height: 8px;
-  background-color: #ffffff;
+  background-color: #8c8c8c;
 }
 .term-list {
   padding: 0;
@@ -383,8 +383,8 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: linear-gradient(to right, #d9d9d9 96%, #ffffff 100%);
-  background: -webkit-linear-gradient(left, #d9d9d9 96%, #ffffff 100%);
+  background: linear-gradient(to right, #d9d9d9 96%, #8c8c8c 100%);
+  background: -webkit-linear-gradient(left, #d9d9d9 96%, #8c8c8c 100%);
   color: #272727;
   font-size: 14.4px;
   overflow-y: auto;
@@ -398,7 +398,7 @@
   margin-left: -10px;
   border-style: solid;
   border-width: 10px;
-  border-color: transparent transparent transparent #ffffff;
+  border-color: transparent transparent transparent #8c8c8c;
 }
 #settings-panel .btn {
   text-decoration: none;
@@ -517,7 +517,7 @@ section.option-container ul {
 }
 .font-size-control:hover {
   background-color: #737373;
-  color: #ffffff;
+  color: #8c8c8c;
 }
 @font-face {
   font-family: 'icons';

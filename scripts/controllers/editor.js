@@ -61,7 +61,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     notify("error loading post", error, false);
   });
 
-
   var savePost = function() {
     Post.save(function() {
       $scope.$apply();
@@ -84,11 +83,12 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   });
 
   var addImage = function(imageName, imageBlob, onSuccessCallback, onErrorCallback) {
-    // TODO: handle images pasted as text/html
     var fileName = imageName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     if (fileName.indexOf('.png') === -1) {
       fileName += '.png';
     }
+
+    fileName += "." + new Date().getTime();
 
     var image = {
       id: new Date().getTime(),
@@ -171,9 +171,9 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     notify("starting WordPress upload", null, true);
 
     Post.sync(function() {
-      notify("finished upload to WordPress", null, false);
+      notify("finished upload to WordPress", null, true);
     }, function(error) {
-      notify("error uploading post '" + $scope.post.title, error, false);
+      notify("error uploading post '" + $scope.post.title + "'", error, false);
     });
   };
 
