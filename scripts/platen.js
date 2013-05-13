@@ -1,4 +1,4 @@
-/*! platen 2013-05-10 */
+/*! platen 2013-05-12 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -339,6 +339,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.aboutDialogOpen = false;
     $scope.fonts = [];
     $scope.settings = {};
+    $scope.themes = settings.themes;
     $scope.appStatus = {
         isProcessing: false,
         isSuccess: true,
@@ -958,7 +959,8 @@ angular.module("platen.services").factory("settings", function() {
     };
     var THEMES = {
         white: "white",
-        dark: "dark"
+        dark: "dark",
+        gray: "gray"
     };
     var getSetting = function(key) {
         return localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key];
@@ -979,7 +981,8 @@ angular.module("platen.services").factory("settings", function() {
             saveSetting(key, value);
         },
         THEME: SETTINGS.theme,
-        keys: SETTINGS
+        keys: SETTINGS,
+        themes: THEMES
     };
 });
 

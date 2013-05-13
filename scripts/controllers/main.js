@@ -5,6 +5,8 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   $scope.fonts = [];
   $scope.settings = {};
 
+  $scope.themes = settings.themes;
+
   $scope.appStatus = {
     isProcessing: false,
     isSuccess: true,

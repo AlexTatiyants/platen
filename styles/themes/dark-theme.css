@@ -709,11 +709,17 @@ nav [class*=" icon-"] {
 }
 .status {
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
   margin: auto;
   background-color: #262626;
   cursor: pointer;
+  background-image: url('/images/icon_30.png');
+  background-color: white !important;
+  width: 30px;
+  height: 30px;
+  display: block;
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 20px;
 }
 .error {
   background-color: #f26a57;
@@ -934,7 +940,6 @@ h2 {
   font-size: 22.4px;
 }
 .input-box {
-  background-color: #262626;
   border: 1px solid #404040;
   border-radius: 3px;
   padding: 4px;
@@ -946,4 +951,13 @@ h2 {
   font-style: italic;
   font-size: 12.8px;
   color: #8c8c8c;
+}
+.logo {
+  background-image: url('/images/icon_128.png');
+  width: 128px;
+  height: 128px;
+  display: block;
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 20px;
 }

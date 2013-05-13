@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<link rel="stylesheet" type="text/css" title="white" href="styles/themes/white-theme.css" />
 	<link rel="stylesheet" type="text/css" title="dark" disabled="true" href="styles/themes/dark-theme.css" />
+	<link rel="stylesheet" type="text/css" title="gray" disabled="true" href="styles/themes/gray-theme.css" />
 	<script src="vendor/jquery-1.9.1.min.js"></script>
 	<script src="vendor/mimic.js"></script>
 	<script src="vendor/wordpress.min.js"></script>
@@ -27,13 +28,8 @@
 		<section class="option-container">
 			<header>theme</header>
 			<ul>
-				<li>
-					<span data-ng-class="{'theme-option':true, white:true, selected: settings.currentTheme === 'white'}"
-					data-ng-click="switchTheme('white')">white</span>
-				</li>
-				<li>
-					<span data-ng-class="{'theme-option':true, dark:true, selected: settings.currentTheme === 'dark'}"
-					data-ng-click="switchTheme('dark')">dark</span>
+				<li data-ng-repeat="theme in themes" data-ng-bind="theme" data-ng-click="switchTheme(theme)"
+				data-ng-class="{'theme-option':true, selected: settings.currentTheme === theme}" />
 				</li>
 			</ul>
 		</section>
@@ -82,11 +78,11 @@
 				<li><a href="#/images"><i class="icon-images-list" title="view images"></i></a></li>
 				<li><a href="#/logs"><i class="icon-logs" title="view logs"></i></a></li>
 				<li><span data-ng-click="showAboutDialog()"><i class="icon-help" title="about"></i></a></li>
-<!-- 				<li>
+				<li>
 					<button data-ng-click="startProcessing()">start</button>
 					<button data-ng-click="stopProcessingWithFail()">fail</button>
 					<button data-ng-click="stopProcessingwithSuccess()">success</button>
-				</li> -->
+				</li>
 			</ul>
 		</nav>
 
@@ -113,8 +109,12 @@
         <h2>About</h2>
       </div>
       <div class="modal-body">
-      	<p>Platen is written by Alex Tatiyants
-      	</p>
+      	<span class="logo"></span>
+      	<h3>platen</h3>
+      	<em>by <a href="http://tatiyants.com">Alex Tatiyants</a></em>
+
+      	<p>source code at <a href="https://github.com/AlexTatiyants/platen">gitHub</a></p>
+      	
       </div>
       <div class="modal-footer">
         <button class="btn btn-warning cancel" ng-click="closeAboutDialog()">Ok</button>
@@ -125,4 +125,3 @@
 </div>
 </body>
 </html>
-

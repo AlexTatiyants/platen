@@ -27,7 +27,8 @@ angular.module('platen.services').factory('settings', function() {
 
   var THEMES = {
     white: 'white',
-    dark: 'dark'
+    dark: 'dark',
+    gray: 'gray'
   };
 
   var getSetting = function(key) {
@@ -55,6 +56,7 @@ angular.module('platen.services').factory('settings', function() {
     },
 
     THEME: SETTINGS.theme,
-    keys: SETTINGS
+    keys: SETTINGS,
+    themes: THEMES
   }
 });

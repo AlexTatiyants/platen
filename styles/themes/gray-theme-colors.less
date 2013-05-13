@@ -1,0 +1,37 @@
+@base-color: #c2c2c2;
+@base-color-rgba-transparent: rgba(255, 255, 255, 0.8);
+@base-color-weak: darken(@base-color, 5%);
+
+@text-color: darken(@base-color, 60%);
+@text-color-strong: darken(@text-color, 20%);
+@text-color-weak: lighten(@text-color, 20%);
+@text-color-very-weak: lighten(@text-color, 50%);
+
+@shadow-color: darken(@base-color, 50%);
+
+@button-color: lighten(@text-color, 10%);
+@button-color-secondary: @text-color;
+
+@line-color: darken(@base-color, 10%);
+@line-color-strong: darken(@line-color, 10%);
+
+@alt-base-color: darken(@base-color, 70%);
+@alt-base-color-strong: darken(@alt-base-color, 15%);
+@alt-base-color-weak: lighten(@alt-base-color, 15%);
+
+@alt-text-color: #fff - @alt-base-color;
+@alt-text-color-strong: darken(@alt-text-color, 30%);
+@alt-text-color-weak: lighten(@alt-text-color, 10%);
+@alt-line-color: darken(@alt-base-color, 10%);
+
+@alt-shadow-color: darken(@alt-base-color, 50%);
+
+@progress-color: @text-color-weak;
+
+@error-color: #f26a57;
+@success-color: #91c848;
+
+body {
+  background-image: -webkit-radial-gradient(center 50%, circle closest-corner, #fff 35%, @base-color 92%);
+  background-color: @base-color;
+}
