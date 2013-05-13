@@ -237,6 +237,11 @@
 #metadata-panel .expanded {
   height: 173px;
 }
+#metadata-panel .btn {
+  box-shadow: 0px 1px 3px 0px #000000;
+  padding: 5px 10px 5px 10px;
+  margin: 10px;
+}
 #metadata-container {
   padding: 6px;
   border-radius: 3px 3px 0 0;
@@ -252,9 +257,26 @@
   box-shadow: 2px 2px 2px #808080;
 }
 #post-metadata {
-  overflow: hidden;
   margin: auto;
   width: 90%;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+#post-metadata::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 5px;
+  background-color: #cccccc;
+}
+#post-metadata::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #737373;
+}
+#post-metadata::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #cccccc;
 }
 .field-group {
   float: left;
@@ -278,6 +300,15 @@
   position: relative;
   top: 6px;
   left: 20px;
+}
+.field-group + .full {
+  width: 95%;
+}
+.field-group + .half {
+  width: 44%;
+}
+.field-group + .first {
+  margin-right: 7%;
 }
 #metadata-collapser {
   display: block;
@@ -321,7 +352,6 @@
   padding: 10px;
   border: 1px solid #333333;
   border-radius: 3px;
-  height: 180px;
   overflow-y: auto;
   margin-top: 10px;
 }
@@ -401,6 +431,7 @@
   border-color: transparent transparent transparent #262626;
 }
 #settings-panel .btn {
+  box-shadow: 0px 1px 3px 0px #000000;
   text-decoration: none;
   margin-left: 10px;
   display: block;
@@ -433,6 +464,7 @@
   margin-top: -5px;
   margin-right: 5px;
   text-shadow: 0 0 0;
+  float: right;
 }
 #settings-panel .settings-panel-header .icon-close:hover {
   color: #b3b3b3;
@@ -707,6 +739,10 @@ nav [class*=" icon-"] {
   height: 40px;
   z-index: 5;
 }
+.status-bar .icon-close {
+  float: right;
+  color: #ffffff;
+}
 .status {
   border-radius: 50%;
   margin: auto;
@@ -726,9 +762,6 @@ nav [class*=" icon-"] {
 }
 .success {
   background-color: #91c848;
-}
-.icon-close {
-  float: right;
 }
 .status-message-common {
   float: left;
@@ -849,9 +882,6 @@ nav [class*=" icon-"] {
     -ms-transform: rotate(360deg);
   }
 }
-html {
-  height: 100%;
-}
 body,
 p,
 h1,
@@ -904,7 +934,7 @@ nav ul li {
   border-radius: 3px;
   padding: 4px 20px 4px 20px;
   line-height: 28.8px;
-  box-shadow: inset 0px 1px 3px 0px #e6e6e6;
+  box-shadow: 0px 1px 3px 0px #808080;
   background: linear-gradient(to bottom, #808080 5%, #666666 100%);
   background-color: #808080;
   border: 1px solid #666666;
@@ -924,13 +954,6 @@ select {
 }
 .pull-right {
   float: right;
-}
-.full {
-  width: 95%;
-}
-.half {
-  width: 43%;
-  margin-right: 7%;
 }
 .center {
   margin: auto;

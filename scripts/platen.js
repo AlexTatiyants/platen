@@ -1,4 +1,4 @@
-/*! platen 2013-05-12 */
+/*! platen 2013-05-13 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -202,6 +202,10 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.imagesAvailable = function() {
         return !$.isEmptyObject($scope.post.images);
     };
+    $scope.copyToClipboard = function(image) {
+        console.log("copying", image);
+        document.execCommand("Copy");
+    };
     $scope.initiateImageDelete = function(image) {
         $scope.imageToDelete = image;
         $scope.deleteImageConfirmOpen = true;
@@ -223,7 +227,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             notify("error deleting image", error, false);
         });
     };
-    $scope.addImageToPost = function(image) {};
     $scope.togglePublishStatus = function() {
         if ($scope.post.status === STATUS_DRAFT) {
             $scope.post.status = STATUS_PUBLISH;

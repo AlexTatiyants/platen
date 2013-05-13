@@ -24,11 +24,19 @@
       <section id="post-metadata" data-ng-show="showMetadata" data-ng-animate>
 
         <div class="field-group full">
-          <span>status</span>: <span data-ng-bind="post.status"></span>
-          <button class="btn small" data-ng-show="post.status === 'draft'" data-ng-click="togglePublishStatus()">publish</button>
-          <span data-ng-show="post.state.toBePublished">
-            <em>(this post will be published next time you upload it)</em>
-            <button class="btn small" data-ng-click="togglePublishStatus()">undo</button>
+          <span>
+            <span>status</span>: <strong><span data-ng-bind="post.status"></span></strong>
+            <button class="btn small" data-ng-show="post.status === 'draft'" data-ng-click="togglePublishStatus()">publish</button>
+            <span data-ng-show="post.state.toBePublished">
+              <em>(this post will be published next time you upload it)</em>
+              <button class="btn small" data-ng-click="togglePublishStatus()">undo</button>
+            </span>
+          </span>
+          <span>
+            <span>last uploaded:<strong>
+              <span data-ng-show="post.state.lastUploadDate" data-ng-bind="post.state.lastUploadDate | date:'short'"></span>
+              <span data-ng-show="!post.state.lastUploadDate">never</span></strong>
+            </span>
           </span>
         </div>
 
@@ -38,7 +46,7 @@
           <div class="input" contenteditable="true" data-editable-text="true" data-ng-model="post.excerpt" id="post-excerpt"></div>
         </div>
 
-        <div class="field-group half">
+        <div class="field-group half first">
           <label>tags</label>
           <span class="icon-sync-wordpress" data-ng-click="getTags()" title="get existing tags from WordPress"></span>
           <div class="input" contenteditable="true" data-editable-text="true" data-ng-model="post.tags" id="post-tags"></div>
@@ -68,15 +76,11 @@
               <span class="caption" data-ng-bind="image.name"></span>
               <img data-ng-src="{{image.localUrl}}"></img>
               <span class="image-controls">
-                <span class="icon-insert" data-ng-click="addImageToPost(image)"></span>
+                <span class="icon-insert" data-ng-click="copyToClipboard(image)"></span>
                 <span class="icon-delete" data-ng-click="initiateImageDelete(image)"></span>
               </span>
             </li>
           </ul>
-        </div>
-        <div class="field-group ">
-          <span>wordpress id: <span data-ng-bind="post.wordPressId"></span></span>
-          <span>last uploaded: <span data-ng-bind="post.state.lastUploadDate | date:'short'"></span></span>
         </div>
       </section>
     </div>

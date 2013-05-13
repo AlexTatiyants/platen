@@ -13,3 +13,6 @@ WP integration
 
 Pasting
 - automatically convert HTML to markdown
+
+Image
+- add support for full set of WordPress options (alt text, description, caption, alignment, featured image)

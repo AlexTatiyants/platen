@@ -1,5 +1,5 @@
-@base-color: #c2c2c2;
-@base-color-rgba-transparent: rgba(255, 255, 255, 0.8);
+@base-color: #e8e8e8;
+@base-color-rgba-transparent: rgba(232, 232, 232, 0.8);
 @base-color-weak: darken(@base-color, 5%);
 
 @text-color: darken(@base-color, 60%);
@@ -30,8 +30,9 @@
 
 @error-color: #f26a57;
 @success-color: #91c848;
+@status-text-color: #fff;
 
 body {
-  background-image: -webkit-radial-gradient(center 50%, circle closest-corner, #fff 35%, @base-color 92%);
-  background-color: @base-color;
+  // background-image: -webkit-radial-gradient(center 50%, circle closest-corner, #fff 35%, @base-color 92%);
+  background-image: -webkit-radial-gradient(center 35em, circle closest-corner, #fff 5%, @base-color 65%);
 }

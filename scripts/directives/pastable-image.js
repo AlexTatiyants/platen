@@ -10,6 +10,7 @@ angular.module('platen.directives').directive('pastableImage', function() {
 
         // first, check the clipboard to see if an image being pasted
         var pastedImage;
+
         _.each(event.originalEvent.clipboardData.items, function(item) {
           if (item.type === 'image/png') {
             pastedImage = item;

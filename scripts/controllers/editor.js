@@ -217,6 +217,11 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     return !($.isEmptyObject($scope.post.images));
   };
 
+  $scope.copyToClipboard = function(image) {
+    console.log("copying", image);
+    document.execCommand( 'Copy' );
+  };
+
   $scope.initiateImageDelete = function(image) {
     $scope.imageToDelete = image;
     $scope.deleteImageConfirmOpen = true;
@@ -244,8 +249,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       notify("error deleting image", error, false);
     });
   };
-
-  $scope.addImageToPost = function(image) {};
 
   $scope.togglePublishStatus = function() {
     if ($scope.post.status === STATUS_DRAFT) {

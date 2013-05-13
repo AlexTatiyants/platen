@@ -15,10 +15,6 @@
 @border-radius: 3px;
 @max-width: 800px;
 
-html {
-  height: 100%;
-}
-
 body, p, h1, h2, h3, h4, h5, h6, table, div, ul, ol {
   padding: 0;
   margin: 0;
@@ -63,8 +59,8 @@ nav {
   border-radius: @border-radius;
   padding: @pad-unit * 0.2 @pad-unit @pad-unit * 0.2 @pad-unit;
   line-height: @base-font-size * 1.8;
-  box-shadow:inset 0px 1px 3px 0px @line-color;
-  background:linear-gradient(to bottom, @button-color 5%, @button-color-secondary 100%);
+  box-shadow: 0px 1px 3px 0px @shadow-color;
+  background: linear-gradient(to bottom, @button-color 5%, @button-color-secondary 100%);
   background-color: @button-color;
   border:1px solid @text-color;
   color: @base-color;
@@ -89,14 +85,6 @@ select {
   float: right;
 }
 
-.full {
-  width: 95%;
-}
-
-.half {
-  width: 43%;
-  margin-right: 7%;
-}
 
 .center {
   margin: auto;

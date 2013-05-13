@@ -14,6 +14,11 @@
   width: 100%;
   height: @status-bar-height;
   z-index: 5;
+
+  .icon-close {
+    float: right;
+    color: @status-text-color;
+  }
 }
 
 .status {
@@ -41,10 +46,6 @@
   background-color: @success-color;
 }
 
-.icon-close {
-  float: right;
-}
-
 .status-message-common {
   float: left;
   position: absolute;
@@ -52,7 +53,7 @@
   left: @pad-unit * 0.5 + @left-margin + @circle-radius + @circle-border * 2;
   width: 85%;
   padding: @pad-unit * 0.5;
-  color: @base-color;
+  color: @status-text-color;
   z-index: 2;
   border-radius: @border-radius;
 }
