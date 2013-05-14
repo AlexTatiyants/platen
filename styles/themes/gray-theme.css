@@ -262,7 +262,7 @@ body {
 #post-metadata {
   margin: auto;
   width: 90%;
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
   padding-right: 20px;
   margin-top: 10px;
@@ -884,6 +884,9 @@ nav [class*=" icon-"] {
   to {
     -ms-transform: rotate(360deg);
   }
+}
+html {
+  min-height: 100%;
 }
 body,
 p,

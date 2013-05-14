@@ -202,9 +202,10 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.imagesAvailable = function() {
         return !$.isEmptyObject($scope.post.images);
     };
-    $scope.copyToClipboard = function(image) {
-        console.log("copying", image);
+    $scope.copyToClipboard = function($element) {
+        $element.focus();
         document.execCommand("Copy");
+        console.log("copied");
     };
     $scope.initiateImageDelete = function(image) {
         $scope.imageToDelete = image;

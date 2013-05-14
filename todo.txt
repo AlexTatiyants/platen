@@ -1,10 +1,10 @@
 Posts
+- add sorting (by date)
 
 Editor
 - add keyboard shortcut for preview
 
 Config
-- add font selection
 
 WP integration
 - add keyboard shortcut for sync
@@ -16,3 +16,4 @@ Pasting
 
 Image
 - add support for full set of WordPress options (alt text, description, caption, alignment, featured image)
+- when deleting from Images screen, remove from all posts where used (could be time consuming)
