@@ -101,7 +101,7 @@ section.option-container {
   }
 
   input, select {
-    width: 70%;
+    width: 55%;
     background-color: @alt-base-color;
     color: @alt-text-color;
   }
@@ -136,10 +136,16 @@ section.option-container {
   label {
     display: block;
   }
+}
 
-  [class^="icon-"] {
-    float: right;
-    margin-right: @pad-unit/4;
+.font-controls {
+  float: right;
+  width: 40%;
+  margin-top: @pad-unit/4;
+    [class^="icon-"] {
+      text-shadow: 2px 0px @alt-line-color;
+      float: left;
+      margin-right: @pad-unit/4;
   }
 }
 

@@ -45,26 +45,33 @@
 				<label>post title</label>
 				<select data-ng-options="font for font in fonts" data-ng-model="settings.postTitleFont"
 				data-ng-change="saveFont(settings.postTitleFont, settingsKeys.postTitleFont)"></select>
-				<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postTitleFontSize)></span>
-				<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postTitleFontSize)></span>
+
+				<div class="font-controls">
+					<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postTitleFontSize)></span>
+					<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postTitleFontSize)></span>
+				</div>
 			</div>
 			<div class="option-group">
 				<label>post body</label>
 				<select data-ng-options="font for font in fonts" data-ng-model="settings.postBodyFont"
 				data-ng-change="saveFont(settings.postBodyFont, settingsKeys.postBodyFont)"></select>
-				<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postBodyFontSize)></span>
-				<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postBodyFontSize)></span>
-				<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postBodyLineHeight)></span>
-				<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postBodyLineHeight)></span>
+				<div class="font-controls">
+					<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postBodyFontSize)></span>
+					<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postBodyFontSize)></span>
+					<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postBodyLineHeight)></span>
+					<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postBodyLineHeight)></span>
+				</div>
 			</div>
 			<div class="option-group">
 				<label>post html</label>
 				<select data-ng-options="font for font in fonts" data-ng-model="settings.postHtmlFont"
 				data-ng-change="saveFont(settings.postHtmlFont, settingsKeys.postHtmlFont)"></select>
-				<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postHtmlFontSize)></span>
-				<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postHtmlFontSize)></span>
-				<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
-				<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
+				<div class="font-controls">
+					<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postHtmlFontSize)></span>
+					<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postHtmlFontSize)></span>
+					<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
+					<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
+				</div>
 			</div>
 		</section>
 	</aside>
@@ -78,12 +85,12 @@
 				<li><a href="#/images"><i class="icon-images-list" title="view images"></i></a></li>
 				<li><a href="#/logs"><i class="icon-logs" title="view logs"></i></a></li>
 				<li><span data-ng-click="showAboutDialog()"><i class="icon-help" title="about"></i></a></li>
-				<li>
+<!-- 				<li>
 					<button data-ng-click="startProcessing()">start</button>
 					<button data-ng-click="stopProcessingWithFail()">fail</button>
 					<button data-ng-click="stopProcessingwithSuccess()">success</button>
 				</li>
-			</ul>
+ -->			</ul>
 		</nav>
 
 		<div class="status-bar">
@@ -114,7 +121,7 @@
       	<em>by <a href="http://tatiyants.com">Alex Tatiyants</a></em>
 
       	<p>source code at <a href="https://github.com/AlexTatiyants/platen">gitHub</a></p>
-      	
+
       </div>
       <div class="modal-footer">
         <button class="btn btn-warning cancel" ng-click="closeAboutDialog()">Ok</button>

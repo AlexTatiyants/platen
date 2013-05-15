@@ -486,7 +486,7 @@ section.option-container:after {
 }
 section.option-container input,
 section.option-container select {
-  width: 70%;
+  width: 55%;
   background-color: #d9d9d9;
   color: #272727;
 }
@@ -516,8 +516,14 @@ section.option-container ul {
 .option-group label {
   display: block;
 }
-.option-group [class^="icon-"] {
+.font-controls {
   float: right;
+  width: 40%;
+  margin-top: 5px;
+}
+.font-controls [class^="icon-"] {
+  text-shadow: 2px 0px #f2f2f2;
+  float: left;
   margin-right: 5px;
 }
 .theme-option {
@@ -560,7 +566,7 @@ nav [class*=" icon-"] {
   display: inline-block;
   text-decoration: none;
   padding: 10px;
-  font-size: 20.8px;
+  font-size: 27.2px;
   cursor: pointer;
 }
 [class^="icon-"],
@@ -579,58 +585,58 @@ nav [class*=" icon-"] {
   color: #bfbfbf;
 }
 .icon-posts-list:before {
-  content: '\e00a';
+  content: 'b';
 }
 .icon-images-list:before {
-  content: '\e009';
+  content: 'e';
 }
 .icon-sync-wordpress:before {
-  content: '\e004';
+  content: 'm';
 }
 .icon-new-post:before {
-  content: '\e006';
+  content: 'd';
 }
 .icon-insert:before {
-  content: '\e008';
+  content: 'o';
 }
 .icon-edit:before {
-  content: '\f044';
+  content: 'q';
 }
 .icon-delete:before {
-  content: '\e005';
+  content: 'n';
 }
 .icon-settings:before {
-  content: '\e000';
+  content: 'a';
 }
 .icon-view-html:before {
-  content: '\e001';
+  content: 'k';
 }
 .icon-view-markdown:before {
-  content: '\e00b';
+  content: 'j';
 }
 .icon-logs:before {
-  content: '\e002';
+  content: 'f';
 }
 .icon-reload:before {
-  content: '\e007';
+  content: 'r';
 }
 .icon-close:before {
-  content: '\e003';
+  content: 'x';
 }
 .icon-help:before {
-  content: '\e003';
+  content: 'l';
 }
 .icon-larger-font:before {
-  content: '\f067';
+  content: 'g';
 }
 .icon-smaller-font:before {
-  content: '\f068';
+  content: 'p';
 }
 .icon-larger-line-height:before {
-  content: '\e00c';
+  content: 'h';
 }
 .icon-smaller-line-height:before {
-  content: '\e00d';
+  content: 'i';
 }
 .modal-backdrop {
   position: fixed;
