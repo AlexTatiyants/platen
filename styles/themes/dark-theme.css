@@ -621,7 +621,7 @@ nav [class*=" icon-"] {
   content: 'r';
 }
 .icon-close:before {
-  content: 'x';
+  content: 's';
 }
 .icon-help:before {
   content: 'l';
