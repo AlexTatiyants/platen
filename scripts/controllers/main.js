@@ -10,7 +10,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   $scope.appStatus = {
     isProcessing: false,
     isSuccess: true,
-    message: '',
+    message: 'everything is cool',
     showMessage: false
   };
 
@@ -177,6 +177,46 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   $scope.closeAboutDialog = function() {
     $scope.aboutDialogOpen = false;
   };
+
+  $scope.deleteAllPosts = function() {
+    fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
+      logger.log("deleted all posts", "MainController");
+
+      $scope.postsList = [];
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "all posts removed",
+        success: true
+      });
+
+    }, function(error) {
+      logger.log("error removing all posts: " + error, "MainController");
+
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "removing posts failed",
+        success: false
+      });
+    });
+  };
+
+  $scope.deleteAllIMages = function() {
+    fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
+      logger.log("deleted all images", "ImagesController");
+      $scope.images = {};
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "all images removed",
+        success: true
+      });
+    }, function(error) {
+      logger.log("error removing all images: " + error, "ImagesController");
+
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "removing images failed",
+        success: false
+      });
+    });
+  };
+
+
 
   $scope.safeApply = function(fn) {
     var phase = this.$root.$$phase;

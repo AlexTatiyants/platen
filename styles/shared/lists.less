@@ -43,8 +43,14 @@
   }
   .item-date {
     font-size: @base-font-size * 0.8;
-    color: @text-color-weak;
-    padding-top: @pad-unit * 0.5;
+    color: @text-color-very-weak;
+    padding-top: @pad-unit/2;
+    margin-right: @pad-unit/2;
+
+    strong {
+      color: @text-color-weak;
+      font-weight: 300;
+    }
   }
 }
 
@@ -90,5 +96,22 @@
     padding-top: @pad-unit * 0.5;
     padding-bottom: @pad-unit * 0.5;
     padding-right: @pad-unit * 0.5;
+  }
+}
+
+.filter-options {
+  position: absolute;
+  right: 10%;
+  top: @pad-unit/2;
+  text-align: right;
+  font-size: @base-font-size * 0.9;
+
+  h4 {
+    color: @text-color-very-weak;
+  }
+
+  .filter-option {
+    cursor: pointer;
+    margin-left: @pad-unit/2;
   }
 }

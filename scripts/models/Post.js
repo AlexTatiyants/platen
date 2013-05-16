@@ -95,9 +95,15 @@ function($q, resources, fileManager, wordpress, logger) {
       }
     });
 
-    // once all promises are fullfilled (i.e. all items have been uploaded),
-    // proceed with uploading the post
-    $q.all(promises).then(onCompletionCallback);
+    if (promises.lenth) {
+      // once all promises are fullfilled (i.e. all items have been uploaded),
+      // proceed with uploading the post
+      $q.all(promises).then(onCompletionCallback);
+    }
+    else {
+      // if there were no promises to begin with, just proceed with uploading
+      onCompletionCallback();
+    }
   };
 
   return {
@@ -147,6 +153,8 @@ function($q, resources, fileManager, wordpress, logger) {
             if (!data.wordPressId) {
               data.wordPressId = result;
               savePost(onSuccessCallback, onErrorCallback);
+            } else {
+              onSuccessCallback();
             }
           }, onErrorCallback);
         });

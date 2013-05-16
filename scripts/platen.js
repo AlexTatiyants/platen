@@ -1,4 +1,4 @@
-/*! platen 2013-05-15 */
+/*! platen 2013-05-16 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -7,7 +7,9 @@ angular.module("platen.services", []);
 
 angular.module("platen.models", []);
 
-var platen = angular.module("platen", [ "platen.models", "platen.directives", "platen.services", "ui.bootstrap", "ui" ]).config([ "$routeProvider", function($routeProvider) {
+angular.module("platen.filters", []);
+
+var platen = angular.module("platen", [ "platen.models", "platen.directives", "platen.services", "platen.filters", "ui.bootstrap", "ui" ]).config([ "$routeProvider", function($routeProvider) {
     $routeProvider.when("/posts", {
         templateUrl: "views/posts.html"
     });
@@ -45,7 +47,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     var IMAGE_TYPE = "image/png";
     $scope.insertImageDialogOpen = false;
     $scope.deleteImageConfirmOpen = false;
-    var notify = function(message, error, isSuccess) {
+    var notifyOnCompletion = function(message, error, isSuccess) {
         if (error) {
             message += ": " + error;
         }
@@ -75,14 +77,14 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         $("#" + POST_TITLE_ID).focus();
         $scope.safeApply();
     }, function(error) {
-        notify("error loading post", error, false);
+        notifyOnCompletion("error loading post", error, false);
     });
     var savePost = function() {
         Post.save(function() {
             $scope.$apply();
             logger.log("saved post '" + $scope.post.title + "' on " + $scope.post.state.lastSaveDate, "EditorController");
         }, function(error) {
-            notify("erorr saving post", error, false);
+            notifyOnCompletion("erorr saving post", error, false);
         });
     };
     $scope.$on(resources.events.ELEMENT_EDITED, function(event, elementId) {
@@ -114,9 +116,9 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             $scope.post.images[image.id] = image;
             savePost();
             image = {};
-            notify("image saved", null, true);
+            notifyOnCompletion("image saved", null, true);
         }, function(error) {
-            notify("error saving image", error, false);
+            notifyOnCompletion("error saving image", error, false);
         });
     };
     $scope.$on(resources.events.IMAGE_INSERTED, function(event, blob) {
@@ -130,7 +132,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         addImage($scope.imageToInsert.fileName, $scope.imageToInsert.blob, function() {
             savePost();
         }, function(error) {
-            notify("erorr updating post '" + $scope.post.title, error, false);
+            notifyOnCompletion("erorr updating post '" + $scope.post.title, error, false);
         });
     };
     $scope.cancelImageInsert = function() {
@@ -160,18 +162,20 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         savePost();
     };
     $scope.sync = function() {
-        notify("starting WordPress upload", null, true);
+        $scope.$emit(resources.events.PROCESSING_STARTED, {
+            message: "starting upload to WordPress"
+        });
         Post.sync(function() {
-            notify("finished upload to WordPress", null, true);
+            notifyOnCompletion("finished upload to WordPress", null, true);
         }, function(error) {
-            notify("error uploading post '" + $scope.post.title + "'", error, false);
+            notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
         });
     };
     $scope.getTags = function() {
         wordpress.getTags(function(result) {
             $scope.tags = result;
         }, function(error) {
-            notify("error loading tags from WordPress", error, false);
+            notifyOnCompletion("error loading tags from WordPress", error, false);
         });
     };
     $scope.addTag = function(tag) {
@@ -187,7 +191,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         wordpress.getCategories(function(result) {
             $scope.categories = result;
         }, function(error) {
-            notify("error loading categories from WordPress", error, false);
+            notifyOnCompletion("error loading categories from WordPress", error, false);
         });
     };
     $scope.addCategory = function(category) {
@@ -225,7 +229,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             logger.log("deleted image '" + imageToDelete.fileName + "'", "EditorController");
             $scope.imageToDelete = {};
         }, function(error) {
-            notify("error deleting image", error, false);
+            notifyOnCompletion("error deleting image", error, false);
         });
     };
     $scope.togglePublishStatus = function() {
@@ -286,22 +290,6 @@ var ImagesController = function($scope, fileManager, logger, resources) {
             });
         });
     };
-    $scope.deleteAll = function() {
-        fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
-            logger.log("deleted all images", "ImagesController");
-            $scope.images = {};
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "all images removed",
-                success: true
-            });
-        }, function(error) {
-            logger.log("error removing all images: " + error, "ImagesController");
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "removing images failed",
-                success: false
-            });
-        });
-    };
 };
 
 ImagesController.$inject = [ "$scope", "fileManager", "logger", "resources" ];
@@ -347,7 +335,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.appStatus = {
         isProcessing: false,
         isSuccess: true,
-        message: "",
+        message: "everything is cool",
         showMessage: false
     };
     var notify = function(message, error, isSuccess) {
@@ -478,6 +466,38 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.closeAboutDialog = function() {
         $scope.aboutDialogOpen = false;
     };
+    $scope.deleteAllPosts = function() {
+        fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
+            logger.log("deleted all posts", "MainController");
+            $scope.postsList = [];
+            $scope.$emit(resources.events.PROCESSING_FINISHED, {
+                message: "all posts removed",
+                success: true
+            });
+        }, function(error) {
+            logger.log("error removing all posts: " + error, "MainController");
+            $scope.$emit(resources.events.PROCESSING_FINISHED, {
+                message: "removing posts failed",
+                success: false
+            });
+        });
+    };
+    $scope.deleteAllIMages = function() {
+        fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
+            logger.log("deleted all images", "ImagesController");
+            $scope.images = {};
+            $scope.$emit(resources.events.PROCESSING_FINISHED, {
+                message: "all images removed",
+                success: true
+            });
+        }, function(error) {
+            logger.log("error removing all images: " + error, "ImagesController");
+            $scope.$emit(resources.events.PROCESSING_FINISHED, {
+                message: "removing images failed",
+                success: false
+            });
+        });
+    };
     $scope.safeApply = function(fn) {
         var phase = this.$root.$$phase;
         if (phase == "$apply" || phase == "$digest") {
@@ -493,15 +513,19 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
 MainController.$inject = [ "$scope", "$dialog", "$timeout", "fileManager", "logger", "resources", "settings" ];
 
 var PostsController = function($scope, $location, fileManager, logger, resources) {
-    $scope.posts = {};
+    $scope.postsList = [];
     $scope.confirm = {};
     $scope.loaded = false;
     $scope.postToDelete = {};
+    var SORT_DESCENDING = "descending";
+    var SORT_ASCENDING = "ascending";
+    $scope.filters = {};
+    $scope.filters.dateSortOrder = SORT_DESCENDING;
     if (!$scope.loaded) {
         fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.READ, function(file) {
             try {
                 var post = JSON.parse(file);
-                $scope.posts[post.id] = post;
+                $scope.postsList.push(post);
                 $scope.loaded = true;
                 $scope.$apply();
             } catch (error) {
@@ -531,7 +555,10 @@ var PostsController = function($scope, $location, fileManager, logger, resources
     $scope.proceedWithDelete = function() {
         $scope.deletePostConfirmOpen = false;
         fileManager.removeFile($scope.postToDelete.path, function() {
-            delete $scope.posts[$scope.postToDelete.id];
+            var newList = _.reject($scope.postsList, function(post) {
+                return post.id === $scope.postToDelete.id;
+            });
+            $scope.postsList = newList;
             logger.log("deleted post '" + $scope.postToDelete.title + "'", "PostsController");
             $scope.postToDelete = {};
             $scope.$apply();
@@ -544,22 +571,6 @@ var PostsController = function($scope, $location, fileManager, logger, resources
     };
     $scope.editPost = function(post) {
         $location.path("posts/" + post.id);
-    };
-    $scope.deleteAll = function() {
-        fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
-            logger.log("deleted all posts", "PostsController");
-            $scope.posts = {};
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "all posts removed",
-                success: true
-            });
-        }, function(error) {
-            logger.log("error removing all posts: " + error, "PostsController");
-            $scope.$emit(resources.events.PROCESSING_FINISHED, {
-                message: "removing posts failed",
-                success: false
-            });
-        });
     };
 };
 
@@ -633,6 +644,16 @@ angular.module("platen.directives").directive("pastableImage", function() {
     };
 });
 
+angular.module("platen.filters").filter("fromNow", function() {
+    return function(date) {
+        if (date) {
+            return moment(date).fromNow();
+        } else {
+            return "never";
+        }
+    };
+});
+
 angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManager", "wordpress", "logger", function($q, resources, fileManager, wordpress, logger) {
     var data = {};
     var STATUS_DRAFT = "draft";
@@ -701,7 +722,11 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                 promises.push(uploadImage(image));
             }
         });
-        $q.all(promises).then(onCompletionCallback);
+        if (promises.lenth) {
+            $q.all(promises).then(onCompletionCallback);
+        } else {
+            onCompletionCallback();
+        }
     };
     return {
         initialize: function(postId, onSuccessCallback, onErrorCallback) {
@@ -738,6 +763,8 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                         if (!data.wordPressId) {
                             data.wordPressId = result;
                             savePost(onSuccessCallback, onErrorCallback);
+                        } else {
+                            onSuccessCallback();
                         }
                     }, onErrorCallback);
                 });

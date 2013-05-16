@@ -19,7 +19,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   $scope.insertImageDialogOpen = false;
   $scope.deleteImageConfirmOpen = false;
 
-  var notify = function(message, error, isSuccess) {
+  var notifyOnCompletion = function(message, error, isSuccess) {
     if (error) {
       message += ": " + error;
     }
@@ -58,7 +58,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.safeApply();
 
   }, function(error) {
-    notify("error loading post", error, false);
+    notifyOnCompletion("error loading post", error, false);
   });
 
   var savePost = function() {
@@ -68,7 +68,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     },
 
     function(error) {
-      notify("erorr saving post", error, false);
+      notifyOnCompletion("erorr saving post", error, false);
     });
   };
 
@@ -109,11 +109,11 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
       savePost();
       image = {};
-      notify("image saved", null, true);
+      notifyOnCompletion("image saved", null, true);
     },
 
     function(error) {
-      notify("error saving image", error, false);
+      notifyOnCompletion("error saving image", error, false);
     });
   };
 
@@ -132,7 +132,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     addImage($scope.imageToInsert.fileName, $scope.imageToInsert.blob, function() {
       savePost();
     }, function(error) {
-      notify("erorr updating post '" + $scope.post.title, error, false);
+      notifyOnCompletion("erorr updating post '" + $scope.post.title, error, false);
     });
   };
 
@@ -168,12 +168,14 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   };
 
   $scope.sync = function() {
-    notify("starting WordPress upload", null, true);
+    $scope.$emit(resources.events.PROCESSING_STARTED, {
+      message: "starting upload to WordPress"
+    });
 
     Post.sync(function() {
-      notify("finished upload to WordPress", null, true);
+      notifyOnCompletion("finished upload to WordPress", null, true);
     }, function(error) {
-      notify("error uploading post '" + $scope.post.title + "'", error, false);
+      notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
     });
   };
 
@@ -181,7 +183,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     wordpress.getTags(function(result) {
       $scope.tags = result;
     }, function(error) {
-      notify("error loading tags from WordPress", error, false);
+      notifyOnCompletion("error loading tags from WordPress", error, false);
     });
   };
 
@@ -199,7 +201,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     wordpress.getCategories(function(result) {
       $scope.categories = result;
     }, function(error) {
-      notify("error loading categories from WordPress", error, false);
+      notifyOnCompletion("error loading categories from WordPress", error, false);
     });
   };
 
@@ -247,7 +249,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     },
 
     function(error) {
-      notify("error deleting image", error, false);
+      notifyOnCompletion("error deleting image", error, false);
     });
   };
 

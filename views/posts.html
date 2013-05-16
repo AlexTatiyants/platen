@@ -1,20 +1,32 @@
 <div class="list-container" data-ng-controller="PostsController">
     <h2>Posts</h2>
+
+    <div class="filter-options">
+        <h4>sort by</h4>
+        <span class="filter-option" ng-click="predicate = 'state.createDate'; reverse=!reverse">created on</span>
+        <span class="filter-option" ng-click="predicate = 'state.lastSaveDate'; reverse=!reverse">saved on</span>
+        <span class="filter-option" ng-click="predicate = 'title'; reverse=!reverse">title</span>
+    </div>
+
     <ul class="list">
-        <li class="list-item-line" data-ng-repeat="(id, post) in posts">
+        <li class="list-item-line" data-ng-repeat="post in postsList | orderBy:predicate:reverse">
             <span class="icon icon-delete" data-ng-click="deletePost(post)"></span>
             <span class="icon icon-edit" data-ng-click="editPost(post)"></span>
             <h3 data-ng-bind="post.title"  data-ng-click="editPost(post)" class="clickable-title"></h3>
-
-            <span class="item-date">created on
-                <strong data-ng-bind="post.state.createDate | date:'short'"></strong>
+            <span class="item-date">created
+                <strong data-ng-bind="post.state.createDate | fromNow"></strong>
+            </span>
+            <span class="item-date">last saved
+                <strong data-ng-bind="post.state.lastSaveDate | fromNow"></strong>
+            </span>
+            <span class="item-date">last uploaded
+                <strong data-ng-bind="post.state.lastUploadDate | fromNow"></strong>
+            </span>
+            <span class="item-date">status
+                <strong data-ng-bind="post.status"></strong>
             </span>
         </li>
     </ul>
-
-    <div>
-        <button class="btn" data-ng-click="deleteAll()">delete all posts</button>
-    </div>
 
     <div id="delete-post-confirm">
         <div modal="deletePostConfirmOpen" close="close()" options="opts">

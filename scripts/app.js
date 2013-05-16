@@ -3,8 +3,9 @@
 angular.module('platen.directives', []);
 angular.module('platen.services', []);
 angular.module('platen.models', []);
+angular.module('platen.filters', []);
 
-var platen = angular.module('platen', ['platen.models', 'platen.directives', 'platen.services', 'ui.bootstrap', 'ui'])
+var platen = angular.module('platen', ['platen.models', 'platen.directives', 'platen.services', 'platen.filters', 'ui.bootstrap', 'ui'])
 	.config(['$routeProvider', function($routeProvider) {
 
 	$routeProvider.when('/posts', {

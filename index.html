@@ -12,6 +12,7 @@
 	<script src="vendor/ui-bootstrap-0.2.0.min.js"></script>
 	<script src="vendor/angular-ui.min.js"></script>
 	<script src="vendor/marked.js"></script>
+	<script src="vendor/moment.min.js"></script>
 	<script src="vendor/underscore.1.4.4.min.js"></script>
 	<script src="scripts/platen.js"></script>
 	<title>platen</title>
@@ -74,6 +75,12 @@
 				</div>
 			</div>
 		</section>
+
+		<section class="option-container">
+			<header>utilities</header>
+			<button class="btn" data-ng-click="deleteAllPosts()">delete all posts</button>
+			<button class="btn" data-ng-click="deleteAllImages()">delete all images</button>
+		</section>
 	</aside>
 
 	<section id="main-panel"  data-ng-class="{'options-visible': optionsPanelVisible}" >
@@ -85,21 +92,18 @@
 				<li><a href="#/images"><i class="icon-images-list" title="view images"></i></a></li>
 				<li><a href="#/logs"><i class="icon-logs" title="view logs"></i></a></li>
 				<li><span data-ng-click="showAboutDialog()"><i class="icon-help" title="about"></i></a></li>
-<!-- 				<li>
+			</ul>
+		</nav>
+<!-- 				<span style="float: right;">
 					<button data-ng-click="startProcessing()">start</button>
 					<button data-ng-click="stopProcessingWithFail()">fail</button>
 					<button data-ng-click="stopProcessingwithSuccess()">success</button>
-				</li>
- -->			</ul>
-		</nav>
-
+				</span>
+ -->
 		<div class="status-bar">
-			<div class="spinner-container">
-				<span class="spinner"></span>
-				<div
-				data-ng-click="showMessage()"
-				data-ng-class="{spinning: appStatus.isProcessing, status: true, error: !appStatus.isSuccess, success: appStatus.isSuccess}"
-				title="{{appStatus.message}}"></div>
+			<div class="status-container">
+				<span data-ng-click="showMessage()" data-ng-class="{'status-light': true, processing: appStatus.isProcessing, error: (!appStatus.isSuccess && !appStatus.isProcessing),  success: (appStatus.isSuccess && !appStatus.isProcessing)}"></span>
+				<div data-ng-class="{rotate: appStatus.isProcessing, status: true}" title="{{appStatus.message}}"></div>
 			</div>
 			<span data-ng-show="appStatus.showMessage"
 			data-ng-class="{'status-message': true, error: !appStatus.isSuccess, success: appStatus.isSuccess}">

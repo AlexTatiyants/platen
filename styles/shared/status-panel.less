@@ -1,4 +1,7 @@
+@logo-size: 40px;
+@status-light-size: 15px;
 @status-bar-height: 40px;
+@status-light-center: 22px;
 
 @circle-radius: 30px;
 @circle-border: 6px;
@@ -21,21 +24,46 @@
   }
 }
 
+.status-container {
+  float: left;
+  margin-left: @pad-unit/2;
+  margin-top: @pad-unit/2;
+}
+
 .status {
-  border-radius: 50%;
-  width: @circle-radius;
-  height: @circle-radius;
+  width: @logo-size;
+  height: @logo-size;
   margin: auto;
   background-color: @base-color;
-  cursor: pointer;
-  background-image: url('/images/icon_30.png');
-  background-color: white !important;
-  width: 30px;
-  height: 30px;
   display: block;
   float: left;
-  margin-right: @pad-unit;
-  margin-bottom: @pad-unit;
+  font-family: 'icons';
+  font-size: @logo-size;
+
+  &:before {
+    content: 't';
+  }
+}
+
+.rotate {
+  -webkit-animation: spin 6s linear infinite;
+  -webkit-transform-origin: 50% 50%;
+}
+
+.status-light {
+  cursor: pointer;
+  border-radius: 50%;
+  margin: auto;
+  height: @status-light-size;
+  width: @status-light-size;
+  position: absolute;
+  display: block;
+  top: @status-light-center;
+  left: @status-light-center;
+}
+
+.processing {
+  background-color: @text-color-weak;
 }
 
 .error {
@@ -85,63 +113,11 @@
     }
   }
 
-.spinning:before {
-  content: "";
-  border-radius: 50%;
-  position: relative;
-  display: block;
-  height: (@circle-radius + @circle-border * 2) * 1;
-  width: (@circle-radius + @circle-border * 2) * 1;
-  top: @circle-border * -1;
-  left: @circle-border * -1;
-  background-color: @progress-color;
-  z-index: -2;
-}
-
-.spinner-container {
-  float: left;
-  margin-left: @pad-unit;
-  margin-top: @pad-unit * 0.5;
-}
-
-.spinner {
-  position: absolute;
-  width: 0;
-  height: 0;
-  left: @circle-radius - @circle-border + @left-margin;
-  top: @circle-radius - @circle-border;
-  border-left: @spinner-width solid transparent;
-  border-right: @spinner-length solid transparent;
-  border-top: @spinner-width solid @base-color-rgba-transparent;
-  z-index: -1;
-
-  -webkit-animation: spin 6s linear infinite;
-  -webkit-transform-origin: 0 0;
-}
-
 @-webkit-keyframes spin {
   from {
     -webkit-transform: rotate(0deg);
   }
   to {
     -webkit-transform: rotate(360deg);
-  }
-}
-
-@-moz-keyframes spin {
-  from {
-    -moz-transform: rotate(0deg);
-  }
-  to {
-    -moz-transform: rotate(360deg);
-  }
-}
-
-@-ms-keyframes spin {
-  from {
-    -ms-transform: rotate(0deg);
-  }
-  to {
-    -ms-transform: rotate(360deg);
   }
 }

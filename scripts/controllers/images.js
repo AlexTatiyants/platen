@@ -5,13 +5,7 @@ var ImagesController = function($scope, fileManager, logger, resources) {
   $scope.imageToDelete = {};
 
   if (!$scope.loaded) {
-    fileManager.accessFilesInDirectory(
-
-    resources.IMAGE_DIRECTORY_PATH,
-    fileManager.directoryAccessActions.LIST,
-
-    function(file) {
-      // on success
+    fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.LIST, function(file) {
       var image = {};
 
       image.name = file.name;
@@ -22,10 +16,7 @@ var ImagesController = function($scope, fileManager, logger, resources) {
       $scope.images[image.id] = image;
 
       $scope.$apply();
-    },
-
-    function(error) {
-      // on error
+    }, function(error) {
       logger.log(error, "ImagesController");
       $scope.$emit(resources.events.PROCESSING_FINISHED, {
         message: "loading images failed",
@@ -46,18 +37,12 @@ var ImagesController = function($scope, fileManager, logger, resources) {
 
   $scope.proceedWithDelete = function() {
     $scope.deleteImageConfirmOpen = false;
-    fileManager.removeFile($scope.imageToDelete.path,
-
-    function() {
-      // on success
+    fileManager.removeFile($scope.imageToDelete.path, function() {
       delete $scope.images[$scope.imageToDelete.id];
       logger.log("deleted image '" + $scope.imageToDelete.title + "'", "ImagesController");
       $scope.imageToDelete = {};
       $scope.$apply();
-    },
-
-    function(error) {
-      // on error
+    }, function(error) {
       $scope.$emit(resources.events.PROCESSING_FINISHED, {
         message: "failed to deleted image '" + $scope.postToDelete.title + "'",
         success: false
@@ -65,31 +50,6 @@ var ImagesController = function($scope, fileManager, logger, resources) {
     });
   };
 
-   $scope.deleteAll = function() {
-    fileManager.accessFilesInDirectory(
-
-    resources.IMAGE_DIRECTORY_PATH,
-    fileManager.directoryAccessActions.REMOVE,
-
-    function(file) {
-      logger.log("deleted all images", "ImagesController");
-      $scope.images = {};
-      $scope.$emit(resources.events.PROCESSING_FINISHED, {
-        message: "all images removed",
-        success: true
-      });
-    },
-
-    function(error) {
-      // on error
-      logger.log("error removing all images: " + error, "ImagesController");
-
-      $scope.$emit(resources.events.PROCESSING_FINISHED, {
-        message: "removing images failed",
-        success: false
-      });
-    });
-  };
 };
 
 ImagesController.$inject = ['$scope', 'fileManager', 'logger', 'resources'];
