@@ -106,6 +106,15 @@ function($q, resources, fileManager, wordpress, logger) {
     }
   };
 
+
+  var replaceImageHtml = function(content, localUrl, blogUrl, imageTitle) {
+    console.log(content);
+
+    return content
+    .replace('&lt;img src="' + localUrl, '&lt;a href="' + blogUrl + '"&gt; &lt;img class="aligncenter" src="' + blogUrl)
+    .replace('alt="' + imageTitle +'"&gt;', 'alt="' + imageTitle +'"&gt;&lt;/a&gt;');
+  };
+
   return {
     initialize: function(postId, onSuccessCallback, onErrorCallback) {
       // load or create new
@@ -139,7 +148,7 @@ function($q, resources, fileManager, wordpress, logger) {
           // replace references to images within the post body with WordPress urls
           var content = data.content;
           _.each(data.images, function(image) {
-            content = content.replace(image.localUrl, image.blogUrl);
+            content = replaceImageHtml(content, image.localUrl, image.blogUrl, image.title);
           });
           data.content = content;
 

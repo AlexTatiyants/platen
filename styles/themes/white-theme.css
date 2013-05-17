@@ -60,7 +60,7 @@
 }
 .list-item-line .item-date {
   font-size: 12.8px;
-  color: #cccccc;
+  color: #e6e6e6;
   padding-top: 10px;
   margin-right: 10px;
 }
@@ -117,7 +117,7 @@
   font-size: 14.4px;
 }
 .filter-options h4 {
-  color: #cccccc;
+  color: #e6e6e6;
 }
 .filter-options .filter-option {
   cursor: pointer;
@@ -218,12 +218,26 @@
   margin-bottom: 10px;
   font-size: 19.2px;
 }
+#post-content-preview img {
+  width: 95%;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #e6e6e6;
+  padding: 10px;
+  border-radius: 3px;
+}
+#post-content-preview ul,
+#post-content-preview ol {
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
 #status-panel {
   display: block;
   float: right;
   font-size: 12.8px;
   margin-top: 8px;
-  color: #cccccc;
+  color: #e6e6e6;
   text-align: right;
   width: 30%;
 }
@@ -311,7 +325,7 @@
   padding-right: 20px;
   width: 100%;
 }
-.field-group .icon-reload,
+.field-group .icon-refresh,
 .field-group .icon-sync-wordpress {
   float: right;
   position: relative;
@@ -594,7 +608,7 @@ nav [class*=" icon-"] {
 }
 [class^="icon-"],
 [class*=" icon-"] {
-  color: #cccccc;
+  color: #e6e6e6;
   font-family: 'icons';
   font-weight: normal;
   font-style: normal;
@@ -784,7 +798,7 @@ nav [class*=" icon-"] {
   color: #999999;
 }
 .page-container p {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .page-container [class^="icon-"],
 .page-container [class*=" icon-"] {
@@ -847,7 +861,7 @@ aside.page-links h3 {
   float: left;
   font-family: 'icons';
   font-size: 40px;
-  color: #cccccc;
+  color: #e6e6e6;
 }
 .status:hover {
   color: #666666;
@@ -867,7 +881,7 @@ aside.page-links h3 {
   width: 15px;
   position: absolute;
   display: block;
-  top: 22px;
+  top: 26px;
   left: 22px;
 }
 .processing {

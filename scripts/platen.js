@@ -728,6 +728,10 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
             onCompletionCallback();
         }
     };
+    var replaceImageHtml = function(content, localUrl, blogUrl, imageTitle) {
+        console.log(content);
+        return content.replace('&lt;img src="' + localUrl, '&lt;a href="' + blogUrl + '"&gt; &lt;img class="aligncenter" src="' + blogUrl).replace('alt="' + imageTitle + '"&gt;', 'alt="' + imageTitle + '"&gt;&lt;/a&gt;');
+    };
     return {
         initialize: function(postId, onSuccessCallback, onErrorCallback) {
             if (postId === "0") {
@@ -752,7 +756,7 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                 uploadImages(data.content, function() {
                     var content = data.content;
                     _.each(data.images, function(image) {
-                        content = content.replace(image.localUrl, image.blogUrl);
+                        content = replaceImageHtml(content, image.localUrl, image.blogUrl, image.title);
                     });
                     data.content = content;
                     wordpress.savePost(data, function(result) {

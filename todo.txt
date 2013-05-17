@@ -4,7 +4,8 @@ Posts
 Editor
 - add keyboard shortcut for preview
 
-Config
+Settings
+- add confirmation before deleting all posts and images
 
 WP integration
 - add keyboard shortcut for sync
@@ -17,3 +18,7 @@ Pasting
 Image
 - add support for full set of WordPress options (alt text, description, caption, alignment, featured image)
 - when deleting from Images screen, remove from all posts where used (could be time consuming)
+
+
+<p style="text-align: center;">
+<a href="image url"><img class="aligncenter" alt="title" src="image url" width="643" /></a></p>

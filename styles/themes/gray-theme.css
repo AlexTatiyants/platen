@@ -221,6 +221,20 @@ body {
   margin-bottom: 10px;
   font-size: 19.2px;
 }
+#post-content-preview img {
+  width: 95%;
+  margin: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #cfcfcf;
+  padding: 10px;
+  border-radius: 3px;
+}
+#post-content-preview ul,
+#post-content-preview ol {
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
 #status-panel {
   display: block;
   float: right;
@@ -314,7 +328,7 @@ body {
   padding-right: 20px;
   width: 100%;
 }
-.field-group .icon-reload,
+.field-group .icon-refresh,
 .field-group .icon-sync-wordpress {
   float: right;
   position: relative;
@@ -787,7 +801,7 @@ nav [class*=" icon-"] {
   color: #828282;
 }
 .page-container p {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .page-container [class^="icon-"],
 .page-container [class*=" icon-"] {
@@ -870,7 +884,7 @@ aside.page-links h3 {
   width: 15px;
   position: absolute;
   display: block;
-  top: 22px;
+  top: 26px;
   left: 22px;
 }
 .processing {

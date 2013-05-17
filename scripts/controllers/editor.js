@@ -42,6 +42,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $('#' + POST_HTML_ID).css('font-family', settings.getSetting(settings.keys.postHtmlFont));
     $('#' + POST_HTML_ID).css('font-size', settings.getSetting(settings.keys.postHtmlFontSize) + 'px');
     $('#' + POST_HTML_ID).css('line-height', settings.getSetting(settings.keys.postHtmlLineHeight) + 'px');
+
   };
 
   Post.initialize($routeParams.postId, function(post) {
