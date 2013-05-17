@@ -29,13 +29,6 @@ body {
   font-style: normal;
   -webkit-font-smoothing: antialiased;
 }
-.list-container {
-  margin: auto;
-  width: 80%;
-  max-width: 800px;
-  padding-top: 20px;
-  position: relative;
-}
 .list {
   padding: 0;
   margin-top: 20px;
@@ -650,7 +643,7 @@ nav [class*=" icon-"] {
 .icon-logs:before {
   content: 'f';
 }
-.icon-reload:before {
+.icon-refresh:before {
   content: 'r';
 }
 .icon-close:before {
@@ -776,6 +769,61 @@ nav [class*=" icon-"] {
 }
 .hide {
   display: none;
+}
+.page-container {
+  margin: auto;
+  width: 80%;
+  max-width: 800px;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  position: relative;
+}
+.page-container h2 {
+  margin-bottom: 20px;
+}
+.page-container h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #828282;
+}
+.page-container p {
+  margin-bottom: 10px;
+}
+.page-container [class^="icon-"],
+.page-container [class*=" icon-"] {
+  display: inline;
+  font-size: 20.8px;
+  color: #4f4f4f;
+  cursor: default;
+}
+.page-container ul {
+  list-style: none;
+}
+.page-container ul li {
+  margin-bottom: 10px;
+  font-size: 14.4px;
+}
+.page-container .status-light {
+  position: relative;
+  display: inline-block;
+  top: 0;
+  left: 0;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+aside.page-links {
+  float: right;
+  margin: 20px 0 20px 20px;
+  border: 1px solid #cfcfcf;
+  background-color: #dbdbdb;
+  clear: both;
+  padding: 20px 20px 20px 20px;
+  border-radius: 5px;
+  width: 20%;
+}
+aside.page-links h3 {
+  margin-top: 0;
+  color: #4f4f4f;
 }
 .status-bar {
   position: fixed;
@@ -1013,7 +1061,7 @@ h2 {
   width: 128px;
   height: 128px;
   display: block;
-  float: left;
-  margin-right: 20px;
+  float: right;
+  margin-left: 20px;
   margin-bottom: 20px;
 }

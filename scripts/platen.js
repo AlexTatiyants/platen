@@ -1,4 +1,4 @@
-/*! platen 2013-05-16 */
+/*! platen 2013-05-17 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -22,8 +22,8 @@ var platen = angular.module("platen", [ "platen.models", "platen.directives", "p
     $routeProvider.when("/logs", {
         templateUrl: "views/logs.html"
     });
-    $routeProvider.when("/login", {
-        templateUrl: "views/login.html"
+    $routeProvider.when("/about", {
+        templateUrl: "views/about.html"
     });
     $routeProvider.otherwise({
         redirectTo: "/posts"

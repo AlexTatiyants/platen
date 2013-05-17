@@ -89,7 +89,7 @@
 				</section>
 
 
-			</div>			
+			</div>
 	</aside>
 
 	<section id="main-panel"  data-ng-class="{'options-visible': optionsPanelVisible}" >
@@ -100,7 +100,7 @@
 				<li><a href="#/posts/0"><i class="icon-new-post" title="create post"></i></a></li>
 				<li><a href="#/images"><i class="icon-images-list" title="view images"></i></a></li>
 				<li><a href="#/logs"><i class="icon-logs" title="view logs"></i></a></li>
-				<li><span data-ng-click="showAboutDialog()"><i class="icon-help" title="about"></i></a></li>
+				<li><a href="#/about"><i class="icon-help" title="about"></i></a></li>
 			</ul>
 		</nav>
 
@@ -118,24 +118,6 @@
 
 	<section data-ng-view></section>
 
-<div id="about-dialog">
-    <div modal="aboutDialogOpen" close="closeAboutDialog()" options="opts">
-      <div class="modal-header">
-        <h2>About</h2>
-      </div>
-      <div class="modal-body">
-      	<span class="logo"></span>
-      	<p>Platen is a Markdown Wordpress editor created by <em><a href="http://tatiyants.com">Alex Tatiyants</a></em>.</p>
-
-      	<p><a href="http://daringfireball.net/projects/markdown/syntax">Markdown Syntax Reference</a><p>
-      	<p>source code at <a href="https://github.com/AlexTatiyants/platen">gitHub</a></p>
-
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-warning cancel" ng-click="closeAboutDialog()">Ok</button>
-      </div>
-    </div>
-  </div>
 </section>
 </div>
 </body>
