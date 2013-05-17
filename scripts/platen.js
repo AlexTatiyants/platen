@@ -1035,11 +1035,13 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
         l.username = login.username;
         l.password = login.password;
         l.rememberCredentials = login.rememberCredentials;
+        localStorage["url"] = l.url;
+        localStorage["username"] = l.username;
+        localStorage["rememberCredentials"] = l.rememberCredentials;
         if (l.rememberCredentials) {
-            localStorage["url"] = l.url;
-            localStorage["username"] = l.username;
             localStorage["password"] = l.password;
-            localStorage["rememberCredentials"] = l.rememberCredentials;
+        } else {
+            localStorage["password"] = "";
         }
         logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
     };

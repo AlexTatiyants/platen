@@ -32,11 +32,12 @@ body {
 .list-container {
   margin: auto;
   width: 80%;
+  max-width: 800px;
   padding-top: 20px;
+  position: relative;
 }
 .list {
   padding: 0;
-  max-width: 800px;
   margin-top: 20px;
   list-style: none;
   overflow: hidden;
@@ -120,7 +121,7 @@ body {
 }
 .filter-options {
   position: absolute;
-  right: 10%;
+  right: 0;
   top: 10px;
   text-align: right;
   font-size: 14.4px;
@@ -278,6 +279,10 @@ body {
   overflow: hidden;
   box-shadow: 2px 2px 2px #696969;
 }
+#metadata-container [class^="icon-"],
+#metadata-container [class*=" icon-"] {
+  font-size: 16px;
+}
 #post-metadata {
   margin: auto;
   width: 90%;
@@ -331,6 +336,9 @@ body {
 }
 .full {
   width: 95%;
+}
+.inline-group {
+  margin-right: 10px;
 }
 #metadata-collapser {
   display: block;
@@ -439,8 +447,6 @@ body {
   background: -webkit-linear-gradient(left, #363636 96%, #0f0f0f 100%);
   color: #cacaca;
   font-size: 14.4px;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 #settings-panel:after {
   content: '';
@@ -490,6 +496,11 @@ body {
 }
 #settings-panel .settings-panel-header .icon-close:hover {
   color: #cacaca;
+}
+.settings-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
 }
 section.option-container {
   padding: 10px 20px 10px 10px;
@@ -692,7 +703,7 @@ nav [class*=" icon-"] {
   border: 1px solid #cfcfcf;
   border-radius: 2px;
   outline: none;
-  box-shadow: 0 4px 4px #696969;
+  box-shadow: 0 2px 4px #696969;
   background-clip: padding-box;
 }
 .modal.fade {
@@ -703,7 +714,7 @@ nav [class*=" icon-"] {
   top: 10%;
 }
 .modal-header {
-  padding: 9px 15px;
+  padding: 10px 20px;
   border-bottom: 1px solid #cfcfcf;
 }
 .modal-header .close {
@@ -716,8 +727,11 @@ nav [class*=" icon-"] {
 .modal-body {
   position: relative;
   max-height: 400px;
-  padding: 15px;
+  padding: 20px;
   overflow-y: auto;
+}
+.modal-body p {
+  margin-bottom: 20px;
 }
 .modal-form {
   margin-bottom: 0;
@@ -725,7 +739,7 @@ nav [class*=" icon-"] {
   padding: 20px;
 }
 .modal-footer {
-  padding: 14px 15px 15px;
+  padding: 20px 20px 20px;
   margin-bottom: 0;
   text-align: right;
   background-color: #dbdbdb;
@@ -766,6 +780,7 @@ nav [class*=" icon-"] {
 .status-bar {
   position: fixed;
   bottom: 20px;
+  margin-left: 10px;
   width: 100%;
   height: 40px;
   z-index: 5;
@@ -783,11 +798,14 @@ nav [class*=" icon-"] {
   width: 40px;
   height: 40px;
   margin: auto;
-  background-color: #e8e8e8;
   display: block;
   float: left;
   font-family: 'icons';
   font-size: 40px;
+  color: #c2c2c2;
+}
+.status:hover {
+  color: #4f4f4f;
 }
 .status:before {
   content: 't';
@@ -909,6 +927,10 @@ ol {
   font-weight: 300;
   font-style: normal;
 }
+a {
+  color: #828282;
+  text-decoration: none;
+}
 body {
   background-color: #e8e8e8;
   width: 100%;
@@ -945,14 +967,14 @@ nav ul li {
   padding: 4px 20px 4px 20px;
   line-height: 28.8px;
   box-shadow: 0px 1px 3px 0px #696969;
-  background: linear-gradient(to bottom, #696969 5%, #4f4f4f 100%);
+  background: -webkit-linear-gradient(bottom, #696969 5%, #4f4f4f 100%);
   background-color: #696969;
   border: 1px solid #4f4f4f;
   color: #e8e8e8;
   text-shadow: 0px -1px 0px #696969;
 }
 .btn:hover {
-  background: linear-gradient(to bottom, #4f4f4f 5%, #696969 100%);
+  background: -webkit-linear-gradient(bottom, #4f4f4f 5%, #696969 100%);
   background-color: #4f4f4f;
 }
 select {
@@ -974,6 +996,7 @@ h2 {
 }
 .input-box {
   border: 1px solid #cfcfcf;
+  background-color: #e8e8e8;
   border-radius: 3px;
   padding: 4px;
   padding-right: 20px;

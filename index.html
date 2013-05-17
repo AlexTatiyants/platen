@@ -22,65 +22,74 @@
 	<div data-ng-controller="MainController" class="main-container">
 
 		<aside id="settings-panel" data-ng-class="{'options-visible': optionsPanelVisible}" data-ng-show="optionsPanelVisible">
-		<header class="settings-panel-header">
-			<span>options</span>
-			<span class="icon-close" data-ng-click="toggleOptionsPanel()"></span>
-		</header>
-		<section class="option-container">
-			<header>theme</header>
-			<ul>
-				<li data-ng-repeat="theme in themes" data-ng-bind="theme" data-ng-click="switchTheme(theme)"
-				data-ng-class="{'theme-option':true, selected: settings.currentTheme === theme}" />
-				</li>
-			</ul>
-		</section>
+			<header class="settings-panel-header">
+				<span>options</span>
+				<span class="icon-close" data-ng-click="toggleOptionsPanel()"></span>
+			</header>
 
-		<section class="option-container">
-			<header>login credentials</header>
-			<button class="btn" data-ng-click="loginCredentials()">edit</button>
-		</section>
+			<div class="settings-container">
+				<section class="option-container">
+					<header>theme</header>
+					<ul>
+						<li data-ng-repeat="theme in themes" data-ng-bind="theme" data-ng-click="switchTheme(theme)"
+						data-ng-class="{'theme-option':true, selected: settings.currentTheme === theme}" />
+						</li>
+					</ul>
+				</section>
 
-		<section class="option-container">
-			<header>fonts</header>
-			<div class="option-group">
-				<label>post title</label>
-				<select data-ng-options="font for font in fonts" data-ng-model="settings.postTitleFont"
-				data-ng-change="saveFont(settings.postTitleFont, settingsKeys.postTitleFont)"></select>
+				<section class="option-container">
+					<header>login credentials</header>
+					<button class="btn" data-ng-click="loginCredentials()">edit</button>
+				</section>
 
-				<div class="font-controls">
-					<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postTitleFontSize)></span>
-					<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postTitleFontSize)></span>
-				</div>
-			</div>
-			<div class="option-group">
-				<label>post body</label>
-				<select data-ng-options="font for font in fonts" data-ng-model="settings.postBodyFont"
-				data-ng-change="saveFont(settings.postBodyFont, settingsKeys.postBodyFont)"></select>
-				<div class="font-controls">
-					<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postBodyFontSize)></span>
-					<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postBodyFontSize)></span>
-					<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postBodyLineHeight)></span>
-					<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postBodyLineHeight)></span>
-				</div>
-			</div>
-			<div class="option-group">
-				<label>post html</label>
-				<select data-ng-options="font for font in fonts" data-ng-model="settings.postHtmlFont"
-				data-ng-change="saveFont(settings.postHtmlFont, settingsKeys.postHtmlFont)"></select>
-				<div class="font-controls">
-					<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postHtmlFontSize)></span>
-					<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postHtmlFontSize)></span>
-					<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
-					<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
-				</div>
-			</div>
-		</section>
+				<section class="option-container">
+					<header>fonts</header>
+					<div class="option-group">
+						<label>post title</label>
+						<select data-ng-options="font for font in fonts" data-ng-model="settings.postTitleFont"
+						data-ng-change="saveFont(settings.postTitleFont, settingsKeys.postTitleFont)"></select>
 
-		<section class="option-container">
-			<header>utilities</header>
-			<button class="btn" data-ng-click="deleteAllPosts()">delete all posts</button>
-			<button class="btn" data-ng-click="deleteAllImages()">delete all images</button>
-		</section>
+						<div class="font-controls">
+							<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postTitleFontSize)></span>
+							<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postTitleFontSize)></span>
+						</div>
+					</div>
+					<div class="option-group">
+						<label>post body</label>
+						<select data-ng-options="font for font in fonts" data-ng-model="settings.postBodyFont"
+						data-ng-change="saveFont(settings.postBodyFont, settingsKeys.postBodyFont)"></select>
+						<div class="font-controls">
+							<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postBodyFontSize)></span>
+							<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postBodyFontSize)></span>
+							<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postBodyLineHeight)></span>
+							<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postBodyLineHeight)></span>
+						</div>
+					</div>
+					<div class="option-group">
+						<label>post html</label>
+						<select data-ng-options="font for font in fonts" data-ng-model="settings.postHtmlFont"
+						data-ng-change="saveFont(settings.postHtmlFont, settingsKeys.postHtmlFont)"></select>
+						<div class="font-controls">
+							<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postHtmlFontSize)></span>
+							<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postHtmlFontSize)></span>
+							<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
+							<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
+						</div>
+					</div>
+				</section>
+
+				<section class="option-container">
+					<header>utilities</header>
+					<div class="option-group">
+						<button class="btn" data-ng-click="deleteAllPosts()">delete all posts</button>
+					</div>
+					<div class="option-group">
+						<button class="btn" data-ng-click="deleteAllImages()">delete all images</button>
+					</div>
+				</section>
+
+
+			</div>			
 	</aside>
 
 	<section id="main-panel"  data-ng-class="{'options-visible': optionsPanelVisible}" >
@@ -94,12 +103,7 @@
 				<li><span data-ng-click="showAboutDialog()"><i class="icon-help" title="about"></i></a></li>
 			</ul>
 		</nav>
-<!-- 				<span style="float: right;">
-					<button data-ng-click="startProcessing()">start</button>
-					<button data-ng-click="stopProcessingWithFail()">fail</button>
-					<button data-ng-click="stopProcessingwithSuccess()">success</button>
-				</span>
- -->
+
 		<div class="status-bar">
 			<div class="status-container">
 				<span data-ng-click="showMessage()" data-ng-class="{'status-light': true, processing: appStatus.isProcessing, error: (!appStatus.isSuccess && !appStatus.isProcessing),  success: (appStatus.isSuccess && !appStatus.isProcessing)}"></span>
@@ -121,9 +125,9 @@
       </div>
       <div class="modal-body">
       	<span class="logo"></span>
-      	<h3>platen</h3>
-      	<em>by <a href="http://tatiyants.com">Alex Tatiyants</a></em>
+      	<p>Platen is a Markdown Wordpress editor created by <em><a href="http://tatiyants.com">Alex Tatiyants</a></em>.</p>
 
+      	<p><a href="http://daringfireball.net/projects/markdown/syntax">Markdown Syntax Reference</a><p>
       	<p>source code at <a href="https://github.com/AlexTatiyants/platen">gitHub</a></p>
 
       </div>

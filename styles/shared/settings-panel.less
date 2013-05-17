@@ -24,8 +24,6 @@
   background: -webkit-linear-gradient(left, @alt-base-color 96%, @alt-base-color-strong 100%);
   color: @alt-text-color;
   font-size: @base-font-size * 0.9;
-  overflow-y: auto;
-  overflow-x: hidden;
 
   &:after {
     content: '';
@@ -82,6 +80,12 @@
       }
     }
   }
+}
+
+.settings-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
 }
 
 section.option-container {

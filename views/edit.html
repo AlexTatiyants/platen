@@ -24,7 +24,7 @@
       <section id="post-metadata" data-ng-show="showMetadata" data-ng-animate>
 
         <div class="field-group full">
-          <span>
+          <span class="inline-group">
             <span>status</span>: <strong><span data-ng-bind="post.status"></span></strong>
             <button class="btn small" data-ng-show="post.status === 'draft'" data-ng-click="togglePublishStatus()">publish</button>
             <span data-ng-show="post.state.toBePublished">
@@ -32,7 +32,7 @@
               <button class="btn small" data-ng-click="togglePublishStatus()">undo</button>
             </span>
           </span>
-          <span>
+          <span class="inline-group">
             <span>last uploaded:<strong>
               <span data-ng-show="post.state.lastUploadDate" data-ng-bind="post.state.lastUploadDate | date:'short'"></span>
               <span data-ng-show="!post.state.lastUploadDate">never</span></strong>

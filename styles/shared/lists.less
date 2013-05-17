@@ -1,12 +1,13 @@
 .list-container {
   margin: auto;
   width: 80%;
+  max-width: @max-width;
   padding-top: @pad-unit;
+  position: relative;
 }
 
 .list {
   padding: 0;
-  max-width: @max-width;
   margin-top: @pad-unit;
   list-style: none;
   overflow: hidden;
@@ -101,7 +102,7 @@
 
 .filter-options {
   position: absolute;
-  right: 10%;
+  right: 0;
   top: @pad-unit/2;
   text-align: right;
   font-size: @base-font-size * 0.9;

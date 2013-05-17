@@ -32,6 +32,10 @@
     max-width: @max-width - @pad-unit;
     overflow: hidden;
     box-shadow: 2px 2px 2px @shadow-color;
+
+    [class^="icon-"], [class*=" icon-"] {
+        font-size: @base-font-size;
+    }
 }
 
 #post-metadata {
@@ -97,6 +101,9 @@
     width: 95%;
 }
 
+.inline-group {
+    margin-right: @pad-unit/2;
+}
 
 #metadata-collapser {
     display: block;

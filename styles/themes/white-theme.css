@@ -29,11 +29,12 @@
 .list-container {
   margin: auto;
   width: 80%;
+  max-width: 800px;
   padding-top: 20px;
+  position: relative;
 }
 .list {
   padding: 0;
-  max-width: 800px;
   margin-top: 20px;
   list-style: none;
   overflow: hidden;
@@ -66,7 +67,7 @@
 }
 .list-item-line .item-date {
   font-size: 12.8px;
-  color: #e6e6e6;
+  color: #cccccc;
   padding-top: 10px;
   margin-right: 10px;
 }
@@ -117,13 +118,13 @@
 }
 .filter-options {
   position: absolute;
-  right: 10%;
+  right: 0;
   top: 10px;
   text-align: right;
   font-size: 14.4px;
 }
 .filter-options h4 {
-  color: #e6e6e6;
+  color: #cccccc;
 }
 .filter-options .filter-option {
   cursor: pointer;
@@ -229,7 +230,7 @@
   float: right;
   font-size: 12.8px;
   margin-top: 8px;
-  color: #e6e6e6;
+  color: #cccccc;
   text-align: right;
   width: 30%;
 }
@@ -274,6 +275,10 @@
   max-width: 780px;
   overflow: hidden;
   box-shadow: 2px 2px 2px #808080;
+}
+#metadata-container [class^="icon-"],
+#metadata-container [class*=" icon-"] {
+  font-size: 16px;
 }
 #post-metadata {
   margin: auto;
@@ -328,6 +333,9 @@
 }
 .full {
   width: 95%;
+}
+.inline-group {
+  margin-right: 10px;
 }
 #metadata-collapser {
   display: block;
@@ -436,8 +444,6 @@
   background: -webkit-linear-gradient(left, #4d4d4d 96%, #262626 100%);
   color: #b3b3b3;
   font-size: 14.4px;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 #settings-panel:after {
   content: '';
@@ -487,6 +493,11 @@
 }
 #settings-panel .settings-panel-header .icon-close:hover {
   color: #b3b3b3;
+}
+.settings-container {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
 }
 section.option-container {
   padding: 10px 20px 10px 10px;
@@ -590,7 +601,7 @@ nav [class*=" icon-"] {
 }
 [class^="icon-"],
 [class*=" icon-"] {
-  color: #e6e6e6;
+  color: #cccccc;
   font-family: 'icons';
   font-weight: normal;
   font-style: normal;
@@ -689,7 +700,7 @@ nav [class*=" icon-"] {
   border: 1px solid #e6e6e6;
   border-radius: 2px;
   outline: none;
-  box-shadow: 0 4px 4px #808080;
+  box-shadow: 0 2px 4px #808080;
   background-clip: padding-box;
 }
 .modal.fade {
@@ -700,7 +711,7 @@ nav [class*=" icon-"] {
   top: 10%;
 }
 .modal-header {
-  padding: 9px 15px;
+  padding: 10px 20px;
   border-bottom: 1px solid #e6e6e6;
 }
 .modal-header .close {
@@ -713,8 +724,11 @@ nav [class*=" icon-"] {
 .modal-body {
   position: relative;
   max-height: 400px;
-  padding: 15px;
+  padding: 20px;
   overflow-y: auto;
+}
+.modal-body p {
+  margin-bottom: 20px;
 }
 .modal-form {
   margin-bottom: 0;
@@ -722,7 +736,7 @@ nav [class*=" icon-"] {
   padding: 20px;
 }
 .modal-footer {
-  padding: 14px 15px 15px;
+  padding: 20px 20px 20px;
   margin-bottom: 0;
   text-align: right;
   background-color: #f2f2f2;
@@ -763,6 +777,7 @@ nav [class*=" icon-"] {
 .status-bar {
   position: fixed;
   bottom: 20px;
+  margin-left: 10px;
   width: 100%;
   height: 40px;
   z-index: 5;
@@ -780,11 +795,14 @@ nav [class*=" icon-"] {
   width: 40px;
   height: 40px;
   margin: auto;
-  background-color: #ffffff;
   display: block;
   float: left;
   font-family: 'icons';
   font-size: 40px;
+  color: #cccccc;
+}
+.status:hover {
+  color: #666666;
 }
 .status:before {
   content: 't';
@@ -906,6 +924,10 @@ ol {
   font-weight: 300;
   font-style: normal;
 }
+a {
+  color: #999999;
+  text-decoration: none;
+}
 body {
   background-color: #ffffff;
   width: 100%;
@@ -942,14 +964,14 @@ nav ul li {
   padding: 4px 20px 4px 20px;
   line-height: 28.8px;
   box-shadow: 0px 1px 3px 0px #808080;
-  background: linear-gradient(to bottom, #808080 5%, #666666 100%);
+  background: -webkit-linear-gradient(bottom, #808080 5%, #666666 100%);
   background-color: #808080;
   border: 1px solid #666666;
   color: #ffffff;
   text-shadow: 0px -1px 0px #808080;
 }
 .btn:hover {
-  background: linear-gradient(to bottom, #666666 5%, #808080 100%);
+  background: -webkit-linear-gradient(bottom, #666666 5%, #808080 100%);
   background-color: #666666;
 }
 select {
@@ -971,6 +993,7 @@ h2 {
 }
 .input-box {
   border: 1px solid #e6e6e6;
+  background-color: #ffffff;
   border-radius: 3px;
   padding: 4px;
   padding-right: 20px;

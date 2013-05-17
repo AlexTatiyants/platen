@@ -14,6 +14,7 @@
 .status-bar {
   position: fixed;
   bottom: @pad-unit;
+  margin-left: @pad-unit/2;
   width: 100%;
   height: @status-bar-height;
   z-index: 5;
@@ -34,11 +35,15 @@
   width: @logo-size;
   height: @logo-size;
   margin: auto;
-  background-color: @base-color;
   display: block;
   float: left;
   font-family: 'icons';
   font-size: @logo-size;
+  color: @text-color-very-weak;
+
+  &:hover {
+    color: @text-color;
+  }
 
   &:before {
     content: 't';

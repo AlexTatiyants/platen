@@ -29,7 +29,7 @@
   border: 1px solid @line-color;
   border-radius: @pad-unit * 0.1;
   outline: none;
-  box-shadow: 0 @pad-unit * 0.2 @pad-unit * 0.2 @shadow-color;
+  box-shadow: 0 @pad-unit * 0.1 @pad-unit * 0.2 @shadow-color;
   background-clip: padding-box;
 }
 
@@ -43,7 +43,7 @@
 }
 
 .modal-header {
-  padding: 9px 15px;
+  padding: @pad-unit/2 @pad-unit;
   border-bottom: 1px solid @line-color;
   }
 
@@ -59,8 +59,12 @@
 .modal-body {
   position: relative;
   max-height: 400px;
-  padding: 15px;
+  padding: @pad-unit;
   overflow-y: auto;
+
+  p {
+    margin-bottom: @pad-unit;
+  }
 }
 
 .modal-form {
@@ -70,7 +74,7 @@
 }
 
 .modal-footer {
-  padding: 14px 15px 15px;
+  padding: @pad-unit @pad-unit @pad-unit;
   margin-bottom: 0;
   text-align: right;
   background-color: @base-color-weak;
