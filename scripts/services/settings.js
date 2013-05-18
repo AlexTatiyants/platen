@@ -10,19 +10,35 @@ angular.module('platen.services').factory('settings', function() {
     postBodyLineHeight: 'postBodyLineHeight',
     postHtmlFont: 'postHtmlFont',
     postHtmlFontSize: 'postHtmlFontSize',
+    postHtmlH1FontSize: 'postHtmlH1FontSize',
+    postHtmlH2FontSize: 'postHtmlH2FontSize',
+    postHtmlH3FontSize: 'postHtmlH3FontSize',
+    postHtmlH4FontSize: 'postHtmlH4FontSize',
+    postHtmlH5FontSize: 'postHtmlH5FontSize',
+    postHtmlH6FontSize: 'postHtmlH6FontSize',
     postHtmlLineHeight: 'postHtmlLineHeight'
   };
+
+  // typography is measured in rems
+  var BASE_FONT_SIZE = 1;
+  var BASE_LINE_HEIGHT = 1.8;
 
   var DEFAULTS = {
     theme: 'white',
     postTitleFont: 'economica',
-    postTitleFontSize: 30,
+    postTitleFontSize: BASE_FONT_SIZE * 2,
     postBodyFont: 'inconsolata',
-    postBodyFontSize: 16,
-    postBodyLineHeight: 25,
+    postBodyFontSize: BASE_FONT_SIZE,
+    postBodyLineHeight: BASE_LINE_HEIGHT,
     postHtmlFont: 'goudy',
-    postHtmlFontSize: 16,
-    postHtmlLineHeight: 25
+    postHtmlFontSize: BASE_FONT_SIZE,
+    postHtmlH1FontSize: BASE_FONT_SIZE * 2,
+    postHtmlH2FontSize: BASE_FONT_SIZE * 1.5,
+    postHtmlH3FontSize: BASE_FONT_SIZE * 1.3125,
+    postHtmlH4FontSize: BASE_FONT_SIZE * 1.125,
+    postHtmlH5FontSize: BASE_FONT_SIZE * 1,
+    postHtmlH6FontSize: BASE_FONT_SIZE * 1,    
+    postHtmlLineHeight: BASE_LINE_HEIGHT
   };
 
   var THEMES = {

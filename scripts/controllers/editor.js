@@ -33,16 +33,21 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
   var setFonts = function() {
     $('#' + POST_TITLE_ID).css('font-family', settings.getSetting(settings.keys.postTitleFont));
-    $('#' + POST_TITLE_ID).css('font-size', settings.getSetting(settings.keys.postTitleFontSize) + 'px');
+    $('#' + POST_TITLE_ID).css('font-size', settings.getSetting(settings.keys.postTitleFontSize) + resources.typography.UNIT_OF_MEASURE);
 
     $('#' + POST_BODY_ID).css('font-family', settings.getSetting(settings.keys.postBodyFont));
-    $('#' + POST_BODY_ID).css('font-size', settings.getSetting(settings.keys.postBodyFontSize) + 'px');
-    $('#' + POST_BODY_ID).css('line-height', settings.getSetting(settings.keys.postBodyLineHeight) + 'px');
+    $('#' + POST_BODY_ID).css('font-size', settings.getSetting(settings.keys.postBodyFontSize) + resources.typography.UNIT_OF_MEASURE);
+    $('#' + POST_BODY_ID).css('line-height', settings.getSetting(settings.keys.postBodyLineHeight) + resources.typography.UNIT_OF_MEASURE);
 
     $('#' + POST_HTML_ID).css('font-family', settings.getSetting(settings.keys.postHtmlFont));
-    $('#' + POST_HTML_ID).css('font-size', settings.getSetting(settings.keys.postHtmlFontSize) + 'px');
-    $('#' + POST_HTML_ID).css('line-height', settings.getSetting(settings.keys.postHtmlLineHeight) + 'px');
-
+    $('#' + POST_HTML_ID).css('font-size', settings.getSetting(settings.keys.postHtmlFontSize) + resources.typography.UNIT_OF_MEASURE);
+    $('#' + POST_HTML_ID + ' h1').css('font-size', settings.getSetting(settings.keys.postHtmlH1FontSize) + resources.typography.UNIT_OF_MEASURE);
+    $('#' + POST_HTML_ID + ' h2').css('font-size', settings.getSetting(settings.keys.postHtmlH2FontSize) + resources.typography.UNIT_OF_MEASURE);
+    $('#' + POST_HTML_ID + ' h3').css('font-size', settings.getSetting(settings.keys.postHtmlH3FontSize) + resources.typography.UNIT_OF_MEASURE);
+    $('#' + POST_HTML_ID + ' h4').css('font-size', settings.getSetting(settings.keys.postHtmlH4FontSize) + resources.typography.UNIT_OF_MEASURE);
+    $('#' + POST_HTML_ID + ' h5').css('font-size', settings.getSetting(settings.keys.postHtmlH5FontSize) + resources.typography.UNIT_OF_MEASURE);
+    $('#' + POST_HTML_ID + ' h6').css('font-size', settings.getSetting(settings.keys.postHtmlH6FontSize) + resources.typography.UNIT_OF_MEASURE);
+    $('#' + POST_HTML_ID).css('line-height', settings.getSetting(settings.keys.postHtmlLineHeight) + resources.typography.UNIT_OF_MEASURE);
   };
 
   Post.initialize($routeParams.postId, function(post) {
@@ -53,10 +58,10 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
     logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
 
-    setFonts();
-    $('#' + POST_TITLE_ID).focus();
 
     $scope.safeApply();
+    $('#' + POST_TITLE_ID).focus();
+    setFonts();
 
   }, function(error) {
     notifyOnCompletion("error loading post", error, false);
@@ -146,6 +151,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
   $scope.togglePreview = function() {
     if (!$scope.previewOn) {
+      setFonts();
       $scope.post.contentHtmlPreview = marked($scope.post.contentMarkdown);
     };
     $scope.previewOn = !$scope.previewOn;

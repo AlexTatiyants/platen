@@ -48,7 +48,7 @@ body {
   margin: 0 0 6px 0;
 }
 .list-item-line h3 {
-  font-size: 22.4px;
+  font-size: 1.4rem;
   font-weight: 300;
   margin: 0 0 10px 0;
 }
@@ -56,13 +56,13 @@ body {
   cursor: pointer;
 }
 .list-item-line .icon {
-  font-size: 22.4px;
+  font-size: 1.4rem;
   float: right;
   margin-left: 20px;
   cursor: pointer;
 }
 .list-item-line .item-date {
-  font-size: 12.8px;
+  font-size: 0.8rem;
   color: #c2c2c2;
   padding-top: 10px;
   margin-right: 10px;
@@ -84,7 +84,7 @@ body {
   float: left;
 }
 .list-item-tile h3 {
-  font-size: 22.4px;
+  font-size: 1.4rem;
   font-weight: 300;
   white-space: nowrap;
   overflow: hidden;
@@ -93,14 +93,14 @@ body {
   width: 180px;
 }
 .list-item-tile .icon {
-  font-size: 22.4px;
+  font-size: 1.4rem;
   float: right;
   margin-left: 20px;
   cursor: pointer;
 }
 .list-table {
   width: 100%;
-  font-size: 14.4px;
+  font-size: 0.9rem;
   padding-bottom: 20px;
   padding-top: 20px;
 }
@@ -117,7 +117,7 @@ body {
   right: 0;
   top: 10px;
   text-align: right;
-  font-size: 14.4px;
+  font-size: 0.9rem;
 }
 .filter-options h4 {
   color: #c2c2c2;
@@ -152,7 +152,7 @@ body {
   outline: none;
   overflow-y: auto;
   height: 85%;
-  line-height: 25px;
+  line-height: 1.9rem;
 }
 #post-title {
   max-width: 900px;
@@ -180,7 +180,7 @@ body {
   outline: none;
   overflow-y: auto;
   height: 85%;
-  line-height: 25px;
+  line-height: 1.9rem;
   padding: 12px;
   border: 0px;
   font-weight: 300;
@@ -192,7 +192,7 @@ body {
   outline: none;
   overflow-y: auto;
   height: 85%;
-  line-height: 25px;
+  line-height: 1.9rem;
   padding: 30px 30px 30px 30px;
   border: 1px dotted #b5b5b5;
   box-shadow: 2px 2px 2px #696969;
@@ -200,30 +200,10 @@ body {
 #post-content-preview p {
   margin-bottom: 20px;
 }
-#post-content-preview h1 {
-  margin-bottom: 20px;
-  font-size: 32px;
-}
-#post-content-preview h2 {
-  margin-bottom: 16px;
-  font-size: 28.8px;
-}
-#post-content-preview h3 {
-  margin-bottom: 14px;
-  font-size: 25.6px;
-}
-#post-content-preview h4 {
-  margin-bottom: 10px;
-  font-size: 22.4px;
-}
-#post-content-preview h5,
-#post-content-preview h6 {
-  margin-bottom: 10px;
-  font-size: 19.2px;
-}
 #post-content-preview img {
-  width: 95%;
+  max-width: 95%;
   margin: auto;
+  display: block;
   margin-top: 10px;
   margin-bottom: 10px;
   border: 1px solid #cfcfcf;
@@ -238,7 +218,7 @@ body {
 #status-panel {
   display: block;
   float: right;
-  font-size: 12.8px;
+  font-size: 0.8rem;
   margin-top: 8px;
   color: #c2c2c2;
   text-align: right;
@@ -247,7 +227,7 @@ body {
 .edit-controls {
   position: fixed;
   top: 330px;
-  font-size: 27.2px;
+  font-size: 1.7rem;
   width: 5%;
   padding: 1%;
   margin: auto;
@@ -278,7 +258,7 @@ body {
   background-color: #363636;
   color: #cacaca;
   border: 1px solid #1c1c1c;
-  font-size: 12.8px;
+  font-size: 0.8rem;
   position: relative;
   margin: auto;
   width: 80%;
@@ -288,7 +268,7 @@ body {
 }
 #metadata-container [class^="icon-"],
 #metadata-container [class*=" icon-"] {
-  font-size: 16px;
+  font-size: 1rem;
 }
 #post-metadata {
   margin: auto;
@@ -368,7 +348,7 @@ body {
   border-radius: 3px;
   float: left;
   list-style: none;
-  font-size: 12.8px;
+  font-size: 0.8rem;
   margin: 2px;
   padding: 4px;
   cursor: pointer;
@@ -405,7 +385,7 @@ body {
 .image-controls span {
   display: inline;
   margin: 4px;
-  font-size: 19.2px;
+  font-size: 1.2rem;
 }
 .thumbnail {
   float: left;
@@ -431,7 +411,7 @@ body {
   width: 110px;
   margin-bottom: 10px;
   float: left;
-  font-size: 12.8px;
+  font-size: 0.8rem;
 }
 #settings-panel.options-visible {
   width: 30%;
@@ -453,7 +433,7 @@ body {
   background: linear-gradient(to right, #363636 96%, #0f0f0f 100%);
   background: -webkit-linear-gradient(left, #363636 96%, #0f0f0f 100%);
   color: #cacaca;
-  font-size: 14.4px;
+  font-size: 0.9rem;
 }
 #settings-panel:after {
   content: '';
@@ -490,11 +470,11 @@ body {
 }
 #settings-panel .settings-panel-header span {
   padding: 10px;
-  font-size: 19.2px;
+  font-size: 1.2rem;
   text-shadow: 2px 0px #1c1c1c;
 }
 #settings-panel .settings-panel-header .icon-close {
-  font-size: 16px;
+  font-size: 1rem;
   color: #cacaca;
   margin-top: -5px;
   margin-right: 5px;
@@ -511,7 +491,7 @@ body {
 }
 section.option-container {
   padding: 10px 20px 10px 10px;
-  font-size: 14.4px;
+  font-size: 0.9rem;
   border-bottom: 1px solid #1c1c1c;
   position: relative;
 }
@@ -535,7 +515,7 @@ section.option-container header {
   color: #e3e3e3;
   display: block;
   text-shadow: 1px 0px #1c1c1c;
-  font-size: 17.6px;
+  font-size: 1.1rem;
 }
 section.option-container .input-box {
   border: 1px inset #1c1c1c;
@@ -581,7 +561,7 @@ section.option-container ul {
 }
 .font-size-control {
   margin-right: 5px;
-  font-size: 17.6px;
+  font-size: 1.1rem;
   padding: 5px;
   float: right;
   cursor: pointer;
@@ -606,7 +586,7 @@ nav [class*=" icon-"] {
   display: inline-block;
   text-decoration: none;
   padding: 10px;
-  font-size: 27.2px;
+  font-size: 1.7rem;
   cursor: pointer;
 }
 [class^="icon-"],
@@ -792,21 +772,17 @@ nav [class*=" icon-"] {
   padding-bottom: 40px;
   position: relative;
 }
-.page-container h2 {
-  margin-bottom: 20px;
-}
 .page-container h3 {
-  margin-top: 20px;
-  margin-bottom: 10px;
   color: #828282;
 }
 .page-container p {
-  margin-bottom: 20px;
+  line-height: 1.9rem;
+  margin-bottom: 1rem;
 }
 .page-container [class^="icon-"],
 .page-container [class*=" icon-"] {
   display: inline;
-  font-size: 20.8px;
+  font-size: 1.3rem;
   color: #4f4f4f;
   cursor: default;
 }
@@ -815,7 +791,7 @@ nav [class*=" icon-"] {
 }
 .page-container ul li {
   margin-bottom: 10px;
-  font-size: 14.4px;
+  font-size: 0.9rem;
 }
 .page-container .status-light {
   position: relative;
@@ -827,7 +803,7 @@ nav [class*=" icon-"] {
 }
 aside.page-links {
   float: right;
-  margin: 20px 0 20px 20px;
+  margin: 40px 0 20px 20px;
   border: 1px solid #cfcfcf;
   background-color: #dbdbdb;
   clear: both;
@@ -988,6 +964,28 @@ ol {
   margin: 0;
   font-weight: 300;
   font-style: normal;
+  font-size: 100%;
+}
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+h3 {
+  font-size: 1.3125rem;
+  margin-bottom: 0.5rem;
+}
+h4 {
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+}
+h5,
+h6 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
 }
 a {
   color: #828282;
@@ -1027,7 +1025,7 @@ nav ul li {
 .btn {
   border-radius: 3px;
   padding: 4px 20px 4px 20px;
-  line-height: 28.8px;
+  line-height: 1.8rem;
   box-shadow: 0px 1px 3px 0px #696969;
   background: -webkit-linear-gradient(bottom, #696969 5%, #4f4f4f 100%);
   background-color: #696969;
@@ -1054,7 +1052,7 @@ select {
 }
 h2 {
   font-weight: 300;
-  font-size: 22.4px;
+  font-size: 1.4rem;
 }
 .input-box {
   border: 1px solid #cfcfcf;
@@ -1062,12 +1060,12 @@ h2 {
   border-radius: 3px;
   padding: 4px;
   padding-right: 20px;
-  font-size: 12.8px;
+  font-size: 0.8rem;
   width: 100%;
 }
 .warning-message {
   font-style: italic;
-  font-size: 12.8px;
+  font-size: 0.8rem;
   color: #828282;
 }
 .logo {

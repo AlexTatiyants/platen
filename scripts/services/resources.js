@@ -9,6 +9,11 @@ angular.module('platen.services').value('resources',
       ELEMENT_EDITED: 'elementEdited',
       FONT_CHANGED: 'fontChanged',
       IMAGE_INSERTED: 'imageInserted'
+    },
+
+    typography: {
+      UNIT_OF_MEASURE: 'rem',
+      INCREMENT: 0.1
     }
   }
 );

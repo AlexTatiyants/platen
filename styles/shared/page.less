@@ -6,18 +6,13 @@
   padding-bottom: @pad-unit*2;
   position: relative;
 
-  h2 {
-    margin-bottom: @pad-unit;
-  }
-
-  h3 {
-    margin-top: @pad-unit;
-    margin-bottom: @pad-unit/2;
+  h3 {    
     color: @text-color-weak;
   }
 
   p {
-    margin-bottom: @pad-unit;
+    line-height: @base-line-height;
+    margin-bottom: @base-font-size;
   }
 
   [class^="icon-"], [class*=" icon-"] {
@@ -47,7 +42,7 @@
 
 aside.page-links {
   float: right;
-  margin: @pad-unit 0 @pad-unit @pad-unit;
+  margin: @pad-unit*2 0 @pad-unit @pad-unit;
   border: 1px solid @line-color;
   background-color: @base-color-weak;
   clear: both;

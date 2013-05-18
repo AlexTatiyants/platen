@@ -93,26 +93,42 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   };
 
   $scope.increaseFontSize = function(fontSize) {
-    var currentSize = parseFloat(settings.getSetting(fontSize));
-    settings.setSetting(fontSize, currentSize + 1);
+    settings.setSetting(fontSize, parseFloat(settings.getSetting(fontSize)) + resources.typography.INCREMENT);
+
+    if (fontSize === 'postHtmlFontSize') {
+      settings.setSetting('postHtmlH1FontSize', parseFloat(settings.getSetting('postHtmlH1FontSize')) + resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH2FontSize', parseFloat(settings.getSetting('postHtmlH2FontSize')) + resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH3FontSize', parseFloat(settings.getSetting('postHtmlH3FontSize')) + resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH4FontSize', parseFloat(settings.getSetting('postHtmlH4FontSize')) + resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH5FontSize', parseFloat(settings.getSetting('postHtmlH5FontSize')) + resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH6FontSize', parseFloat(settings.getSetting('postHtmlH6FontSize')) + resources.typography.INCREMENT);
+    }
     $scope.$broadcast(resources.events.FONT_CHANGED);
   };
 
   $scope.decreaseFontSize = function(fontSize) {
-    var currentSize = parseFloat(settings.getSetting(fontSize));
-    settings.setSetting(fontSize, currentSize - 1);
+    settings.setSetting(fontSize, parseFloat(settings.getSetting(fontSize)) - resources.typography.INCREMENT);
+
+    if (fontSize === 'postHtmlFontSize') {
+      settings.setSetting('postHtmlH1FontSize', parseFloat(settings.getSetting('postHtmlH1FontSize')) - resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH2FontSize', parseFloat(settings.getSetting('postHtmlH2FontSize')) - resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH3FontSize', parseFloat(settings.getSetting('postHtmlH3FontSize')) - resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH4FontSize', parseFloat(settings.getSetting('postHtmlH4FontSize')) - resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH5FontSize', parseFloat(settings.getSetting('postHtmlH5FontSize')) - resources.typography.INCREMENT);
+      settings.setSetting('postHtmlH6FontSize', parseFloat(settings.getSetting('postHtmlH6FontSize')) - resources.typography.INCREMENT);
+    }
     $scope.$broadcast(resources.events.FONT_CHANGED);
   };
 
   $scope.increaseLineHeight = function(lineHeight) {
     var currentHeight = parseFloat(settings.getSetting(lineHeight));
-    settings.setSetting(lineHeight, currentHeight + 1);
+    settings.setSetting(lineHeight, currentHeight + resources.typography.INCREMENT);
     $scope.$broadcast(resources.events.FONT_CHANGED);
   };
 
   $scope.decreaseLineHeight = function(lineHeight) {
     var currentHeight = parseFloat(settings.getSetting(lineHeight));
-    settings.setSetting(lineHeight, currentHeight - 1);
+    settings.setSetting(lineHeight, currentHeight - resources.typography.INCREMENT);
     $scope.$broadcast(resources.events.FONT_CHANGED);
   };
 

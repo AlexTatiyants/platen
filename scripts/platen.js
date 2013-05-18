@@ -1,4 +1,4 @@
-/*! platen 2013-05-17 */
+/*! platen 2013-05-18 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -59,13 +59,19 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     };
     var setFonts = function() {
         $("#" + POST_TITLE_ID).css("font-family", settings.getSetting(settings.keys.postTitleFont));
-        $("#" + POST_TITLE_ID).css("font-size", settings.getSetting(settings.keys.postTitleFontSize) + "px");
+        $("#" + POST_TITLE_ID).css("font-size", settings.getSetting(settings.keys.postTitleFontSize) + resources.typography.UNIT_OF_MEASURE);
         $("#" + POST_BODY_ID).css("font-family", settings.getSetting(settings.keys.postBodyFont));
-        $("#" + POST_BODY_ID).css("font-size", settings.getSetting(settings.keys.postBodyFontSize) + "px");
-        $("#" + POST_BODY_ID).css("line-height", settings.getSetting(settings.keys.postBodyLineHeight) + "px");
+        $("#" + POST_BODY_ID).css("font-size", settings.getSetting(settings.keys.postBodyFontSize) + resources.typography.UNIT_OF_MEASURE);
+        $("#" + POST_BODY_ID).css("line-height", settings.getSetting(settings.keys.postBodyLineHeight) + resources.typography.UNIT_OF_MEASURE);
         $("#" + POST_HTML_ID).css("font-family", settings.getSetting(settings.keys.postHtmlFont));
-        $("#" + POST_HTML_ID).css("font-size", settings.getSetting(settings.keys.postHtmlFontSize) + "px");
-        $("#" + POST_HTML_ID).css("line-height", settings.getSetting(settings.keys.postHtmlLineHeight) + "px");
+        $("#" + POST_HTML_ID).css("font-size", settings.getSetting(settings.keys.postHtmlFontSize) + resources.typography.UNIT_OF_MEASURE);
+        $("#" + POST_HTML_ID + " h1").css("font-size", settings.getSetting(settings.keys.postHtmlH1FontSize) + resources.typography.UNIT_OF_MEASURE);
+        $("#" + POST_HTML_ID + " h2").css("font-size", settings.getSetting(settings.keys.postHtmlH2FontSize) + resources.typography.UNIT_OF_MEASURE);
+        $("#" + POST_HTML_ID + " h3").css("font-size", settings.getSetting(settings.keys.postHtmlH3FontSize) + resources.typography.UNIT_OF_MEASURE);
+        $("#" + POST_HTML_ID + " h4").css("font-size", settings.getSetting(settings.keys.postHtmlH4FontSize) + resources.typography.UNIT_OF_MEASURE);
+        $("#" + POST_HTML_ID + " h5").css("font-size", settings.getSetting(settings.keys.postHtmlH5FontSize) + resources.typography.UNIT_OF_MEASURE);
+        $("#" + POST_HTML_ID + " h6").css("font-size", settings.getSetting(settings.keys.postHtmlH6FontSize) + resources.typography.UNIT_OF_MEASURE);
+        $("#" + POST_HTML_ID).css("line-height", settings.getSetting(settings.keys.postHtmlLineHeight) + resources.typography.UNIT_OF_MEASURE);
     };
     Post.initialize($routeParams.postId, function(post) {
         $scope.post = post;
@@ -73,9 +79,9 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         $scope.showMetadata = false;
         $scope.previewMessage = MESSAGE_PREVIEW_HTML;
         logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
-        setFonts();
-        $("#" + POST_TITLE_ID).focus();
         $scope.safeApply();
+        $("#" + POST_TITLE_ID).focus();
+        setFonts();
     }, function(error) {
         notifyOnCompletion("error loading post", error, false);
     });
@@ -143,6 +149,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     };
     $scope.togglePreview = function() {
         if (!$scope.previewOn) {
+            setFonts();
             $scope.post.contentHtmlPreview = marked($scope.post.contentMarkdown);
         }
         $scope.previewOn = !$scope.previewOn;
@@ -399,23 +406,37 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
         $scope.$broadcast(resources.events.FONT_CHANGED);
     };
     $scope.increaseFontSize = function(fontSize) {
-        var currentSize = parseFloat(settings.getSetting(fontSize));
-        settings.setSetting(fontSize, currentSize + 1);
+        settings.setSetting(fontSize, parseFloat(settings.getSetting(fontSize)) + resources.typography.INCREMENT);
+        if (fontSize === "postHtmlFontSize") {
+            settings.setSetting("postHtmlH1FontSize", parseFloat(settings.getSetting("postHtmlH1FontSize")) + resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH2FontSize", parseFloat(settings.getSetting("postHtmlH2FontSize")) + resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH3FontSize", parseFloat(settings.getSetting("postHtmlH3FontSize")) + resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH4FontSize", parseFloat(settings.getSetting("postHtmlH4FontSize")) + resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH5FontSize", parseFloat(settings.getSetting("postHtmlH5FontSize")) + resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH6FontSize", parseFloat(settings.getSetting("postHtmlH6FontSize")) + resources.typography.INCREMENT);
+        }
         $scope.$broadcast(resources.events.FONT_CHANGED);
     };
     $scope.decreaseFontSize = function(fontSize) {
-        var currentSize = parseFloat(settings.getSetting(fontSize));
-        settings.setSetting(fontSize, currentSize - 1);
+        settings.setSetting(fontSize, parseFloat(settings.getSetting(fontSize)) - resources.typography.INCREMENT);
+        if (fontSize === "postHtmlFontSize") {
+            settings.setSetting("postHtmlH1FontSize", parseFloat(settings.getSetting("postHtmlH1FontSize")) - resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH2FontSize", parseFloat(settings.getSetting("postHtmlH2FontSize")) - resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH3FontSize", parseFloat(settings.getSetting("postHtmlH3FontSize")) - resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH4FontSize", parseFloat(settings.getSetting("postHtmlH4FontSize")) - resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH5FontSize", parseFloat(settings.getSetting("postHtmlH5FontSize")) - resources.typography.INCREMENT);
+            settings.setSetting("postHtmlH6FontSize", parseFloat(settings.getSetting("postHtmlH6FontSize")) - resources.typography.INCREMENT);
+        }
         $scope.$broadcast(resources.events.FONT_CHANGED);
     };
     $scope.increaseLineHeight = function(lineHeight) {
         var currentHeight = parseFloat(settings.getSetting(lineHeight));
-        settings.setSetting(lineHeight, currentHeight + 1);
+        settings.setSetting(lineHeight, currentHeight + resources.typography.INCREMENT);
         $scope.$broadcast(resources.events.FONT_CHANGED);
     };
     $scope.decreaseLineHeight = function(lineHeight) {
         var currentHeight = parseFloat(settings.getSetting(lineHeight));
-        settings.setSetting(lineHeight, currentHeight - 1);
+        settings.setSetting(lineHeight, currentHeight - resources.typography.INCREMENT);
         $scope.$broadcast(resources.events.FONT_CHANGED);
     };
     $scope.settings.currentTheme = settings.getSetting(settings.THEME);
@@ -965,6 +986,10 @@ angular.module("platen.services").value("resources", {
         ELEMENT_EDITED: "elementEdited",
         FONT_CHANGED: "fontChanged",
         IMAGE_INSERTED: "imageInserted"
+    },
+    typography: {
+        UNIT_OF_MEASURE: "rem",
+        INCREMENT: .1
     }
 });
 
@@ -979,18 +1004,32 @@ angular.module("platen.services").factory("settings", function() {
         postBodyLineHeight: "postBodyLineHeight",
         postHtmlFont: "postHtmlFont",
         postHtmlFontSize: "postHtmlFontSize",
+        postHtmlH1FontSize: "postHtmlH1FontSize",
+        postHtmlH2FontSize: "postHtmlH2FontSize",
+        postHtmlH3FontSize: "postHtmlH3FontSize",
+        postHtmlH4FontSize: "postHtmlH4FontSize",
+        postHtmlH5FontSize: "postHtmlH5FontSize",
+        postHtmlH6FontSize: "postHtmlH6FontSize",
         postHtmlLineHeight: "postHtmlLineHeight"
     };
+    var BASE_FONT_SIZE = 1;
+    var BASE_LINE_HEIGHT = 1.8;
     var DEFAULTS = {
         theme: "white",
         postTitleFont: "economica",
-        postTitleFontSize: 30,
+        postTitleFontSize: BASE_FONT_SIZE * 2,
         postBodyFont: "inconsolata",
-        postBodyFontSize: 16,
-        postBodyLineHeight: 25,
+        postBodyFontSize: BASE_FONT_SIZE,
+        postBodyLineHeight: BASE_LINE_HEIGHT,
         postHtmlFont: "goudy",
-        postHtmlFontSize: 16,
-        postHtmlLineHeight: 25
+        postHtmlFontSize: BASE_FONT_SIZE,
+        postHtmlH1FontSize: BASE_FONT_SIZE * 2,
+        postHtmlH2FontSize: BASE_FONT_SIZE * 1.5,
+        postHtmlH3FontSize: BASE_FONT_SIZE * 1.3125,
+        postHtmlH4FontSize: BASE_FONT_SIZE * 1.125,
+        postHtmlH5FontSize: BASE_FONT_SIZE * 1,
+        postHtmlH6FontSize: BASE_FONT_SIZE * 1,
+        postHtmlLineHeight: BASE_LINE_HEIGHT
     };
     var THEMES = {
         white: "white",
