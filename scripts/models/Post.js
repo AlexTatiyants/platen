@@ -64,7 +64,7 @@ function($q, resources, fileManager, wordpress, logger) {
         wordpress.uploadFile(cleanFileName, image.type, imageData, function(id, url) {
           image.blogUrl = url;
           image.blogId = id;
-          logger.log("processed image '" + image.fileName + "'", "Post module");
+          logger.log("uploaded image '" + image.fileName + "' to '" + image.blogUrl, "Post module");
           d.resolve();
 
         }, function(e) {
@@ -95,7 +95,7 @@ function($q, resources, fileManager, wordpress, logger) {
       }
     });
 
-    if (promises.lenth) {
+    if (promises.length > 0) {
       // once all promises are fullfilled (i.e. all items have been uploaded),
       // proceed with uploading the post
       $q.all(promises).then(onCompletionCallback);
@@ -107,12 +107,10 @@ function($q, resources, fileManager, wordpress, logger) {
   };
 
 
-  var replaceImageHtml = function(content, localUrl, blogUrl, imageTitle) {
-    console.log(content);
-
+  var replaceImageHtml = function(content, image) {
     return content
-    .replace('&lt;img src="' + localUrl, '&lt;a href="' + blogUrl + '"&gt; &lt;img class="aligncenter" src="' + blogUrl)
-    .replace('alt="' + imageTitle +'"&gt;', 'alt="' + imageTitle +'"&gt;&lt;/a&gt;');
+    .replace('&lt;img src="' + image.localUrl, '&lt;a href="' + image.blogUrl + '"&gt; &lt;img class="align' + image.alignment + '" width="' + image.maxWidth + '" src="' + image.blogUrl)
+    .replace('alt="' + image.title +'"&gt;', 'alt="' + image.title +'"&gt;&lt;/a&gt;');
   };
 
   return {
@@ -148,7 +146,7 @@ function($q, resources, fileManager, wordpress, logger) {
           // replace references to images within the post body with WordPress urls
           var content = data.content;
           _.each(data.images, function(image) {
-            content = replaceImageHtml(content, image.localUrl, image.blogUrl, image.title);
+            content = replaceImageHtml(content, image);
           });
           data.content = content;
 

@@ -76,8 +76,9 @@
               <span class="caption" data-ng-bind="image.name"></span>
               <img data-ng-src="{{image.localUrl}}"></img>
               <span class="image-controls">
-                <span class="icon-insert" data-ng-click="copyToClipboard(image)"></span>
-                <span class="icon-delete" data-ng-click="initiateImageDelete(image)"></span>
+                <!-- <span class="icon-insert" data-ng-click="copyToClipboard(image)" title="copy image to clipboard"></span> -->
+                <span class="icon-settings" data-ng-click="configureImage(image)" title="configure image"></span>
+                <span class="icon-delete" data-ng-click="initiateImageDelete(image)" title="delete image"></span>
               </span>
             </li>
           </ul>
@@ -85,6 +86,7 @@
       </section>
     </div>
   </aside>
+
 
   <div id="delete-image-confirm">
     <div modal="deleteImageConfirmOpen" close="cancelImageDelete()" options="opts">
@@ -101,6 +103,7 @@
     </div>
   </div>
 
+
   <div id="insert-image-dialog">
     <div modal="insertImageDialogOpen" close="cancelImageInsert()" options="opts">
       <div class="modal-header">
@@ -115,6 +118,42 @@
       <div class="modal-footer">
         <button class="btn btn-warning cancel" ng-click="proceedWithImageInsert()">Ok</button>
         <button class="btn btn-warning cancel" ng-click="cancelImageInsert()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="configure-image-dialog">
+    <div modal="configureImageDialogOpen" close="closeConfigureImage()" options="opts">
+      <div class="modal-header">
+        <h2>Configure Image</h2>
+      </div>
+
+      <div class="image-thumb-container">
+        <img class="image" data-ng-src="{{imageToConfigure.localUrl}}"></img>
+        <span class="caption" data-ng-bind="imageToConfigure.fileName"></span>
+      </div>
+
+      <div class="modal-body pad-right">
+        <div class="field-group full">
+          <label>title</label>
+          <input type="text" class="input-box" data-ng-model="imageToConfigure.name"></input>
+        </div>
+        <div class="field-group full">
+          <label>maximum width</label>
+          <input type="text" class="input-box" data-ng-model="imageToConfigure.maxWidth"></input>
+        </div>
+        <div class="field-group full">
+          <label>alignment</label>
+            <input type="radio" ng-model="imageToConfigure.alignment" value="none"> none <br/>
+            <input type="radio" ng-model="imageToConfigure.alignment" value="left"> left <br/>
+            <input type="radio" ng-model="imageToConfigure.alignment" value="center"> center <br/>
+            <input type="radio" ng-model="imageToConfigure.alignment" value="right"> right <br/>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning cancel" ng-click="closeConfigureImage()">Ok</button>
       </div>
     </div>
   </div>

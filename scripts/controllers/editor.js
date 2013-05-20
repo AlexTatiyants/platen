@@ -17,6 +17,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   var IMAGE_TYPE = 'image/png';
 
   $scope.insertImageDialogOpen = false;
+  $scope.configureImageDialogOpen = false;
   $scope.deleteImageConfirmOpen = false;
 
   var notifyOnCompletion = function(message, error, isSuccess) {
@@ -101,7 +102,9 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       type: IMAGE_TYPE,
       name: imageName,
       fileName: fileName,
-      filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName
+      filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName,
+      maxWidth: settings.getSetting(settings.keys.imageMaximumWidth),
+      alignment: settings.getSetting(settings.keys.imageAlignment)
     };
 
     var contentMarkdownHtml = $scope.post.contentMarkdownHtml;
@@ -226,11 +229,25 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     return !($.isEmptyObject($scope.post.images));
   };
 
-  $scope.copyToClipboard = function($element) {
-    $element.focus();
-    document.execCommand('Copy');
-    console.log("copied");
+  // $scope.copyToClipboard = function(image) {
+  //   // $element.focus();
+  //   image.focus();
+  //   document.execCommand('Copy');
+  //   console.log("copied");
+  // };
+
+  $scope.configureImage = function(image) {
+    $scope.imageToConfigure = image;
+    console.log($scope.imageToConfigure);
+    $scope.configureImageDialogOpen = true;
   };
+
+  $scope.closeConfigureImage = function() {
+    $scope.imageToConfigure = {};
+    $scope.configureImageDialogOpen = false;
+    savePost();
+  };
+
 
   $scope.initiateImageDelete = function(image) {
     $scope.imageToDelete = image;

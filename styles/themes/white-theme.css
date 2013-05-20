@@ -233,6 +233,22 @@
 .edit-control {
   padding: 10px;
 }
+.image-thumb-container {
+  float: left;
+  margin: 20px;
+}
+.image-thumb-container .image {
+  float: left;
+  max-width: 200px;
+  max-height: 240px;
+}
+.image-thumb-container .caption {
+  float: left;
+  clear: both;
+  font-size: 0.8rem;
+  font-style: italic;
+  margin-top: 10px;
+}
 #metadata-panel {
   position: fixed;
   bottom: 0px;
@@ -776,13 +792,6 @@ nav [class*=" icon-"] {
   line-height: 1.9rem;
   margin-bottom: 1rem;
 }
-.page-container [class^="icon-"],
-.page-container [class*=" icon-"] {
-  display: inline;
-  font-size: 1.3rem;
-  color: #666666;
-  cursor: default;
-}
 .page-container ul {
   list-style: none;
 }
@@ -811,6 +820,13 @@ aside.page-links {
 aside.page-links h3 {
   margin-top: 0;
   color: #666666;
+}
+#about-page [class^="icon-"],
+#about-page [class*=" icon-"] {
+  display: inline;
+  font-size: 1.3rem;
+  color: #666666;
+  cursor: default;
 }
 .status-bar {
   position: fixed;
@@ -1043,6 +1059,9 @@ select {
 }
 .pull-right {
   float: right;
+}
+.pad-right {
+  margin-right: 20px;
 }
 .center {
   margin: auto;

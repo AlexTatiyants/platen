@@ -20,3 +20,4 @@ Pasting
 Image
 - add support for full set of WordPress options (alt text, description, caption, alignment, featured image)
 - when deleting from Images screen, remove from all posts where used (could be time consuming)
+- fix copy to clipboard

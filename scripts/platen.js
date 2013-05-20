@@ -46,6 +46,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     var MESSAGE_PREVIEW_MARKDOWN = "View Markdown";
     var IMAGE_TYPE = "image/png";
     $scope.insertImageDialogOpen = false;
+    $scope.configureImageDialogOpen = false;
     $scope.deleteImageConfirmOpen = false;
     var notifyOnCompletion = function(message, error, isSuccess) {
         if (error) {
@@ -112,7 +113,9 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             type: IMAGE_TYPE,
             name: imageName,
             fileName: fileName,
-            filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName
+            filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName,
+            maxWidth: settings.getSetting(settings.keys.imageMaximumWidth),
+            alignment: settings.getSetting(settings.keys.imageAlignment)
         };
         var contentMarkdownHtml = $scope.post.contentMarkdownHtml;
         fileManager.writeFile(image.filePath, imageBlob, function(fileEntry) {
@@ -213,10 +216,15 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.imagesAvailable = function() {
         return !$.isEmptyObject($scope.post.images);
     };
-    $scope.copyToClipboard = function($element) {
-        $element.focus();
-        document.execCommand("Copy");
-        console.log("copied");
+    $scope.configureImage = function(image) {
+        $scope.imageToConfigure = image;
+        console.log($scope.imageToConfigure);
+        $scope.configureImageDialogOpen = true;
+    };
+    $scope.closeConfigureImage = function() {
+        $scope.imageToConfigure = {};
+        $scope.configureImageDialogOpen = false;
+        savePost();
     };
     $scope.initiateImageDelete = function(image) {
         $scope.imageToDelete = image;
@@ -744,7 +752,7 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                 wordpress.uploadFile(cleanFileName, image.type, imageData, function(id, url) {
                     image.blogUrl = url;
                     image.blogId = id;
-                    logger.log("processed image '" + image.fileName + "'", "Post module");
+                    logger.log("uploaded image '" + image.fileName + "' to '" + image.blogUrl, "Post module");
                     d.resolve();
                 }, function(e) {
                     d.reject();
@@ -767,15 +775,14 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                 promises.push(uploadImage(image));
             }
         });
-        if (promises.lenth) {
+        if (promises.length > 0) {
             $q.all(promises).then(onCompletionCallback);
         } else {
             onCompletionCallback();
         }
     };
-    var replaceImageHtml = function(content, localUrl, blogUrl, imageTitle) {
-        console.log(content);
-        return content.replace('&lt;img src="' + localUrl, '&lt;a href="' + blogUrl + '"&gt; &lt;img class="aligncenter" src="' + blogUrl).replace('alt="' + imageTitle + '"&gt;', 'alt="' + imageTitle + '"&gt;&lt;/a&gt;');
+    var replaceImageHtml = function(content, image) {
+        return content.replace('&lt;img src="' + image.localUrl, '&lt;a href="' + image.blogUrl + '"&gt; &lt;img class="align' + image.alignment + '" width="' + image.maxWidth + '" src="' + image.blogUrl).replace('alt="' + image.title + '"&gt;', 'alt="' + image.title + '"&gt;&lt;/a&gt;');
     };
     return {
         initialize: function(postId, onSuccessCallback, onErrorCallback) {
@@ -801,7 +808,7 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                 uploadImages(data.content, function() {
                     var content = data.content;
                     _.each(data.images, function(image) {
-                        content = replaceImageHtml(content, image.localUrl, image.blogUrl, image.title);
+                        content = replaceImageHtml(content, image);
                     });
                     data.content = content;
                     wordpress.savePost(data, function(result) {
@@ -1034,7 +1041,9 @@ angular.module("platen.services").factory("settings", function() {
         postHtmlH4FontSize: "postHtmlH4FontSize",
         postHtmlH5FontSize: "postHtmlH5FontSize",
         postHtmlH6FontSize: "postHtmlH6FontSize",
-        postHtmlLineHeight: "postHtmlLineHeight"
+        postHtmlLineHeight: "postHtmlLineHeight",
+        imageMaximumWidth: "imageMaximumWidth",
+        imageAlignment: "imageAlignment"
     };
     var BASE_FONT_SIZE = 1;
     var BASE_LINE_HEIGHT = 1.8;
@@ -1053,7 +1062,9 @@ angular.module("platen.services").factory("settings", function() {
         postHtmlH4FontSize: BASE_FONT_SIZE * 1.125,
         postHtmlH5FontSize: BASE_FONT_SIZE * 1,
         postHtmlH6FontSize: BASE_FONT_SIZE * 1,
-        postHtmlLineHeight: BASE_LINE_HEIGHT
+        postHtmlLineHeight: BASE_LINE_HEIGHT,
+        imageMaximumWidth: "700px",
+        imageAlignment: "center"
     };
     var THEMES = {
         white: "white",

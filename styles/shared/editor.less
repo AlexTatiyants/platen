@@ -104,3 +104,21 @@
     padding: @pad-unit * 0.5;
 }
 
+.image-thumb-container {
+    float: left;
+    margin: @pad-unit;
+
+    .image {
+        float: left;
+        max-width: 200px;
+        max-height: 240px;
+    }
+
+    .caption {
+        float: left;
+        clear: both;
+        font-size: @base-font-size * 0.8;
+        font-style: italic;
+        margin-top: @pad-unit/2;
+    }
+}
