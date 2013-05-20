@@ -4,7 +4,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   $scope.aboutDialogOpen = false;
   $scope.fonts = [];
   $scope.settings = {};
-
+  $scope.settingsKeys = settings.keys;
   $scope.themes = settings.themes;
 
   $scope.appStatus = {
@@ -43,6 +43,14 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   });
 
 
+  var getSetting = function(key) {
+    $scope.settings[key] = settings.getSetting(settings.keys[key]);
+  };
+
+  var resetSetting = function(key) {
+    $scope.settings[key] = settings.setSetting(settings.keys[key], settings.defaults[key]);
+  };
+
   /* initialize font list */
 
   // add local fonts installed by the app
@@ -58,15 +66,34 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     });
   });
 
-  $scope.settingsKeys = settings.keys;
+  getSetting("postTitleFont");
+  getSetting("postTitleFontSize");
+  getSetting("postBodyFont");
+  getSetting("postBodyFontSize");
+  getSetting("postHtmlFont");
+  getSetting("postHtmlFontSize");
 
-  $scope.settings.postTitleFont = settings.getSetting(settings.keys.postTitleFont);
-  $scope.settings.postTitleFontSize = settings.getSetting(settings.keys.postTitleFontSize);
-  $scope.settings.postBodyFont = settings.getSetting(settings.keys.postBodyFont);
-  $scope.settings.postBodyFontSize = settings.getSetting(settings.keys.postTitleFontSize);
-  $scope.settings.postHtmlFont = settings.getSetting(settings.keys.postHtmlFont);
-  $scope.settings.postHtmlFontSize = settings.getSetting(settings.keys.postHtmlFontSize);
 
+  $scope.resetFonts = function() {
+    resetSetting("postTitleFont");
+    resetSetting("postTitleFontSize");
+    resetSetting("postBodyFont");
+    resetSetting("postBodyFontSize");
+    resetSetting("postBodyLineHeight");
+    resetSetting("postHtmlFont");
+    resetSetting("postHtmlFontSize");
+    resetSetting("postHtmlH1FontSize");
+    resetSetting("postHtmlH2FontSize");
+    resetSetting("postHtmlH3FontSize");
+    resetSetting("postHtmlH4FontSize");
+    resetSetting("postHtmlH5FontSize");
+    resetSetting("postHtmlH6FontSize");
+    resetSetting("postHtmlLineHeight");
+
+    logger.log("reset fonts", "MainController");
+
+    $scope.$broadcast(resources.events.FONT_CHANGED);
+  };
 
   $scope.loginCredentials = function() {
     $dialog.dialog({
@@ -231,8 +258,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
       });
     });
   };
-
-
 
   $scope.safeApply = function(fn) {
     var phase = this.$root.$$phase;

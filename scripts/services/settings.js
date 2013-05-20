@@ -37,7 +37,7 @@ angular.module('platen.services').factory('settings', function() {
     postHtmlH3FontSize: BASE_FONT_SIZE * 1.3125,
     postHtmlH4FontSize: BASE_FONT_SIZE * 1.125,
     postHtmlH5FontSize: BASE_FONT_SIZE * 1,
-    postHtmlH6FontSize: BASE_FONT_SIZE * 1,    
+    postHtmlH6FontSize: BASE_FONT_SIZE * 1,
     postHtmlLineHeight: BASE_LINE_HEIGHT
   };
 
@@ -53,6 +53,7 @@ angular.module('platen.services').factory('settings', function() {
 
   var saveSetting = function(key, value) {
     localStorage[LOCAL_STORAGE_OPTIONS_KEY + '.' + key] = value;
+    return localStorage[LOCAL_STORAGE_OPTIONS_KEY + '.' + key];
   };
 
   // initialize settings to defaults if empty
@@ -68,11 +69,13 @@ angular.module('platen.services').factory('settings', function() {
     },
 
     setSetting: function(key, value) {
-      saveSetting(key, value);
+      return saveSetting(key, value);
     },
+
 
     THEME: SETTINGS.theme,
     keys: SETTINGS,
-    themes: THEMES
+    themes: THEMES,
+    defaults: DEFAULTS
   }
 });

@@ -1,4 +1,4 @@
-/*! platen 2013-05-18 */
+/*! platen 2013-05-20 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -338,6 +338,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.aboutDialogOpen = false;
     $scope.fonts = [];
     $scope.settings = {};
+    $scope.settingsKeys = settings.keys;
     $scope.themes = settings.themes;
     $scope.appStatus = {
         isProcessing: false,
@@ -369,6 +370,12 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     }, function(error) {
         notify("error initializing file system", error, false);
     });
+    var getSetting = function(key) {
+        $scope.settings[key] = settings.getSetting(settings.keys[key]);
+    };
+    var resetSetting = function(key) {
+        $scope.settings[key] = settings.setSetting(settings.keys[key], settings.defaults[key]);
+    };
     $scope.fonts.push("economica");
     $scope.fonts.push("inconsolata");
     $scope.fonts.push("goudy");
@@ -378,13 +385,30 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
             $scope.fonts.push(font.fontId);
         });
     });
-    $scope.settingsKeys = settings.keys;
-    $scope.settings.postTitleFont = settings.getSetting(settings.keys.postTitleFont);
-    $scope.settings.postTitleFontSize = settings.getSetting(settings.keys.postTitleFontSize);
-    $scope.settings.postBodyFont = settings.getSetting(settings.keys.postBodyFont);
-    $scope.settings.postBodyFontSize = settings.getSetting(settings.keys.postTitleFontSize);
-    $scope.settings.postHtmlFont = settings.getSetting(settings.keys.postHtmlFont);
-    $scope.settings.postHtmlFontSize = settings.getSetting(settings.keys.postHtmlFontSize);
+    getSetting("postTitleFont");
+    getSetting("postTitleFontSize");
+    getSetting("postBodyFont");
+    getSetting("postBodyFontSize");
+    getSetting("postHtmlFont");
+    getSetting("postHtmlFontSize");
+    $scope.resetFonts = function() {
+        resetSetting("postTitleFont");
+        resetSetting("postTitleFontSize");
+        resetSetting("postBodyFont");
+        resetSetting("postBodyFontSize");
+        resetSetting("postBodyLineHeight");
+        resetSetting("postHtmlFont");
+        resetSetting("postHtmlFontSize");
+        resetSetting("postHtmlH1FontSize");
+        resetSetting("postHtmlH2FontSize");
+        resetSetting("postHtmlH3FontSize");
+        resetSetting("postHtmlH4FontSize");
+        resetSetting("postHtmlH5FontSize");
+        resetSetting("postHtmlH6FontSize");
+        resetSetting("postHtmlLineHeight");
+        logger.log("reset fonts", "MainController");
+        $scope.$broadcast(resources.events.FONT_CHANGED);
+    };
     $scope.loginCredentials = function() {
         $dialog.dialog({
             backdrop: true,
@@ -1041,6 +1065,7 @@ angular.module("platen.services").factory("settings", function() {
     };
     var saveSetting = function(key, value) {
         localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key] = value;
+        return localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key];
     };
     _.each(SETTINGS, function(setting) {
         if (!getSetting(setting)) {
@@ -1052,11 +1077,12 @@ angular.module("platen.services").factory("settings", function() {
             return getSetting(key);
         },
         setSetting: function(key, value) {
-            saveSetting(key, value);
+            return saveSetting(key, value);
         },
         THEME: SETTINGS.theme,
         keys: SETTINGS,
-        themes: THEMES
+        themes: THEMES,
+        defaults: DEFAULTS
     };
 });
 
