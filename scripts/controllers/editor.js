@@ -103,7 +103,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       name: imageName,
       fileName: fileName,
       filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName,
-      maxWidth: settings.getSetting(settings.keys.imageMaximumWidth),
       alignment: settings.getSetting(settings.keys.imageAlignment)
     };
 
@@ -111,14 +110,32 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
     fileManager.writeFile(image.filePath, imageBlob, function(fileEntry) {
       image.localUrl = fileEntry.toURL();
-      image.markdownUrl = '![' + image.name + '](' + image.localUrl + ')';
 
-      $scope.post.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
-      $scope.post.images[image.id] = image;
+      var finishImageAdd = function() {
+        image.markdownUrl = '![' + image.name + '](' + image.localUrl + ')';
 
-      savePost();
-      image = {};
-      notifyOnCompletion("image saved", null, true);
+        $scope.post.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
+        $scope.post.images[image.id] = image;
+
+        savePost();
+        image = {};
+        notifyOnCompletion("image saved", null, true);
+      };
+
+      // code below is required to get the image width
+      var img = new Image();
+
+      img.onload = function() {
+        image.width = img.width;
+        finishImageAdd()
+      }
+
+      image.onerror = function() {
+        finishImageAdd();
+      };
+
+      img.src = image.localUrl;
+
     },
 
     function(error) {
@@ -238,7 +255,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
   $scope.configureImage = function(image) {
     $scope.imageToConfigure = image;
-    console.log($scope.imageToConfigure);
     $scope.configureImageDialogOpen = true;
   };
 

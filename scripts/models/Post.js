@@ -108,8 +108,17 @@ function($q, resources, fileManager, wordpress, logger) {
 
 
   var replaceImageHtml = function(content, image) {
+
+    var imgReplacement = '&lt;a href="' + image.blogUrl + '"&gt; &lt;img class="align' + image.alignment;
+
+    if (image.width > 0) {
+      imgReplacement += '" width="' + image.width;
+    }
+
+    imgReplacement += '" src="' + image.blogUrl;
+
     return content
-    .replace('&lt;img src="' + image.localUrl, '&lt;a href="' + image.blogUrl + '"&gt; &lt;img class="align' + image.alignment + '" width="' + image.maxWidth + '" src="' + image.blogUrl)
+    .replace('&lt;img src="' + image.localUrl, imgReplacement)
     .replace('alt="' + image.title +'"&gt;', 'alt="' + image.title +'"&gt;&lt;/a&gt;');
   };
 

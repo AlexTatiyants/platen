@@ -17,7 +17,6 @@ angular.module('platen.services').factory('settings', function() {
     postHtmlH5FontSize: 'postHtmlH5FontSize',
     postHtmlH6FontSize: 'postHtmlH6FontSize',
     postHtmlLineHeight: 'postHtmlLineHeight',
-    imageMaximumWidth: 'imageMaximumWidth',
     imageAlignment: 'imageAlignment'
   };
 
@@ -41,7 +40,6 @@ angular.module('platen.services').factory('settings', function() {
     postHtmlH5FontSize: BASE_FONT_SIZE * 1,
     postHtmlH6FontSize: BASE_FONT_SIZE * 1,
     postHtmlLineHeight: BASE_LINE_HEIGHT,
-    imageMaximumWidth: '700px',
     imageAlignment: 'center'
   };
 

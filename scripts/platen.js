@@ -1,4 +1,4 @@
-/*! platen 2013-05-20 */
+/*! platen 2013-05-21 */
 "use strict";
 
 angular.module("platen.directives", []);
@@ -114,18 +114,28 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             name: imageName,
             fileName: fileName,
             filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName,
-            maxWidth: settings.getSetting(settings.keys.imageMaximumWidth),
             alignment: settings.getSetting(settings.keys.imageAlignment)
         };
         var contentMarkdownHtml = $scope.post.contentMarkdownHtml;
         fileManager.writeFile(image.filePath, imageBlob, function(fileEntry) {
             image.localUrl = fileEntry.toURL();
-            image.markdownUrl = "![" + image.name + "](" + image.localUrl + ")";
-            $scope.post.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
-            $scope.post.images[image.id] = image;
-            savePost();
-            image = {};
-            notifyOnCompletion("image saved", null, true);
+            var finishImageAdd = function() {
+                image.markdownUrl = "![" + image.name + "](" + image.localUrl + ")";
+                $scope.post.contentMarkdownHtml = contentMarkdownHtml.replace(INSERTED_IMAGE_PLACEHOLDER, image.markdownUrl);
+                $scope.post.images[image.id] = image;
+                savePost();
+                image = {};
+                notifyOnCompletion("image saved", null, true);
+            };
+            var img = new Image();
+            img.onload = function() {
+                image.width = img.width;
+                finishImageAdd();
+            };
+            image.onerror = function() {
+                finishImageAdd();
+            };
+            img.src = image.localUrl;
         }, function(error) {
             notifyOnCompletion("error saving image", error, false);
         });
@@ -218,7 +228,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     };
     $scope.configureImage = function(image) {
         $scope.imageToConfigure = image;
-        console.log($scope.imageToConfigure);
         $scope.configureImageDialogOpen = true;
     };
     $scope.closeConfigureImage = function() {
@@ -782,7 +791,12 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
         }
     };
     var replaceImageHtml = function(content, image) {
-        return content.replace('&lt;img src="' + image.localUrl, '&lt;a href="' + image.blogUrl + '"&gt; &lt;img class="align' + image.alignment + '" width="' + image.maxWidth + '" src="' + image.blogUrl).replace('alt="' + image.title + '"&gt;', 'alt="' + image.title + '"&gt;&lt;/a&gt;');
+        var imgReplacement = '&lt;a href="' + image.blogUrl + '"&gt; &lt;img class="align' + image.alignment;
+        if (image.width > 0) {
+            imgReplacement += '" width="' + image.width;
+        }
+        imgReplacement += '" src="' + image.blogUrl;
+        return content.replace('&lt;img src="' + image.localUrl, imgReplacement).replace('alt="' + image.title + '"&gt;', 'alt="' + image.title + '"&gt;&lt;/a&gt;');
     };
     return {
         initialize: function(postId, onSuccessCallback, onErrorCallback) {
@@ -1042,7 +1056,6 @@ angular.module("platen.services").factory("settings", function() {
         postHtmlH5FontSize: "postHtmlH5FontSize",
         postHtmlH6FontSize: "postHtmlH6FontSize",
         postHtmlLineHeight: "postHtmlLineHeight",
-        imageMaximumWidth: "imageMaximumWidth",
         imageAlignment: "imageAlignment"
     };
     var BASE_FONT_SIZE = 1;
@@ -1063,7 +1076,6 @@ angular.module("platen.services").factory("settings", function() {
         postHtmlH5FontSize: BASE_FONT_SIZE * 1,
         postHtmlH6FontSize: BASE_FONT_SIZE * 1,
         postHtmlLineHeight: BASE_LINE_HEIGHT,
-        imageMaximumWidth: "700px",
         imageAlignment: "center"
     };
     var THEMES = {
