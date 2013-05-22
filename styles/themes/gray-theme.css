@@ -849,11 +849,7 @@ aside.page-links h3 {
   margin-top: 10px;
 }
 .status {
-  width: 40px;
-  height: 40px;
-  margin: auto;
   display: block;
-  float: left;
   font-family: 'icons';
   font-size: 40px;
   color: #c2c2c2;
@@ -872,12 +868,12 @@ aside.page-links h3 {
   cursor: pointer;
   border-radius: 50%;
   margin: auto;
-  height: 15px;
-  width: 15px;
+  height: 14px;
+  width: 14px;
   position: absolute;
   display: block;
-  top: 26px;
-  left: 22px;
+  top: 27px;
+  left: 23px;
 }
 .processing {
   background-color: #828282;
