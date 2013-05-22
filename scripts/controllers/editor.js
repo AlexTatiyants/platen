@@ -294,9 +294,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       savePost();
       logger.log("deleted image '" + imageToDelete.fileName + "'", "EditorController");
       $scope.imageToDelete = {};
-    },
-
-    function(error) {
+    }, function(error) {
       notifyOnCompletion("error deleting image", error, false);
     });
   };

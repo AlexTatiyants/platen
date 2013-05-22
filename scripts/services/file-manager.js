@@ -162,11 +162,15 @@ angular.module('platen.services').factory('fileManager', function() {
     },
 
     removeFile: function(filePath, onSuccessCallback, onErrorCallback) {
-      getFileEntryAndDoAction(filePath, dontCreate, function(fileEntry) {
-        fileEntry.remove(onSuccessCallback, function(e) {
-          onErrorCallback(getError(e, " while removing file " + filePath));
-        });
-      });
+      var doError = function(e) {
+        onErrorCallback(getError(e, " while removing file " + filePath))
+      };
+
+      var doAction = function(fileEntry) {
+        fileEntry.remove(onSuccessCallback, doError);
+      };
+
+      getFileEntryAndDoAction(filePath, dontCreate, doAction, doError);
     },
 
     createDirectory: function(directoryPath, onSuccessCallback, onErrorCallback) {

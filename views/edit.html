@@ -6,7 +6,7 @@
 
     <h1 class="input-box" id="post-title" contenteditable="true" data-editable-text="true" data-ng-model="post.title"></h1>
     <div id="post-container">
-      <article contenteditable="true" class="input-box" data-editable-markdown="true" id="post-content" data-ng-show="!previewOn"
+      <article contenteditable="true" data-editable-markdown="true" id="post-content" data-ng-show="!previewOn"
       data-ng-model="post.contentMarkdownHtml" data-pastable-image="true"></article>
       <div id="post-content-preview" data-ng-show="previewOn" data-ng-bind-html-unsafe="post.contentHtmlPreview"></div>
     </div>
