@@ -76,7 +76,7 @@
               <span class="caption" data-ng-bind="image.name"></span>
               <img data-ng-src="{{image.localUrl}}"></img>
               <span class="image-controls">
-                <!-- <span class="icon-insert" data-ng-click="copyToClipboard(image)" title="copy image to clipboard"></span> -->
+                <span class="icon-insert" data-ng-click="copyToClipboard(image)" title="copy image to clipboard"></span>
                 <span class="icon-settings" data-ng-click="configureImage(image)" title="configure image"></span>
                 <span class="icon-delete" data-ng-click="initiateImageDelete(image)" title="delete image"></span>
               </span>
@@ -126,7 +126,7 @@
   <div id="configure-image-dialog">
     <div modal="configureImageDialogOpen" close="closeConfigureImage()" options="opts">
       <div class="modal-header">
-        <h2>Configure Image</h2>
+        <h2>Configure Image '<span data-ng-bind="imageToConfigure.name"></span>'</h2>
       </div>
 
       <div class="image-thumb-container">
@@ -135,10 +135,6 @@
       </div>
 
       <div class="modal-body pad-right">
-        <div class="field-group full">
-          <label>title</label>
-          <input type="text" class="input-box" data-ng-model="imageToConfigure.name"></input>
-        </div>
         <div class="field-group full">
           <label>width <em>(in px)</em></label>
           <input type="text" class="input-box" data-ng-model="imageToConfigure.width"></input>

@@ -246,12 +246,20 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     return !($.isEmptyObject($scope.post.images));
   };
 
-  // $scope.copyToClipboard = function(image) {
-  //   // $element.focus();
-  //   image.focus();
-  //   document.execCommand('Copy');
-  //   console.log("copied");
-  // };
+  $scope.copyToClipboard = function(image) {
+    var imageSnippet = document.createElement('span');
+    imageSnippet.contentEditable = true;
+
+    document.body.appendChild(imageSnippet);
+    imageSnippet.innerText = image.markdownUrl;
+    imageSnippet.focus();
+
+    document.execCommand('SelectAll');
+    document.execCommand("Copy", false, null);
+    document.body.removeChild(imageSnippet);
+
+    notifyOnCompletion("copied image to clipboard, use Shift+Ctrl+V to paste", null, true);
+  };
 
   $scope.configureImage = function(image) {
     $scope.imageToConfigure = image;
