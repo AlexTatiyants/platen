@@ -837,6 +837,24 @@ aside.page-links h3 {
   color: #666666;
   cursor: default;
 }
+.tip-container {
+  margin-top: 40px;
+  margin-left: 40px;
+  width: 150px;
+  float: right;
+  clear: both;
+  border: 1px solid #e6e6e6;
+  padding: 20px;
+  border-radius: 3px;
+}
+.tip-container p {
+  font-size: 0.9rem;
+  line-height: 1.52rem;
+}
+.tip-container .btn {
+  font-size: 1.2rem;
+  width: 100%;
+}
 .status-bar {
   position: fixed;
   bottom: 20px;
