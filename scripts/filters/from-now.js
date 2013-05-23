@@ -5,5 +5,5 @@ angular.module('platen.filters').filter('fromNow', function() {
     } else {
       return "never";
     }
-  }
+  };
 });

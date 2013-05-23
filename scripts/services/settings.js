@@ -51,7 +51,7 @@ angular.module('platen.services').factory('settings', function() {
 
   var getSetting = function(key) {
     return localStorage[LOCAL_STORAGE_OPTIONS_KEY + '.' + key];
-  }
+  };
 
   var saveSetting = function(key, value) {
     localStorage[LOCAL_STORAGE_OPTIONS_KEY + '.' + key] = value;
@@ -79,5 +79,5 @@ angular.module('platen.services').factory('settings', function() {
     keys: SETTINGS,
     themes: THEMES,
     defaults: DEFAULTS
-  }
+  };
 });

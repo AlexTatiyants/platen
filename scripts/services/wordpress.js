@@ -6,11 +6,11 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
   var DEFAULT_AUTHOR_ID = 1;
 
   var l = {
-    url: localStorage['url'] || '',
-    username: localStorage['username'] || '',
-    password: localStorage['password'] || '',
-    rememberCredentials: (localStorage['rememberCredentials'] === 'true') ? true : false
-  }
+    url: localStorage.url || '',
+    username: localStorage.username || '',
+    password: localStorage.password || '',
+    rememberCredentials: (localStorage.rememberCredentials === 'true') ? true : false
+  };
 
   var wp = null;
 
@@ -20,14 +20,14 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
     l.password = login.password;
     l.rememberCredentials = login.rememberCredentials;
 
-    localStorage['url'] = l.url;
-    localStorage['username'] = l.username;
-    localStorage['rememberCredentials'] = l.rememberCredentials;
+    localStorage.url = l.url;
+    localStorage.username = l.username;
+    localStorage.rememberCredentials = l.rememberCredentials;
 
     if (l.rememberCredentials) {
-      localStorage['password'] = l.password;
+      localStorage.password = l.password;
     } else {
-      localStorage['password'] = '';
+      localStorage.password = '';
     }
 
     logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
@@ -111,7 +111,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
   var getTerms = function(termType, onSuccessCallback, onErrorCallback) {
     var result = wp.getTerms(DEFAULT_BLOG_ID, termType, '');
     if (result.faultCode) {
-      var err = result.faultString.concat()
+      var err = result.faultString.concat();
       logger.log("error for loading tags for blog '" + l.url + "': " + err, "wordpress service");
       onErrorCallback(err);
     } else {
@@ -209,6 +209,5 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', fun
       args.fileData = fileData;
       runCommand(uploadFile, args, onSuccessCallback, onErrorCallback);
     },
-
-  }
+  };
 }]);

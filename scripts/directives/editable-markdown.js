@@ -20,7 +20,7 @@ angular.module('platen.directives').directive('editableMarkdown', function() {
 
       $element.bind('blur paste', function() {
         $scope.$emit('elementEdited', $element[0].id);
-      })
+      });
 
       read();
     }

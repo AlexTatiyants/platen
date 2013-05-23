@@ -65,7 +65,7 @@ var PostsController = function($scope, $location, fileManager, logger, resources
         success: false
       });
     });
-  }
+  };
 
   $scope.editPost = function(post) {
     $location.path('posts/' + post.id);

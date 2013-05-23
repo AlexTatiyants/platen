@@ -23,7 +23,7 @@ var LoginController = function($scope, dialog, wordpress) {
 
   $scope.cancel = function() {
     dialog.close();
-  }
+  };
 };
 
 LoginController.$inject = ['$scope', 'dialog', 'wordpress'];

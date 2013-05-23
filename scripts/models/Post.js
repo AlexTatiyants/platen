@@ -70,7 +70,7 @@ function($q, resources, fileManager, wordpress, logger) {
         }, function(e) {
           d.reject();
           logger.log("error uploading image '" + image.fileName + "'", "Post Module");
-        })
+        });
 
       }, function(e) {
         d.reject();
@@ -135,7 +135,7 @@ function($q, resources, fileManager, wordpress, logger) {
           onSuccessCallback(data);
         }, function(error) {
           onErrorCallback(error);
-        })
+        });
       }
     },
 
@@ -178,5 +178,5 @@ function($q, resources, fileManager, wordpress, logger) {
         onErrorCallback(e);
       }
     }
-  }
+  };
 }]);

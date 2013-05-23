@@ -23,7 +23,7 @@ var ImagesController = function($scope, fileManager, logger, resources) {
         success: false
       });
     });
-  };
+  }
 
   $scope.deleteImage = function(image) {
     $scope.imageToDelete = image;

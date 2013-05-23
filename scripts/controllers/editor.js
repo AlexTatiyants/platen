@@ -127,8 +127,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
       img.onload = function() {
         image.width = img.width;
-        finishImageAdd()
-      }
+        finishImageAdd();
+      };
 
       image.onerror = function() {
         finishImageAdd();
@@ -173,7 +173,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     if (!$scope.previewOn) {
       setFonts();
       $scope.post.contentHtmlPreview = marked($scope.post.contentMarkdown);
-    };
+    }
+
     $scope.previewOn = !$scope.previewOn;
     $scope.previewMessage = $scope.previewOn ? MESSAGE_PREVIEW_MARKDOWN : MESSAGE_PREVIEW_HTML;
   };
@@ -307,8 +308,9 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       $scope.post.status = STATUS_DRAFT;
       $scope.post.state.toBePublished = false;
     }
+
     savePost();
-  }
+  };
 };
 
 EditorController.$inject = ['Post', '$scope', '$routeParams', '$filter', 'fileManager', 'wordpress', 'logger', 'resources', 'settings'];

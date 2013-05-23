@@ -24,11 +24,13 @@ angular.module('platen.services').factory('fileManager', function() {
   // add "name" property to FileError prototype for easier error reporting
   FileError.prototype.__defineGetter__('name', function() {
     var keys = Object.keys(FileError);
-    for (var i = 0, key; key = keys[i]; ++i) {
-      if (FileError[key] == this.code) {
+
+    _.each(keys, function(key) {
+      if (FileError[key] === this.code) {
         return key;
       }
-    }
+    });
+
     return 'Unknown Error';
   });
 
@@ -41,7 +43,7 @@ angular.module('platen.services').factory('fileManager', function() {
   var processFile = function(filePath, createParam, onSuccessCallback, onErrorCallback) {
     if (fs) {
       fs.root.getFile(filePath, createParam, function(fileEntry) {
-        fileEntry.file(onSuccessCallback, onErrorCallback)
+        fileEntry.file(onSuccessCallback, onErrorCallback);
       }, onErrorCallback);
     }
   };
@@ -81,7 +83,7 @@ angular.module('platen.services').factory('fileManager', function() {
                       var reader = new FileReader();
                       reader.onloadend = function(e) {
                         onSuccessCallback(this.result);
-                      }
+                      };
                       reader.readAsText(file);
                     },
 
@@ -105,7 +107,7 @@ angular.module('platen.services').factory('fileManager', function() {
                     break;
                 }
               }
-            })
+            });
           }, function(e) {
             onErrorCallback(getError(e, "while reading entries in " + directoryPath));
           });
@@ -131,7 +133,7 @@ angular.module('platen.services').factory('fileManager', function() {
             fileWriter.onwriteend = null;
             fileWriter.write(blob);
             onSuccessCallback(fileEntry);
-          }
+          };
 
           // a call to truncate() is apparently required if a file is being overriden
           // without this call, there may be extra bits in the newly written file
@@ -150,7 +152,7 @@ angular.module('platen.services').factory('fileManager', function() {
         var reader = new FileReader();
         reader.onloadend = function(e) {
           onSuccessCallback(this.result);
-        }
+        };
         if (asText) {
           reader.readAsText(file);
         } else {
@@ -163,7 +165,7 @@ angular.module('platen.services').factory('fileManager', function() {
 
     removeFile: function(filePath, onSuccessCallback, onErrorCallback) {
       var doError = function(e) {
-        onErrorCallback(getError(e, " while removing file " + filePath))
+        onErrorCallback(getError(e, " while removing file " + filePath));
       };
 
       var doAction = function(fileEntry) {
