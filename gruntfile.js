@@ -1,35 +1,48 @@
 module.exports = function(grunt) {
   var platen_scripts = ['scripts/app.js', 'scripts/*/*.js'];
 
+  var all_scripts = ['vendor/jquery-1.9.1.min.js',
+      'vendor/mimic.js',
+      'vendor/wordpress.min.js',
+      'vendor/angular.min.1.1.4.js',
+      'vendor/ui-bootstrap-0.2.0.min.js',
+      'vendor/angular-ui.min.js',
+      'vendor/marked.js',
+      'vendor/moment.min.js',
+      'vendor/underscore.1.4.4.min.js',
+      'scripts/app.js',
+      'scripts/*/*.js'
+  ];
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+
+    dist: {
+
+    },
 
     uglify: {
       dev: {
         options: {
-          banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+          banner: '/*! DEV ! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
           compress: false,
           mangle: false,
           beautify: true
         },
-        build: {
-          files: {
-            'scripts/platen.js': platen_scripts
-          }
+        files: {
+          'platen.js': all_scripts
         }
       },
 
-      prod: {
+      dist: {
         options: {
           banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
           compress: true,
           mangle: true,
           beautify: false
         },
-        build: {
-          files: {
-            'scripts/platen.js': platen_scripts
-          }
+        files: {
+          'platen.js': all_scripts
         }
       }
     },
@@ -43,34 +56,50 @@ module.exports = function(grunt) {
     watch: {
       scripts: {
         files: platen_scripts,
-        tasks: ['uglify:dev'],
+        tasks: ['jshint', 'uglify:dev'],
         options: {
           nospawn: true
         }
       },
       styles: {
         files: ['styles/**/*.less'],
-        tasks: ['less']
+        tasks: ['less:dev']
       }
     },
 
     less: {
-      development: {
+      dev: {
         files: {
           "styles/themes/white-theme.css": "styles/themes/white-theme.less",
           "styles/themes/gray-theme.css": "styles/themes/gray-theme.less",
           "styles/themes/dark-theme.css": "styles/themes/dark-theme.less"
         }
       },
-      production: {
+      dist: {
         options: {
-          yuicompress: false
+          yuicompress: true
         },
         files: {
           "styles/themes/gray-theme.css": "styles/themes/gray-theme.less",
           "styles/themes/white-theme.css": "styles/themes/white-theme.less",
           "styles/themes/dark-theme.css": "styles/themes/dark-theme.less"
         }
+      }
+    },
+
+    zip: {
+      platen: {
+        src: ['fonts/*',
+            'images/*',
+          platen_scripts,
+            'vendor/*',
+            'styles/themes/*.css',
+            'views/*',
+            'index.html',
+            'manifest.json',
+            'main.js'
+        ],
+        dest: 'platen.zip'
       }
     },
   });

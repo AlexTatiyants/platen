@@ -196,9 +196,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   };
 
   $scope.sync = function() {
-    $scope.$emit(resources.events.PROCESSING_STARTED, {
-      message: "starting upload to WordPress"
-    });
+    $scope.$emit(resources.events.PROCESSING_STARTED, "starting upload to WordPress");
 
     Post.sync(function() {
       notifyOnCompletion("finished upload to WordPress", null, true);
@@ -296,6 +294,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       logger.log("deleted image '" + imageToDelete.fileName + "'", "EditorController");
       $scope.imageToDelete = {};
     }, function(error) {
+      delete $scope.post.images[imageToDelete.id];
+      savePost();
       notifyOnCompletion("error deleting image", error, false);
     });
   };
