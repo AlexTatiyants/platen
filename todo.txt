@@ -1,13 +1,8 @@
-Posts
-- add sorting (by date)
-
 Editor
 - add keyboard shortcut for preview
 
 Settings
 - add confirmation before deleting all posts and images
-- add ability to reset font settings
-- add confirmation when deleting images/posts
 
 WP integration
 - add keyboard shortcut for sync
@@ -18,6 +13,4 @@ Pasting
 - automatically convert HTML to markdown
 
 Image
-- add support for full set of WordPress options (alt text, description, caption, alignment, featured image)
 - when deleting from Images screen, remove from all posts where used (could be time consuming)
-- fix copy to clipboard

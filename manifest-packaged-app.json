@@ -4,16 +4,20 @@
   "version": "0.1",
   "manifest_version": 2,
   "app": {
-      "background": {
-        "scripts": ["main.js"]
-      }
+      // "background": {
+      //   "scripts": ["main.js"]
+      // }
+    "launch": {
+      "local_path": "index.html"
+    }
     },
     "permissions": [
       "experimental",
-      "storage",
+      // "fileSystem",
       "unlimitedStorage",
       "clipboardRead",
       "clipboardWrite",
+      "fontSettings",
       "http://*/",
       "https://*/"
     ],

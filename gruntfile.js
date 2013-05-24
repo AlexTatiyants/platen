@@ -17,10 +17,6 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
 
-    dist: {
-
-    },
-
     uglify: {
       dev: {
         options: {
@@ -91,10 +87,9 @@ module.exports = function(grunt) {
       platen: {
         src: ['fonts/*',
             'images/*',
-          platen_scripts,
-            'vendor/*',
+            'platen.js',
             'styles/themes/*.css',
-            'views/*',
+            'views/**/*',
             'index.html',
             'manifest.json',
             'main.js'
@@ -113,5 +108,6 @@ module.exports = function(grunt) {
 
   // Default task(s).
   grunt.registerTask('default', ['watch']);
+  grunt.registerTask('dist', ['uglify:dist', 'less:dist', 'zip:platen']);
 
 };
