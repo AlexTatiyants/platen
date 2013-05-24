@@ -59,12 +59,12 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   $scope.fonts.push('goudy');
   $scope.fonts.push('merriweather');
 
-  chrome.fontSettings.getFontList(function(fonts) {
-    // add available system fonts
-    _.each(fonts, function(font) {
-      $scope.fonts.push(font.fontId);
-    });
-  });
+  // chrome.fontSettings.getFontList(function(fonts) {
+  //   // add available system fonts
+  //   _.each(fonts, function(font) {
+  //     $scope.fonts.push(font.fontId);
+  //   });
+  // });
 
   getSetting("postTitleFont");
   getSetting("postTitleFontSize");

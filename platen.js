@@ -11351,11 +11351,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.fonts.push("inconsolata");
     $scope.fonts.push("goudy");
     $scope.fonts.push("merriweather");
-    chrome.fontSettings.getFontList(function(fonts) {
-        _.each(fonts, function(font) {
-            $scope.fonts.push(font.fontId);
-        });
-    });
     getSetting("postTitleFont");
     getSetting("postTitleFontSize");
     getSetting("postBodyFont");
@@ -11996,26 +11991,9 @@ angular.module("platen.services").value("resources", {
 
 angular.module("platen.services").factory("settings", function() {
     var LOCAL_STORAGE_OPTIONS_KEY = "platen.settings";
-    var SETTINGS = {
-        theme: "theme",
-        postTitleFont: "postTitleFont",
-        postTitleFontSize: "postTitleFontSize",
-        postBodyFont: "postBodyFont",
-        postBodyFontSize: "postBodyFontSize",
-        postBodyLineHeight: "postBodyLineHeight",
-        postHtmlFont: "postHtmlFont",
-        postHtmlFontSize: "postHtmlFontSize",
-        postHtmlH1FontSize: "postHtmlH1FontSize",
-        postHtmlH2FontSize: "postHtmlH2FontSize",
-        postHtmlH3FontSize: "postHtmlH3FontSize",
-        postHtmlH4FontSize: "postHtmlH4FontSize",
-        postHtmlH5FontSize: "postHtmlH5FontSize",
-        postHtmlH6FontSize: "postHtmlH6FontSize",
-        postHtmlLineHeight: "postHtmlLineHeight",
-        imageAlignment: "imageAlignment"
-    };
     var BASE_FONT_SIZE = 1;
     var BASE_LINE_HEIGHT = 1.8;
+    var settings = {};
     var DEFAULTS = {
         theme: "white",
         postTitleFont: "economica",
@@ -12034,17 +12012,46 @@ angular.module("platen.services").factory("settings", function() {
         postHtmlLineHeight: BASE_LINE_HEIGHT,
         imageAlignment: "center"
     };
+    var SETTINGS = {
+        theme: "theme",
+        postTitleFont: "postTitleFont",
+        postTitleFontSize: "postTitleFontSize",
+        postBodyFont: "postBodyFont",
+        postBodyFontSize: "postBodyFontSize",
+        postBodyLineHeight: "postBodyLineHeight",
+        postHtmlFont: "postHtmlFont",
+        postHtmlFontSize: "postHtmlFontSize",
+        postHtmlH1FontSize: "postHtmlH1FontSize",
+        postHtmlH2FontSize: "postHtmlH2FontSize",
+        postHtmlH3FontSize: "postHtmlH3FontSize",
+        postHtmlH4FontSize: "postHtmlH4FontSize",
+        postHtmlH5FontSize: "postHtmlH5FontSize",
+        postHtmlH6FontSize: "postHtmlH6FontSize",
+        postHtmlLineHeight: "postHtmlLineHeight",
+        imageAlignment: "imageAlignment"
+    };
     var THEMES = {
         white: "white",
         dark: "dark",
         gray: "gray"
     };
+    chrome.storage.sync.get(LOCAL_STORAGE_OPTIONS_KEY, function(result) {
+        settings = result;
+        _.each(settings, function(setting) {
+            if (!settings[setting]) {
+                settings[setting] = DEFAULTS[setting];
+            }
+        });
+    });
     var getSetting = function(key) {
-        return localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key];
+        return settings[key];
     };
     var saveSetting = function(key, value) {
-        localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key] = value;
-        return localStorage[LOCAL_STORAGE_OPTIONS_KEY + "." + key];
+        settings[key] = value;
+        chrome.storage.sync.set({
+            LOCAL_STORAGE_OPTIONS_KEY: settings
+        });
+        return settings[key];
     };
     _.each(SETTINGS, function(setting) {
         if (!getSetting(setting)) {
