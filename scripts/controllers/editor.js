@@ -49,6 +49,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $('#' + POST_HTML_ID + ' h5').css('font-size', settings.getSetting(settings.keys.postHtmlH5FontSize) + resources.typography.UNIT_OF_MEASURE);
     $('#' + POST_HTML_ID + ' h6').css('font-size', settings.getSetting(settings.keys.postHtmlH6FontSize) + resources.typography.UNIT_OF_MEASURE);
     $('#' + POST_HTML_ID).css('line-height', settings.getSetting(settings.keys.postHtmlLineHeight) + resources.typography.UNIT_OF_MEASURE);
+
+    logger.log("set fonts", "EditorController");
   };
 
   Post.initialize($routeParams.postId, function(post) {

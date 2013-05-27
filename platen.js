@@ -1,4 +1,4 @@
-/*! DEV ! platen 2013-05-24 */
+/*! DEV ! platen 2013-05-27 */
 (function(e, t) {
     var n, r, i = typeof t, o = e.document, a = e.location, s = e.jQuery, u = e.$, l = {}, c = [], p = "1.9.1", f = c.concat, d = c.push, h = c.slice, g = c.indexOf, m = l.toString, y = l.hasOwnProperty, v = p.trim, b = function(e, t) {
         return new b.fn.init(e, t, r);
@@ -11016,6 +11016,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         $("#" + POST_HTML_ID + " h5").css("font-size", settings.getSetting(settings.keys.postHtmlH5FontSize) + resources.typography.UNIT_OF_MEASURE);
         $("#" + POST_HTML_ID + " h6").css("font-size", settings.getSetting(settings.keys.postHtmlH6FontSize) + resources.typography.UNIT_OF_MEASURE);
         $("#" + POST_HTML_ID).css("line-height", settings.getSetting(settings.keys.postHtmlLineHeight) + resources.typography.UNIT_OF_MEASURE);
+        logger.log("set fonts", "EditorController");
     };
     Post.initialize($routeParams.postId, function(post) {
         $scope.post = post;
@@ -11311,6 +11312,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.settings = {};
     $scope.settingsKeys = settings.keys;
     $scope.themes = settings.themes;
+    $scope.systemFontsAvailable = false;
     $scope.appStatus = {
         isProcessing: false,
         isSuccess: true,
@@ -11351,6 +11353,15 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.fonts.push("inconsolata");
     $scope.fonts.push("goudy");
     $scope.fonts.push("merriweather");
+    if (chrome.fontSettings) {
+        logger.log("adding system fonts", "MainController");
+        $scope.systemFontsAvailable = true;
+        chrome.fontSettings.getFontList(function(fonts) {
+            _.each(fonts, function(font) {
+                $scope.fonts.push(font.fontId);
+            });
+        });
+    }
     getSetting("postTitleFont");
     getSetting("postTitleFontSize");
     getSetting("postBodyFont");
@@ -11393,6 +11404,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     };
     $scope.saveFont = function(font, item) {
         settings.setSetting(item, font);
+        console.log("setting font: " + font + " to " + item);
         $scope.$broadcast(resources.events.FONT_CHANGED);
     };
     $scope.increaseFontSize = function(fontSize) {
@@ -11586,6 +11598,14 @@ var PostsController = function($scope, $location, fileManager, logger, resources
 };
 
 PostsController.$inject = [ "$scope", "$location", "fileManager", "logger", "resources" ];
+
+angular.module("platen.directives").directive("blur", function() {
+    return function(scope, elem, attrs) {
+        elem.bind("blur", function() {
+            scope.$apply(attrs.ngBlur);
+        });
+    };
+});
 
 angular.module("platen.directives").directive("editableMarkdown", function() {
     return {
@@ -11947,6 +11967,49 @@ angular.module("platen.services").factory("fileManager", function() {
     };
 });
 
+angular.module("platen.services").factory("localStorage", [ "logger", function(logger) {
+    var asyncKeys = {};
+    var _getKey, _setKey;
+    var collectionName;
+    if (chrome.storage) {
+        logger.log("local storage configured for new pacakged apps", "LocalStorage service");
+        _getKey = function(key) {
+            return asyncKeys[key];
+        };
+        _setKey = function(key, value) {
+            asyncKeys[key] = value;
+            chrome.storage.sync.set({
+                collectionName: asyncKeys
+            });
+            return value;
+        };
+    } else {
+        logger.log("local storage configured for legacy pacakged apps", "LocalStorage service");
+        _getKey = function(key) {
+            return localStorage[collectionName + "." + key];
+        };
+        _setKey = function(key, value) {
+            localStorage[collectionName + "." + key] = value;
+            return value;
+        };
+    }
+    return {
+        getKey: _getKey,
+        setKey: _setKey,
+        initialize: function(colName, doAction) {
+            collectionName = colName;
+            if (chrome.sync) {
+                chrome.storage.sync.get(collectionName, function(result) {
+                    asyncKeys = result;
+                    if (doAction) {
+                        doAction(asyncKeys);
+                    }
+                });
+            }
+        }
+    };
+} ]);
+
 angular.module("platen.services").factory("logger", function() {
     var MAX_QUEUE_SIZE = 100;
     var offset = 0;
@@ -11989,8 +12052,9 @@ angular.module("platen.services").value("resources", {
     }
 });
 
-angular.module("platen.services").factory("settings", function() {
-    var LOCAL_STORAGE_OPTIONS_KEY = "platen.settings";
+angular.module("platen.services").factory("settings", [ "localStorage", function(localStorage) {
+    var LOCAL_STORAGE_SETTINGS_KEY = "platen.settings";
+    var storage = localStorage;
     var BASE_FONT_SIZE = 1;
     var BASE_LINE_HEIGHT = 1.8;
     var settings = {};
@@ -12035,42 +12099,27 @@ angular.module("platen.services").factory("settings", function() {
         dark: "dark",
         gray: "gray"
     };
-    chrome.storage.sync.get(LOCAL_STORAGE_OPTIONS_KEY, function(result) {
-        settings = result;
+    var initializeSettings = function(settings) {
         _.each(settings, function(setting) {
             if (!settings[setting]) {
                 settings[setting] = DEFAULTS[setting];
             }
         });
-    });
-    var getSetting = function(key) {
-        return settings[key];
     };
-    var saveSetting = function(key, value) {
-        settings[key] = value;
-        chrome.storage.sync.set({
-            LOCAL_STORAGE_OPTIONS_KEY: settings
-        });
-        return settings[key];
-    };
-    _.each(SETTINGS, function(setting) {
-        if (!getSetting(setting)) {
-            saveSetting(setting, DEFAULTS[setting]);
-        }
-    });
+    storage.initialize(LOCAL_STORAGE_SETTINGS_KEY, initializeSettings(settings));
     return {
         getSetting: function(key) {
-            return getSetting(key);
+            return storage.getKey(key);
         },
         setSetting: function(key, value) {
-            return saveSetting(key, value);
+            return storage.setKey(key, value);
         },
         THEME: SETTINGS.theme,
         keys: SETTINGS,
         themes: THEMES,
         defaults: DEFAULTS
     };
-});
+} ]);
 
 angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", function($dialog, logger) {
     var POST_TYPE = "post";

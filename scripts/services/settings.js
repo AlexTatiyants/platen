@@ -1,5 +1,6 @@
-angular.module('platen.services').factory('settings', function() {
-  var LOCAL_STORAGE_OPTIONS_KEY = 'platen.settings';
+angular.module('platen.services').factory('settings', ['localStorage', function(localStorage) {
+  var LOCAL_STORAGE_SETTINGS_KEY = 'platen.settings';
+  var storage = localStorage;
 
   // typography is measured in rems
   var BASE_FONT_SIZE = 1;
@@ -50,47 +51,24 @@ angular.module('platen.services').factory('settings', function() {
     gray: 'gray'
   };
 
-
-  chrome.storage.sync.get(LOCAL_STORAGE_OPTIONS_KEY, function(result) {
-    settings = result;
-
-    // initialize settings to defaults if empty
+  var initializeSettings = function(settings) {
     _.each(settings, function(setting) {
       if (!settings[setting]) {
         settings[setting] = DEFAULTS[setting];
       }
     });
-  });
-
-
-  var getSetting = function(key) {
-    return settings[key];
-    // return localStorage[LOCAL_STORAGE_OPTIONS_KEY + '.' + key];
-  };
-
-  var saveSetting = function(key, value) {
-    // localStorage[LOCAL_STORAGE_OPTIONS_KEY + '.' + key] = value;
-    // return localStorage[LOCAL_STORAGE_OPTIONS_KEY + '.' + key];
-
-    settings[key] = value;
-    chrome.storage.sync.set({ LOCAL_STORAGE_OPTIONS_KEY: settings});
-    return settings[key];
   };
 
   // initialize settings to defaults if empty
-  _.each(SETTINGS, function(setting) {
-    if (!getSetting(setting)) {
-      saveSetting(setting, DEFAULTS[setting]);
-    }
-  });
+  storage.initialize(LOCAL_STORAGE_SETTINGS_KEY, initializeSettings(settings));
 
   return {
     getSetting: function(key) {
-      return getSetting(key);
+      return storage.getKey(key);
     },
 
     setSetting: function(key, value) {
-      return saveSetting(key, value);
+      return storage.setKey(key, value);
     },
 
     THEME: SETTINGS.theme,
@@ -98,4 +76,4 @@ angular.module('platen.services').factory('settings', function() {
     themes: THEMES,
     defaults: DEFAULTS
   };
-});
+}]);

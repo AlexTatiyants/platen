@@ -6,6 +6,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   $scope.settings = {};
   $scope.settingsKeys = settings.keys;
   $scope.themes = settings.themes;
+  $scope.systemFontsAvailable = false;
 
   $scope.appStatus = {
     isProcessing: false,
@@ -59,12 +60,16 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   $scope.fonts.push('goudy');
   $scope.fonts.push('merriweather');
 
-  // chrome.fontSettings.getFontList(function(fonts) {
-  //   // add available system fonts
-  //   _.each(fonts, function(font) {
-  //     $scope.fonts.push(font.fontId);
-  //   });
-  // });
+  if (chrome.fontSettings) {
+    logger.log("adding system fonts", "MainController");
+    $scope.systemFontsAvailable = true;
+    chrome.fontSettings.getFontList(function(fonts) {
+      // add available system fonts
+      _.each(fonts, function(font) {
+        $scope.fonts.push(font.fontId);
+      });
+    });
+  }
 
   getSetting("postTitleFont");
   getSetting("postTitleFontSize");
@@ -116,6 +121,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
 
   $scope.saveFont = function(font, item) {
     settings.setSetting(item, font);
+    console.log("setting font: " + font + " to " + item);
     $scope.$broadcast(resources.events.FONT_CHANGED);
   };
 
