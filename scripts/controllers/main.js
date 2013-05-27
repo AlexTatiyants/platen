@@ -1,4 +1,4 @@
-var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings) {
+var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings, wordpress) {
   var FADE_DURATION = 3000;
   $scope.optionsPanelVisible = false;
   $scope.aboutDialogOpen = false;
@@ -79,6 +79,12 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   getSetting("postHtmlFontSize");
 
 
+  // initialize theme
+  $scope.settings.currentTheme = settings.getSetting(settings.THEME);
+  $scope.autoSaveInterval = settings.getSetting(settings.AUTOSAVE_INTERVAL);
+
+  wordpress.loadConfiguration();
+
   $scope.resetFonts = function() {
     resetSetting("postTitleFont");
     resetSetting("postTitleFontSize");
@@ -119,9 +125,10 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.settings.currentTheme = settings.getSetting(settings.THEME);
   };
 
+  $scope.switchTheme($scope.settings.currentTheme);
+
   $scope.saveFont = function(font, item) {
     settings.setSetting(item, font);
-    console.log("setting font: " + font + " to " + item);
     $scope.$broadcast(resources.events.FONT_CHANGED);
   };
 
@@ -166,10 +173,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   };
 
 
-  // initialize theme
-  $scope.settings.currentTheme = settings.getSetting(settings.THEME);
-  $scope.autoSaveInterval = settings.getSetting(settings.AUTOSAVE_INTERVAL);
-  $scope.switchTheme($scope.settings.currentTheme);
 
   $scope.toggleOptionsPanel = function() {
     $scope.optionsPanelVisible = !$scope.optionsPanelVisible;
@@ -275,6 +278,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
       this.$apply(fn);
     }
   };
+
 };
 
-MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'logger', 'resources', 'settings'];
+MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'logger', 'resources', 'settings', 'wordpress'];

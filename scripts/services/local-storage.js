@@ -54,6 +54,10 @@ angular.module('platen.services').factory('localStorage', ['logger', function(lo
             doAction(asyncKeys);
           }
         });
+      } else {
+        if (doAction) {
+          doAction(asyncKeys);
+        }
       }
     }
   };

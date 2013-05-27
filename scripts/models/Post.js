@@ -86,7 +86,6 @@ function($q, resources, fileManager, wordpress, logger) {
 
   var uploadImages = function(content, onCompletionCallback) {
     var promises = [];
-
     _.each(data.images, function(image) {
       if (!image.blogId || image.blogId.trim() === '') {
         // for each image to be uploaded, initiate upload to wordpress
@@ -98,17 +97,14 @@ function($q, resources, fileManager, wordpress, logger) {
     if (promises.length > 0) {
       // once all promises are fullfilled (i.e. all items have been uploaded),
       // proceed with uploading the post
-      $q.all(promises).then(onCompletionCallback);
-    }
-    else {
+      $q.all(promises).then(onCompletionCallback());
+    } else {
       // if there were no promises to begin with, just proceed with uploading
       onCompletionCallback();
     }
   };
 
-
   var replaceImageHtml = function(content, image) {
-
     var imgReplacement = '&lt;a href="' + image.blogUrl + '"&gt; &lt;img class="align' + image.alignment;
 
     if (image.width > 0) {
@@ -117,9 +113,8 @@ function($q, resources, fileManager, wordpress, logger) {
 
     imgReplacement += '" src="' + image.blogUrl;
 
-    return content
-    .replace('&lt;img src="' + image.localUrl, imgReplacement)
-    .replace('alt="' + image.title +'"&gt;', 'alt="' + image.title +'"&gt;&lt;/a&gt;');
+    return content.replace('&lt;img src="' + image.localUrl, imgReplacement)
+      .replace('alt="' + image.title + '"&gt;', 'alt="' + image.title + '"&gt;&lt;/a&gt;');
   };
 
   return {
@@ -151,7 +146,6 @@ function($q, resources, fileManager, wordpress, logger) {
         // before uploading the post to WordPress, we need to
         // extract and upload any images which haven't already been uploaded
         uploadImages(data.content, function() {
-
           // replace references to images within the post body with WordPress urls
           var content = data.content;
           _.each(data.images, function(image) {
