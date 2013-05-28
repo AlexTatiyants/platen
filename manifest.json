@@ -4,23 +4,27 @@
   "version": "0.1",
   "manifest_version": 2,
   "app": {
-    "launch": {
-      "local_path": "index.html"
+    "background": {
+      "scripts": ["main.js"]
     }
-    },
-    "permissions": [
+  },
+
+  "sandbox": {
+    "pages": ["views/donate-sandbox.html"]
+  },
+
+  "permissions": [
       "experimental",
-      "fileSystem",
+      "storage",
       "unlimitedStorage",
       "clipboardRead",
-      "clipboardWrite",
       "fontSettings",
+      "clipboardWrite",
       "http://*/",
       "https://*/"
-    ],
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-    "icons": {
-      "16": "images/icon_16.png",
-      "128": "images/icon_128.png"
-    }
+  ],
+  "icons": {
+    "16": "images/icon_16.png",
+    "128": "images/icon_128.png"
   }
+}

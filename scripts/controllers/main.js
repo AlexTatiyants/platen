@@ -52,7 +52,27 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.settings[key] = settings.setSetting(settings.keys[key], settings.defaults[key]);
   };
 
-  /* initialize font list */
+  $scope.switchTheme = function(themeName) {
+    _.each($('link'), function(link) {
+      link.disabled = (link.title !== themeName);
+    });
+    $scope.settings.theme = settings.setSetting("theme", themeName);
+  };
+
+  settings.initialize(function(settings) {
+    getSetting("postTitleFont");
+    getSetting("postTitleFontSize");
+    getSetting("postBodyFont");
+    getSetting("postBodyFontSize");
+    getSetting("postHtmlFont");
+    getSetting("postHtmlFontSize");
+    getSetting("theme");
+
+    $scope.switchTheme($scope.settings.theme);
+
+    console.log("broadcasting FONT_CHANGED event after initalizing settings in MainController");
+    $scope.$broadcast(resources.events.FONT_CHANGED);
+  });
 
   // add local fonts installed by the app
   $scope.fonts.push('economica');
@@ -70,18 +90,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
       });
     });
   }
-
-  getSetting("postTitleFont");
-  getSetting("postTitleFontSize");
-  getSetting("postBodyFont");
-  getSetting("postBodyFontSize");
-  getSetting("postHtmlFont");
-  getSetting("postHtmlFontSize");
-
-
-  // initialize theme
-  $scope.settings.currentTheme = settings.getSetting(settings.THEME);
-  $scope.autoSaveInterval = settings.getSetting(settings.AUTOSAVE_INTERVAL);
 
   wordpress.loadConfiguration();
 
@@ -115,17 +123,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
       templateUrl: 'views/modals/login.html'
     }).open();
   };
-
-  $scope.switchTheme = function(themeName) {
-    _.each($('link'), function(link) {
-      link.disabled = (link.title !== themeName);
-    });
-
-    settings.setSetting(settings.THEME, themeName);
-    $scope.settings.currentTheme = settings.getSetting(settings.THEME);
-  };
-
-  $scope.switchTheme($scope.settings.currentTheme);
 
   $scope.saveFont = function(font, item) {
     settings.setSetting(item, font);
@@ -171,8 +168,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     settings.setSetting(lineHeight, currentHeight - resources.typography.INCREMENT);
     $scope.$broadcast(resources.events.FONT_CHANGED);
   };
-
-
 
   $scope.toggleOptionsPanel = function() {
     $scope.optionsPanelVisible = !$scope.optionsPanelVisible;

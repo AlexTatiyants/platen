@@ -21,6 +21,8 @@ angular.module('platen.services').factory('logger', function() {
         location: location,
         date: new Date()
       });
+
+      console.log(message);
     },
 
     getLogs: function() {

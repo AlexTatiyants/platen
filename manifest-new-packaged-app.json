@@ -19,7 +19,6 @@
       "unlimitedStorage",
       "clipboardRead",
       "clipboardWrite",
-      "fontSettings",
       "http://*/",
       "https://*/"
   ],

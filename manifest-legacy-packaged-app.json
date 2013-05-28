@@ -10,7 +10,7 @@
     },
     "permissions": [
       "experimental",
-      "fileSystem",
+      "storage",
       "unlimitedStorage",
       "clipboardRead",
       "clipboardWrite",

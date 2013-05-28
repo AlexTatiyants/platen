@@ -33,7 +33,13 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   };
 
   var setFonts = function() {
+
+    console.log("postTitleFont:" + settings.getSetting(settings.keys.postTitleFont));
+
     $('#' + POST_TITLE_ID).css('font-family', settings.getSetting(settings.keys.postTitleFont));
+
+    console.log($('#' + POST_TITLE_ID).css('font-family'));
+
     $('#' + POST_TITLE_ID).css('font-size', settings.getSetting(settings.keys.postTitleFontSize) + resources.typography.UNIT_OF_MEASURE);
 
     $('#' + POST_BODY_ID).css('font-family', settings.getSetting(settings.keys.postBodyFont));
@@ -60,7 +66,6 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     $scope.previewMessage = MESSAGE_PREVIEW_HTML;
 
     logger.log("loaded post '" + $scope.post.title + "'", "EditorController");
-
 
     $scope.safeApply();
     $('#' + POST_TITLE_ID).focus();

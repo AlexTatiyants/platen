@@ -11002,7 +11002,9 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         });
     };
     var setFonts = function() {
+        console.log("postTitleFont:" + settings.getSetting(settings.keys.postTitleFont));
         $("#" + POST_TITLE_ID).css("font-family", settings.getSetting(settings.keys.postTitleFont));
+        console.log($("#" + POST_TITLE_ID).css("font-family"));
         $("#" + POST_TITLE_ID).css("font-size", settings.getSetting(settings.keys.postTitleFontSize) + resources.typography.UNIT_OF_MEASURE);
         $("#" + POST_BODY_ID).css("font-family", settings.getSetting(settings.keys.postBodyFont));
         $("#" + POST_BODY_ID).css("font-size", settings.getSetting(settings.keys.postBodyFontSize) + resources.typography.UNIT_OF_MEASURE);
@@ -11347,6 +11349,24 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     var resetSetting = function(key) {
         $scope.settings[key] = settings.setSetting(settings.keys[key], settings.defaults[key]);
     };
+    $scope.switchTheme = function(themeName) {
+        _.each($("link"), function(link) {
+            link.disabled = link.title !== themeName;
+        });
+        $scope.settings.theme = settings.setSetting("theme", themeName);
+    };
+    settings.initialize(function(settings) {
+        getSetting("postTitleFont");
+        getSetting("postTitleFontSize");
+        getSetting("postBodyFont");
+        getSetting("postBodyFontSize");
+        getSetting("postHtmlFont");
+        getSetting("postHtmlFontSize");
+        getSetting("theme");
+        $scope.switchTheme($scope.settings.theme);
+        console.log("broadcasting FONT_CHANGED event after initalizing settings in MainController");
+        $scope.$broadcast(resources.events.FONT_CHANGED);
+    });
     $scope.fonts.push("economica");
     $scope.fonts.push("inconsolata");
     $scope.fonts.push("goudy");
@@ -11360,14 +11380,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
             });
         });
     }
-    getSetting("postTitleFont");
-    getSetting("postTitleFontSize");
-    getSetting("postBodyFont");
-    getSetting("postBodyFontSize");
-    getSetting("postHtmlFont");
-    getSetting("postHtmlFontSize");
-    $scope.settings.currentTheme = settings.getSetting(settings.THEME);
-    $scope.autoSaveInterval = settings.getSetting(settings.AUTOSAVE_INTERVAL);
     wordpress.loadConfiguration();
     $scope.resetFonts = function() {
         resetSetting("postTitleFont");
@@ -11396,14 +11408,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
             templateUrl: "views/modals/login.html"
         }).open();
     };
-    $scope.switchTheme = function(themeName) {
-        _.each($("link"), function(link) {
-            link.disabled = link.title !== themeName;
-        });
-        settings.setSetting(settings.THEME, themeName);
-        $scope.settings.currentTheme = settings.getSetting(settings.THEME);
-    };
-    $scope.switchTheme($scope.settings.currentTheme);
     $scope.saveFont = function(font, item) {
         settings.setSetting(item, font);
         $scope.$broadcast(resources.events.FONT_CHANGED);
@@ -11966,47 +11970,49 @@ angular.module("platen.services").factory("fileManager", function() {
 });
 
 angular.module("platen.services").factory("localStorage", [ "logger", function(logger) {
-    var asyncKeys = {};
+    var cachedStorage = {};
+    var PLATEN_COLLECTION_KEY = "platen";
     var _getKey, _setKey;
-    var collectionName;
+    var loadCachedStorage = function(onCompletionCallback) {
+        chrome.storage.local.get(PLATEN_COLLECTION_KEY, function(result) {
+            cachedStorage = result;
+            logger.log("loaded cached storage", "localStorage service");
+            onCompletionCallback(cachedStorage);
+        });
+    };
     if (chrome.storage) {
-        logger.log("local storage configured for new pacakged apps", "LocalStorage service");
-        _getKey = function(key) {
-            return asyncKeys[key];
+        logger.log("local storage configured for new pacakged apps", "localStorage service");
+        _getKey = function(collection, key) {
+            console.log("cache", cachedStorage);
+            console.log("got key -- collection: " + collection + ", key: " + key + ", value: " + cachedStorage[collection + "." + key]);
+            return cachedStorage[collection + "." + key];
         };
-        _setKey = function(key, value) {
-            asyncKeys[key] = value;
-            chrome.storage.sync.set({
-                collectionName: asyncKeys
+        _setKey = function(collection, key, value) {
+            cachedStorage[collection + "." + key] = value;
+            console.log("set key -- collection: " + collection + ", key: " + key + ", value: " + cachedStorage[collection + "." + key]);
+            chrome.storage.local.set({
+                PLATEN_COLLECTION_KEY: cachedStorage
             });
             return value;
         };
     } else {
-        logger.log("local storage configured for legacy pacakged apps", "LocalStorage service");
-        _getKey = function(key) {
-            return localStorage[collectionName + "." + key];
+        logger.log("local storage configured for legacy pacakged apps", "localStorage service");
+        _getKey = function(collection, key) {
+            return localStorage[collection + "." + key];
         };
-        _setKey = function(key, value) {
-            localStorage[collectionName + "." + key] = value;
+        _setKey = function(collection, key, value) {
+            localStorage[collection + "." + key] = value;
             return value;
         };
     }
     return {
         getKey: _getKey,
         setKey: _setKey,
-        initialize: function(colName, doAction) {
-            collectionName = colName;
-            if (chrome.sync) {
-                chrome.storage.sync.get(collectionName, function(result) {
-                    asyncKeys = result;
-                    if (doAction) {
-                        doAction(asyncKeys);
-                    }
-                });
+        initialize: function(doAction) {
+            if (cachedStorage) {
+                doAction(cachedStorage);
             } else {
-                if (doAction) {
-                    doAction(asyncKeys);
-                }
+                loadCachedStorage(doAction);
             }
         }
     };
@@ -12031,6 +12037,7 @@ angular.module("platen.services").factory("logger", function() {
                 location: location,
                 date: new Date()
             });
+            console.log(message);
         },
         getLogs: function() {
             return log.reverse();
@@ -12054,7 +12061,7 @@ angular.module("platen.services").value("resources", {
     }
 });
 
-angular.module("platen.services").factory("settings", [ "localStorage", function(localStorage) {
+angular.module("platen.services").factory("settings", [ "localStorage", "logger", function(localStorage, logger) {
     var LOCAL_STORAGE_SETTINGS_KEY = "platen.settings";
     var storage = localStorage;
     var BASE_FONT_SIZE = 1;
@@ -12101,22 +12108,25 @@ angular.module("platen.services").factory("settings", [ "localStorage", function
         dark: "dark",
         gray: "gray"
     };
-    var initializeSettings = function(settings) {
-        _.each(settings, function(setting) {
-            if (!settings[setting]) {
-                settings[setting] = DEFAULTS[setting];
-            }
-        });
-    };
-    storage.initialize(LOCAL_STORAGE_SETTINGS_KEY, initializeSettings(settings));
     return {
+        initialize: function(onSuccessCallback) {
+            storage.initialize(function(settings) {
+                _.each(SETTINGS, function(setting) {
+                    if (!settings[setting]) {
+                        settings[setting] = DEFAULTS[setting];
+                        storage.setKey(LOCAL_STORAGE_SETTINGS_KEY, setting, settings[setting]);
+                    }
+                });
+                logger.log("loaded settings", "settings service");
+                onSuccessCallback(settings);
+            });
+        },
         getSetting: function(key) {
-            return storage.getKey(key);
+            return storage.getKey(LOCAL_STORAGE_SETTINGS_KEY, key);
         },
         setSetting: function(key, value) {
-            return storage.setKey(key, value);
+            return storage.setKey(LOCAL_STORAGE_SETTINGS_KEY, key, value);
         },
-        THEME: SETTINGS.theme,
         keys: SETTINGS,
         themes: THEMES,
         defaults: DEFAULTS
@@ -12134,12 +12144,18 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", "l
     var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = "platen.wordPressCredentials";
     var storage = localStorage;
     var wp = null;
+    var getConfiguration = function(key) {
+        return storage.getKey(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, key);
+    };
+    var setConfiguration = function(key, value) {
+        storage.setKey(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, key, value);
+    };
     var loadConfiguration = function() {
-        storage.initialize(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, function(config) {
-            l.url = storage.getKey("url") || "";
-            l.username = storage.getKey("username") || "";
-            l.password = storage.getKey("password") || "";
-            l.rememberCredentials = storage.getKey("rememberCredentials") === "true" ? true : false;
+        storage.initialize(function(config) {
+            l.url = getConfiguration("url") || "";
+            l.username = getConfiguration("username") || "";
+            l.password = getConfiguration("password") || "";
+            l.rememberCredentials = getConfiguration("rememberCredentials") === "true" ? true : false;
             logger.log("loaded WordPress configuration", "wordpress service");
         });
     };
@@ -12148,13 +12164,13 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", "l
         l.username = login.username;
         l.password = login.password;
         l.rememberCredentials = login.rememberCredentials;
-        storage.setKey("url", l.url);
-        storage.setKey("username", l.username);
-        storage.setKey("rememberCredentials", l.rememberCredentials);
+        setConfiguration("url", l.url);
+        setConfiguration("username", l.username);
+        setConfiguration("rememberCredentials", l.rememberCredentials);
         if (l.rememberCredentials) {
-            storage.setKey("password", l.password);
+            setConfiguration("password", l.password);
         } else {
-            storage.setKey("password", "");
+            setConfiguration("password", "");
         }
         logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
     };

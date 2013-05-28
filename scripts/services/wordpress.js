@@ -9,14 +9,23 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', 'lo
 
   var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = 'platen.wordPressCredentials';
   var storage = localStorage;
+
   var wp = null;
 
+  var getConfiguration = function(key) {
+    return storage.getKey(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, key);
+  };
+
+  var setConfiguration = function(key, value) {
+    storage.setKey(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, key, value);
+  };
+
   var loadConfiguration = function() {
-    storage.initialize(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, function(config) {
-      l.url = storage.getKey("url") || '';
-      l.username = storage.getKey("username") || '';
-      l.password = storage.getKey("password") || '';
-      l.rememberCredentials = (storage.getKey("rememberCredentials") === 'true') ? true : false;
+    storage.initialize(function(config) {
+      l.url = getConfiguration("url") || '';
+      l.username = getConfiguration("username") || '';
+      l.password = getConfiguration("password") || '';
+      l.rememberCredentials = (getConfiguration("rememberCredentials") === 'true') ? true : false;
 
       logger.log("loaded WordPress configuration", "wordpress service");
     });
@@ -28,14 +37,14 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', 'lo
     l.password = login.password;
     l.rememberCredentials = login.rememberCredentials;
 
-    storage.setKey("url", l.url);
-    storage.setKey("username", l.username);
-    storage.setKey("rememberCredentials", l.rememberCredentials);
+    setConfiguration("url", l.url);
+    setConfiguration("username", l.username);
+    setConfiguration("rememberCredentials", l.rememberCredentials);
 
     if (l.rememberCredentials) {
-      storage.setKey("password", l.password);
+      setConfiguration("password", l.password);
     } else {
-      storage.setKey("password", "");
+      setConfiguration("password", "");
     }
 
     logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
