@@ -7,8 +7,8 @@
     "launch": {
       "local_path": "index.html"
     }
-    },
-    "permissions": [
+  },
+  "permissions": [
       "experimental",
       "storage",
       "unlimitedStorage",
@@ -17,10 +17,10 @@
       "fontSettings",
       "http://*/",
       "https://*/"
-    ],
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-    "icons": {
-      "16": "images/icon_16.png",
-      "128": "images/icon_128.png"
-    }
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "icons": {
+    "16": "images/icon_16.png",
+    "128": "images/icon_128.png"
   }
+}

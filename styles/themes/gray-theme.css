@@ -987,6 +987,7 @@ aside.page-links h3 {
 }
 html {
   min-height: 100%;
+  overflow-y: auto;
 }
 body,
 p,
@@ -1005,6 +1006,7 @@ ol {
   font-weight: 300;
   font-style: normal;
   font-size: 100%;
+  -webkit-user-select: text;
 }
 h1 {
   font-size: 2rem;

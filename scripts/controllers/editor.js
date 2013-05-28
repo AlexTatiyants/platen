@@ -33,30 +33,48 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   };
 
   var setFonts = function() {
+    // settings.getAllSettings(function(settings) {
+    //   $('#' + POST_TITLE_ID).css('font-family', settings.postTitleFont);
+    //   $('#' + POST_TITLE_ID).css('font-size', settings.postTitleFontSize + resources.typography.UNIT_OF_MEASURE);
 
-    console.log("postTitleFont:" + settings.getSetting(settings.keys.postTitleFont));
+    //   $('#' + POST_BODY_ID).css('font-family', settings.postBodyFont);
+    //   $('#' + POST_BODY_ID).css('font-size', settings.postBodyFontSize + resources.typography.UNIT_OF_MEASURE);
+    //   $('#' + POST_BODY_ID).css('line-height', settings.postBodyLineHeight + resources.typography.UNIT_OF_MEASURE);
 
-    $('#' + POST_TITLE_ID).css('font-family', settings.getSetting(settings.keys.postTitleFont));
+    //   $('#' + POST_HTML_ID).css('font-family', settings.postHtmlFont);
+    //   $('#' + POST_HTML_ID).css('font-size', settings.postHtmlFontSize + resources.typography.UNIT_OF_MEASURE);
+    //   $('#' + POST_HTML_ID + ' h1').css('font-size', settings.postHtmlH1FontSize + resources.typography.UNIT_OF_MEASURE);
+    //   $('#' + POST_HTML_ID + ' h2').css('font-size', settings.postHtmlH2FontSize + resources.typography.UNIT_OF_MEASURE);
+    //   $('#' + POST_HTML_ID + ' h3').css('font-size', settings.postHtmlH3FontSize + resources.typography.UNIT_OF_MEASURE);
+    //   $('#' + POST_HTML_ID + ' h4').css('font-size', settings.postHtmlH4FontSize + resources.typography.UNIT_OF_MEASURE);
+    //   $('#' + POST_HTML_ID + ' h5').css('font-size', settings.postHtmlH5FontSize + resources.typography.UNIT_OF_MEASURE);
+    //   $('#' + POST_HTML_ID + ' h6').css('font-size', settings.postHtmlH6FontSize + resources.typography.UNIT_OF_MEASURE);
+    //   $('#' + POST_HTML_ID).css('line-height', settings.postHtmlLineHeight + resources.typography.UNIT_OF_MEASURE);
 
-    console.log($('#' + POST_TITLE_ID).css('font-family'));
+    //   logger.log("set fonts", "EditorController");
+    // });
 
-    $('#' + POST_TITLE_ID).css('font-size', settings.getSetting(settings.keys.postTitleFontSize) + resources.typography.UNIT_OF_MEASURE);
+    // settings.getSetting("postTitleFont", function(value) {
+    //   $('#' + POST_TITLE_ID).css('font-family', value);
+    //   console.log("set postTitleFont to ", value);
+    // });
 
-    $('#' + POST_BODY_ID).css('font-family', settings.getSetting(settings.keys.postBodyFont));
-    $('#' + POST_BODY_ID).css('font-size', settings.getSetting(settings.keys.postBodyFontSize) + resources.typography.UNIT_OF_MEASURE);
-    $('#' + POST_BODY_ID).css('line-height', settings.getSetting(settings.keys.postBodyLineHeight) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_TITLE_ID).css('font-size', settings.getSetting(settings.keys.postTitleFontSize) + resources.typography.UNIT_OF_MEASURE);
 
-    $('#' + POST_HTML_ID).css('font-family', settings.getSetting(settings.keys.postHtmlFont));
-    $('#' + POST_HTML_ID).css('font-size', settings.getSetting(settings.keys.postHtmlFontSize) + resources.typography.UNIT_OF_MEASURE);
-    $('#' + POST_HTML_ID + ' h1').css('font-size', settings.getSetting(settings.keys.postHtmlH1FontSize) + resources.typography.UNIT_OF_MEASURE);
-    $('#' + POST_HTML_ID + ' h2').css('font-size', settings.getSetting(settings.keys.postHtmlH2FontSize) + resources.typography.UNIT_OF_MEASURE);
-    $('#' + POST_HTML_ID + ' h3').css('font-size', settings.getSetting(settings.keys.postHtmlH3FontSize) + resources.typography.UNIT_OF_MEASURE);
-    $('#' + POST_HTML_ID + ' h4').css('font-size', settings.getSetting(settings.keys.postHtmlH4FontSize) + resources.typography.UNIT_OF_MEASURE);
-    $('#' + POST_HTML_ID + ' h5').css('font-size', settings.getSetting(settings.keys.postHtmlH5FontSize) + resources.typography.UNIT_OF_MEASURE);
-    $('#' + POST_HTML_ID + ' h6').css('font-size', settings.getSetting(settings.keys.postHtmlH6FontSize) + resources.typography.UNIT_OF_MEASURE);
-    $('#' + POST_HTML_ID).css('line-height', settings.getSetting(settings.keys.postHtmlLineHeight) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_BODY_ID).css('font-family', settings.getSetting(settings.keys.postBodyFont));
+    // $('#' + POST_BODY_ID).css('font-size', settings.getSetting(settings.keys.postBodyFontSize) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_BODY_ID).css('line-height', settings.getSetting(settings.keys.postBodyLineHeight) + resources.typography.UNIT_OF_MEASURE);
 
-    logger.log("set fonts", "EditorController");
+    // $('#' + POST_HTML_ID).css('font-family', settings.getSetting(settings.keys.postHtmlFont));
+    // $('#' + POST_HTML_ID).css('font-size', settings.getSetting(settings.keys.postHtmlFontSize) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_HTML_ID + ' h1').css('font-size', settings.getSetting(settings.keys.postHtmlH1FontSize) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_HTML_ID + ' h2').css('font-size', settings.getSetting(settings.keys.postHtmlH2FontSize) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_HTML_ID + ' h3').css('font-size', settings.getSetting(settings.keys.postHtmlH3FontSize) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_HTML_ID + ' h4').css('font-size', settings.getSetting(settings.keys.postHtmlH4FontSize) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_HTML_ID + ' h5').css('font-size', settings.getSetting(settings.keys.postHtmlH5FontSize) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_HTML_ID + ' h6').css('font-size', settings.getSetting(settings.keys.postHtmlH6FontSize) + resources.typography.UNIT_OF_MEASURE);
+    // $('#' + POST_HTML_ID).css('line-height', settings.getSetting(settings.keys.postHtmlLineHeight) + resources.typography.UNIT_OF_MEASURE);
+
   };
 
   Post.initialize($routeParams.postId, function(post) {

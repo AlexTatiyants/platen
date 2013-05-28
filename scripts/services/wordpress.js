@@ -8,7 +8,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', 'lo
   var dialogOpen = false;
 
   var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = 'platen.wordPressCredentials';
-  var storage = localStorage;
+  // var storage = localStorage;
 
   var wp = null;
 
@@ -207,7 +207,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger', 'lo
     login: l,
 
     loadConfiguration: function() {
-      loadConfiguration();
+      // loadConfiguration();
     },
 
     initialize: function(onSuccessCallback, onErrorCallback) {

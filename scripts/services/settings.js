@@ -1,12 +1,10 @@
-angular.module('platen.services').factory('settings', ['localStorage', 'logger',
-  function(localStorage, logger) {
+angular.module('platen.services').factory('settings', ['logger',
+  function(logger) {
     var LOCAL_STORAGE_SETTINGS_KEY = 'platen.settings';
-    var storage = localStorage;
 
     // typography is measured in rems
     var BASE_FONT_SIZE = 1;
     var BASE_LINE_HEIGHT = 1.8;
-    var settings = {};
 
     var DEFAULTS = {
       theme: 'white',
@@ -27,58 +25,94 @@ angular.module('platen.services').factory('settings', ['localStorage', 'logger',
       imageAlignment: 'center'
     };
 
-    var SETTINGS = {
-      theme: 'theme',
-      postTitleFont: 'postTitleFont',
-      postTitleFontSize: 'postTitleFontSize',
-      postBodyFont: 'postBodyFont',
-      postBodyFontSize: 'postBodyFontSize',
-      postBodyLineHeight: 'postBodyLineHeight',
-      postHtmlFont: 'postHtmlFont',
-      postHtmlFontSize: 'postHtmlFontSize',
-      postHtmlH1FontSize: 'postHtmlH1FontSize',
-      postHtmlH2FontSize: 'postHtmlH2FontSize',
-      postHtmlH3FontSize: 'postHtmlH3FontSize',
-      postHtmlH4FontSize: 'postHtmlH4FontSize',
-      postHtmlH5FontSize: 'postHtmlH5FontSize',
-      postHtmlH6FontSize: 'postHtmlH6FontSize',
-      postHtmlLineHeight: 'postHtmlLineHeight',
-      imageAlignment: 'imageAlignment'
-    };
-
     var THEMES = {
       white: 'white',
       dark: 'dark',
       gray: 'gray'
     };
 
+    var _settings = DEFAULTS;
+
     return {
-      initialize: function(onSuccessCallback) {
-        // initialize settings to defaults if empty
-        storage.initialize(function(settings) {
-          _.each(SETTINGS, function(setting) {
-            if (!settings[setting]) {
-              settings[setting] = DEFAULTS[setting];
-              storage.setKey(LOCAL_STORAGE_SETTINGS_KEY, setting, settings[setting]);
-            }
-          });
-          logger.log("loaded settings", "settings service");
-          onSuccessCallback(settings);
+      settings: _settings,
+      themes: THEMES,
+
+      initialize: function(onCompletionCallback) {
+        chrome.storage.local.get(LOCAL_STORAGE_SETTINGS_KEY, function(result) {
+          _settings = result;
+          onCompletionCallback();
         });
       },
 
-      getSetting: function(key) {
-        return storage.getKey(LOCAL_STORAGE_SETTINGS_KEY, key);
+      save: function(onCompletionCallback) {
+        chrome.storage.local.set({LOCAL_STORAGE_SETTINGS_KEY: _settings}, onCompletionCallback);
       },
 
-      setSetting: function(key, value) {
-        return storage.setKey(LOCAL_STORAGE_SETTINGS_KEY, key, value);
-      },
-
-      // theme: settings.theme,
-      keys: SETTINGS,
-      themes: THEMES,
-      defaults: DEFAULTS
+      clear: function() {
+        chrome.storage.local.clear();
+      }
     };
+
+    // var getInternalKey = function(key) {
+    //   return LOCAL_STORAGE_SETTINGS_KEY + "." + key;
+    // };
+
+    // var setKey = function(key, value) {
+    //   var setting = {};
+    //   setting[getInternalKey(key)] = value;
+    //   chrome.storage.local.set(setting);
+    // };
+
+    // return {
+    //   getAllSettings: function(onCompletionCallback) {
+    //     var keysToGet = [],
+    //       response = {};
+
+    //     _.each(DEFAULTS, function(value, key, list) {
+    //       keysToGet.push(getInternalKey(key));
+    //     });
+
+    //     chrome.storage.local.get(keysToGet, function(values) {
+    //       // if any of the settings aren't already stored, initialize them from defaults
+    //       _.each(DEFAULTS, function(value, key, list) {
+    //         if (values[getInternalKey(key)]) {
+    //           response[key] = values[getInternalKey(key)];
+    //         } else {
+    //           response[key] = DEFAULTS[key];
+    //           setKey(key, response[key]);
+    //         }
+    //       });
+    //       onCompletionCallback(response);
+    //     });
+    //   },
+
+    //   getSetting: function(key, onCompletionCallback) {
+    //     var internalKey = getInternalKey(key);
+    //     chrome.storage.local.get(internalKey, function(value) {
+    //       if (_.isEmpty(value)) {
+    //         value = DEFAULTS[key];
+    //         setKey(key, value);
+    //       }
+    //       onCompletionCallback(value[internalKey]);
+    //     });
+    //   },
+
+    //   setSetting: function(key, value, onCompletionCallback) {
+    //     setKey(key, value);
+    //     if (onCompletionCallback) {
+    //       onCompletionCallback();
+    //     }
+    //   },
+
+    //   resetSetting: function(key) {
+    //     setKey(key, DEFAULTS[key]);
+    //     if (onCompletionCallback) {
+    //       onCompletionCallback();
+    //     }
+    //   },
+
+    //   themes: THEMES,
+    //   defaults: DEFAULTS
+    // };
   }
 ]);

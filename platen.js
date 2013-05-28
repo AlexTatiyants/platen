@@ -1,4 +1,4 @@
-/*! DEV ! platen 2013-05-27 */
+/*! DEV ! platen 2013-05-28 */
 (function(e, t) {
     var n, r, i = typeof t, o = e.document, a = e.location, s = e.jQuery, u = e.$, l = {}, c = [], p = "1.9.1", f = c.concat, d = c.push, h = c.slice, g = c.indexOf, m = l.toString, y = l.hasOwnProperty, v = p.trim, b = function(e, t) {
         return new b.fn.init(e, t, r);
@@ -11001,25 +11001,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             success: isSuccess
         });
     };
-    var setFonts = function() {
-        console.log("postTitleFont:" + settings.getSetting(settings.keys.postTitleFont));
-        $("#" + POST_TITLE_ID).css("font-family", settings.getSetting(settings.keys.postTitleFont));
-        console.log($("#" + POST_TITLE_ID).css("font-family"));
-        $("#" + POST_TITLE_ID).css("font-size", settings.getSetting(settings.keys.postTitleFontSize) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_BODY_ID).css("font-family", settings.getSetting(settings.keys.postBodyFont));
-        $("#" + POST_BODY_ID).css("font-size", settings.getSetting(settings.keys.postBodyFontSize) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_BODY_ID).css("line-height", settings.getSetting(settings.keys.postBodyLineHeight) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_HTML_ID).css("font-family", settings.getSetting(settings.keys.postHtmlFont));
-        $("#" + POST_HTML_ID).css("font-size", settings.getSetting(settings.keys.postHtmlFontSize) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_HTML_ID + " h1").css("font-size", settings.getSetting(settings.keys.postHtmlH1FontSize) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_HTML_ID + " h2").css("font-size", settings.getSetting(settings.keys.postHtmlH2FontSize) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_HTML_ID + " h3").css("font-size", settings.getSetting(settings.keys.postHtmlH3FontSize) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_HTML_ID + " h4").css("font-size", settings.getSetting(settings.keys.postHtmlH4FontSize) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_HTML_ID + " h5").css("font-size", settings.getSetting(settings.keys.postHtmlH5FontSize) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_HTML_ID + " h6").css("font-size", settings.getSetting(settings.keys.postHtmlH6FontSize) + resources.typography.UNIT_OF_MEASURE);
-        $("#" + POST_HTML_ID).css("line-height", settings.getSetting(settings.keys.postHtmlLineHeight) + resources.typography.UNIT_OF_MEASURE);
-        logger.log("set fonts", "EditorController");
-    };
+    var setFonts = function() {};
     Post.initialize($routeParams.postId, function(post) {
         $scope.post = post;
         $scope.previewOn = false;
@@ -11310,7 +11292,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.aboutDialogOpen = false;
     $scope.fonts = [];
     $scope.settings = {};
-    $scope.settingsKeys = settings.keys;
     $scope.themes = settings.themes;
     $scope.systemFontsAvailable = false;
     $scope.appStatus = {
@@ -11343,30 +11324,21 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     }, function(error) {
         notify("error initializing file system", error, false);
     });
-    var getSetting = function(key) {
-        $scope.settings[key] = settings.getSetting(settings.keys[key]);
-    };
-    var resetSetting = function(key) {
-        $scope.settings[key] = settings.setSetting(settings.keys[key], settings.defaults[key]);
-    };
+    settings.clear();
+    settings.initialize(function() {
+        $scope.settings = settings.settings;
+        $scope.switchTheme($scope.settings.theme);
+        $scope.$broadcast(resources.events.FONT_CHANGED);
+        $scope.safeApply();
+        console.log("initialized settings");
+    });
     $scope.switchTheme = function(themeName) {
+        logger.log("set theme to '" + themeName + "'", "MainController");
         _.each($("link"), function(link) {
             link.disabled = link.title !== themeName;
         });
-        $scope.settings.theme = settings.setSetting("theme", themeName);
+        $scope.settings.theme = themeName;
     };
-    settings.initialize(function(settings) {
-        getSetting("postTitleFont");
-        getSetting("postTitleFontSize");
-        getSetting("postBodyFont");
-        getSetting("postBodyFontSize");
-        getSetting("postHtmlFont");
-        getSetting("postHtmlFontSize");
-        getSetting("theme");
-        $scope.switchTheme($scope.settings.theme);
-        console.log("broadcasting FONT_CHANGED event after initalizing settings in MainController");
-        $scope.$broadcast(resources.events.FONT_CHANGED);
-    });
     $scope.fonts.push("economica");
     $scope.fonts.push("inconsolata");
     $scope.fonts.push("goudy");
@@ -11381,24 +11353,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
         });
     }
     wordpress.loadConfiguration();
-    $scope.resetFonts = function() {
-        resetSetting("postTitleFont");
-        resetSetting("postTitleFontSize");
-        resetSetting("postBodyFont");
-        resetSetting("postBodyFontSize");
-        resetSetting("postBodyLineHeight");
-        resetSetting("postHtmlFont");
-        resetSetting("postHtmlFontSize");
-        resetSetting("postHtmlH1FontSize");
-        resetSetting("postHtmlH2FontSize");
-        resetSetting("postHtmlH3FontSize");
-        resetSetting("postHtmlH4FontSize");
-        resetSetting("postHtmlH5FontSize");
-        resetSetting("postHtmlH6FontSize");
-        resetSetting("postHtmlLineHeight");
-        logger.log("reset fonts", "MainController");
-        $scope.$broadcast(resources.events.FONT_CHANGED);
-    };
     $scope.loginCredentials = function() {
         $dialog.dialog({
             backdrop: true,
@@ -11409,31 +11363,18 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
         }).open();
     };
     $scope.saveFont = function(font, item) {
-        settings.setSetting(item, font);
-        $scope.$broadcast(resources.events.FONT_CHANGED);
+        settings.save(function() {
+            $scope.$broadcast(resources.events.FONT_CHANGED);
+        });
     };
     $scope.increaseFontSize = function(fontSize) {
-        settings.setSetting(fontSize, parseFloat(settings.getSetting(fontSize)) + resources.typography.INCREMENT);
-        if (fontSize === "postHtmlFontSize") {
-            settings.setSetting("postHtmlH1FontSize", parseFloat(settings.getSetting("postHtmlH1FontSize")) + resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH2FontSize", parseFloat(settings.getSetting("postHtmlH2FontSize")) + resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH3FontSize", parseFloat(settings.getSetting("postHtmlH3FontSize")) + resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH4FontSize", parseFloat(settings.getSetting("postHtmlH4FontSize")) + resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH5FontSize", parseFloat(settings.getSetting("postHtmlH5FontSize")) + resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH6FontSize", parseFloat(settings.getSetting("postHtmlH6FontSize")) + resources.typography.INCREMENT);
-        }
-        $scope.$broadcast(resources.events.FONT_CHANGED);
+        console.log("increasing " + fontSize);
+        $scope.settings[fontSize] = parseFloat($scope.settings[fontSize]) + resources.typography.INCREMENT;
+        settings.save(function() {
+            $scope.$broadcast(resources.events.FONT_CHANGED);
+        });
     };
     $scope.decreaseFontSize = function(fontSize) {
-        settings.setSetting(fontSize, parseFloat(settings.getSetting(fontSize)) - resources.typography.INCREMENT);
-        if (fontSize === "postHtmlFontSize") {
-            settings.setSetting("postHtmlH1FontSize", parseFloat(settings.getSetting("postHtmlH1FontSize")) - resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH2FontSize", parseFloat(settings.getSetting("postHtmlH2FontSize")) - resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH3FontSize", parseFloat(settings.getSetting("postHtmlH3FontSize")) - resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH4FontSize", parseFloat(settings.getSetting("postHtmlH4FontSize")) - resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH5FontSize", parseFloat(settings.getSetting("postHtmlH5FontSize")) - resources.typography.INCREMENT);
-            settings.setSetting("postHtmlH6FontSize", parseFloat(settings.getSetting("postHtmlH6FontSize")) - resources.typography.INCREMENT);
-        }
         $scope.$broadcast(resources.events.FONT_CHANGED);
     };
     $scope.increaseLineHeight = function(lineHeight) {
@@ -11976,20 +11917,16 @@ angular.module("platen.services").factory("localStorage", [ "logger", function(l
     var loadCachedStorage = function(onCompletionCallback) {
         chrome.storage.local.get(PLATEN_COLLECTION_KEY, function(result) {
             cachedStorage = result;
-            logger.log("loaded cached storage", "localStorage service");
             onCompletionCallback(cachedStorage);
         });
     };
     if (chrome.storage) {
         logger.log("local storage configured for new pacakged apps", "localStorage service");
         _getKey = function(collection, key) {
-            console.log("cache", cachedStorage);
-            console.log("got key -- collection: " + collection + ", key: " + key + ", value: " + cachedStorage[collection + "." + key]);
             return cachedStorage[collection + "." + key];
         };
         _setKey = function(collection, key, value) {
             cachedStorage[collection + "." + key] = value;
-            console.log("set key -- collection: " + collection + ", key: " + key + ", value: " + cachedStorage[collection + "." + key]);
             chrome.storage.local.set({
                 PLATEN_COLLECTION_KEY: cachedStorage
             });
@@ -12009,6 +11946,7 @@ angular.module("platen.services").factory("localStorage", [ "logger", function(l
         getKey: _getKey,
         setKey: _setKey,
         initialize: function(doAction) {
+            console.log("in initialize", cachedStorage);
             if (cachedStorage) {
                 doAction(cachedStorage);
             } else {
@@ -12061,12 +11999,10 @@ angular.module("platen.services").value("resources", {
     }
 });
 
-angular.module("platen.services").factory("settings", [ "localStorage", "logger", function(localStorage, logger) {
+angular.module("platen.services").factory("settings", [ "logger", function(logger) {
     var LOCAL_STORAGE_SETTINGS_KEY = "platen.settings";
-    var storage = localStorage;
     var BASE_FONT_SIZE = 1;
     var BASE_LINE_HEIGHT = 1.8;
-    var settings = {};
     var DEFAULTS = {
         theme: "white",
         postTitleFont: "economica",
@@ -12085,51 +12021,29 @@ angular.module("platen.services").factory("settings", [ "localStorage", "logger"
         postHtmlLineHeight: BASE_LINE_HEIGHT,
         imageAlignment: "center"
     };
-    var SETTINGS = {
-        theme: "theme",
-        postTitleFont: "postTitleFont",
-        postTitleFontSize: "postTitleFontSize",
-        postBodyFont: "postBodyFont",
-        postBodyFontSize: "postBodyFontSize",
-        postBodyLineHeight: "postBodyLineHeight",
-        postHtmlFont: "postHtmlFont",
-        postHtmlFontSize: "postHtmlFontSize",
-        postHtmlH1FontSize: "postHtmlH1FontSize",
-        postHtmlH2FontSize: "postHtmlH2FontSize",
-        postHtmlH3FontSize: "postHtmlH3FontSize",
-        postHtmlH4FontSize: "postHtmlH4FontSize",
-        postHtmlH5FontSize: "postHtmlH5FontSize",
-        postHtmlH6FontSize: "postHtmlH6FontSize",
-        postHtmlLineHeight: "postHtmlLineHeight",
-        imageAlignment: "imageAlignment"
-    };
     var THEMES = {
         white: "white",
         dark: "dark",
         gray: "gray"
     };
+    var _settings = DEFAULTS;
     return {
-        initialize: function(onSuccessCallback) {
-            storage.initialize(function(settings) {
-                _.each(SETTINGS, function(setting) {
-                    if (!settings[setting]) {
-                        settings[setting] = DEFAULTS[setting];
-                        storage.setKey(LOCAL_STORAGE_SETTINGS_KEY, setting, settings[setting]);
-                    }
-                });
-                logger.log("loaded settings", "settings service");
-                onSuccessCallback(settings);
+        settings: _settings,
+        themes: THEMES,
+        initialize: function(onCompletionCallback) {
+            chrome.storage.local.get(LOCAL_STORAGE_SETTINGS_KEY, function(result) {
+                _settings = result;
+                onCompletionCallback();
             });
         },
-        getSetting: function(key) {
-            return storage.getKey(LOCAL_STORAGE_SETTINGS_KEY, key);
+        save: function(onCompletionCallback) {
+            chrome.storage.local.set({
+                LOCAL_STORAGE_SETTINGS_KEY: _settings
+            }, onCompletionCallback);
         },
-        setSetting: function(key, value) {
-            return storage.setKey(LOCAL_STORAGE_SETTINGS_KEY, key, value);
-        },
-        keys: SETTINGS,
-        themes: THEMES,
-        defaults: DEFAULTS
+        clear: function() {
+            chrome.storage.local.clear();
+        }
     };
 } ]);
 
@@ -12142,7 +12056,6 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", "l
     var l = {};
     var dialogOpen = false;
     var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = "platen.wordPressCredentials";
-    var storage = localStorage;
     var wp = null;
     var getConfiguration = function(key) {
         return storage.getKey(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, key);
@@ -12302,9 +12215,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", "l
     };
     return {
         login: l,
-        loadConfiguration: function() {
-            loadConfiguration();
-        },
+        loadConfiguration: function() {},
         initialize: function(onSuccessCallback, onErrorCallback) {
             if (!wp) {
                 initializeConnection(onSuccessCallback, onErrorCallback);
