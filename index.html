@@ -37,7 +37,7 @@
 					<header>fonts</header>
 					<div class="option-group">
 						<label>post title</label>
-						
+
 						<select data-ng-show="systemFontsAvailable" data-ng-options="font for font in fonts" data-ng-model="settings.postTitleFont"
 						data-ng-change="saveFont(settings.postTitleFont, settingsKeys.postTitleFont)"></select>
 						<input data-ng-show="!systemFontsAvailable" type="text" class="input-box" data-ng-model="settings.postTitleFont"
@@ -85,15 +85,19 @@
 
 				<section class="option-container">
 					<header>utilities</header>
+<!-- 					<div class="option-group">
+						<button class="btn" data-ng-click="clearSettings()">cleare settings</button>
+					</div>
 					<div class="option-group">
+						<button class="btn" data-ng-click="readAllSettings()">read all settings</button>
+					</div>
+ -->					<div class="option-group">
 						<button class="btn" data-ng-click="deleteAllPosts()">delete all posts</button>
 					</div>
 					<div class="option-group">
 						<button class="btn" data-ng-click="deleteAllImages()">delete all images</button>
 					</div>
 				</section>
-
-
 			</div>
 	</aside>
 

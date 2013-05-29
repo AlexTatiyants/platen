@@ -62,7 +62,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
 
   wordpress.loadConfiguration();
 
-  settings.initialize(function(settings) {
+  settings.load(function(settings) {
     $scope.settings = settings;
     $scope.switchTheme($scope.settings.theme);
     $scope.$broadcast(resources.events.FONT_CHANGED);
@@ -77,14 +77,9 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.settings.theme = themeName;
 
     settings.save($scope.settings, function() {
-      logger.log("set theme to '" + themeName + "'", "MainController");
-      // settings.getAll(function(results) {
-      //   console.log("all settings", results);
-      // });
+      logger.log("set theme to " + $scope.settings.theme, "MainController");
     });
   };
-
-  settings.clear();
 
   $scope.resetFonts = function() {
     $scope.settings.postTitleFont = settings.defaults.postTitleFont;
@@ -108,16 +103,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     });
   };
 
-  $scope.loginCredentials = function() {
-    $dialog.dialog({
-      backdrop: true,
-      keyboard: true,
-      backdropClick: true,
-      controller: 'LoginController',
-      templateUrl: 'views/modals/login.html'
-    }).open();
-  };
-
   $scope.saveFont = function(font, item) {
     settings.save($scope.settings, function() {
       $scope.$broadcast(resources.events.FONT_CHANGED);
@@ -138,20 +123,27 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     }
 
     settings.save($scope.settings, function() {
-      // console.log("changed " + fontSize + " direction: " + incrementDirection, $scope.settings);
       $scope.$broadcast(resources.events.FONT_CHANGED);
     });
   };
-
 
   $scope.changeLineHeight = function(lineHeight, incrementDirection) {
     var increment = (resources.typography.INCREMENT * incrementDirection);
     $scope.settings[lineHeight] = parseFloat($scope.settings[lineHeight]) + increment;
 
     settings.save($scope.settings, function() {
-      // console.log("changed " + lineHeight + " direction: " + incrementDirection, $scope.settings);
       $scope.$broadcast(resources.events.FONT_CHANGED);
     });
+  };
+
+  $scope.loginCredentials = function() {
+    $dialog.dialog({
+      backdrop: true,
+      keyboard: true,
+      backdropClick: true,
+      controller: 'LoginController',
+      templateUrl: 'views/modals/login.html'
+    }).open();
   };
 
   $scope.toggleOptionsPanel = function() {
