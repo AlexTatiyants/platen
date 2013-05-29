@@ -36,20 +36,36 @@ angular.module('platen.services').factory('settings', ['logger',
     return {
       settings: _settings,
       themes: THEMES,
+      defaults: DEFAULTS,
 
       initialize: function(onCompletionCallback) {
-        chrome.storage.local.get(LOCAL_STORAGE_SETTINGS_KEY, function(result) {
-          _settings = result;
-          onCompletionCallback();
+        chrome.storage.local.get(LOCAL_STORAGE_SETTINGS_KEY, function(settings) {
+          console.log("loaded settings", settings);
+          // for any settings not already configured, set them to the default value
+          _.each(DEFAULTS, function(value, key, list) {
+            console.log("in settings.initialize(), setting for key " + key + " is " + settings[key]);
+            if (!settings[key]) {
+              settings[key] = value;
+            }
+          });
+
+          onCompletionCallback(settings);
         });
       },
 
-      save: function(onCompletionCallback) {
-        chrome.storage.local.set({LOCAL_STORAGE_SETTINGS_KEY: _settings}, onCompletionCallback);
+      save: function(foo, onCompletionCallback) {
+        var saveMe = {};
+        saveMe[LOCAL_STORAGE_SETTINGS_KEY] = foo;
+        console.log("saving settings", saveMe);
+        chrome.storage.local.set(saveMe);
       },
 
       clear: function() {
         chrome.storage.local.clear();
+      },
+
+      getAll: function(onCompletionCallback) {
+        chrome.storage.local.get(null, onCompletionCallback);
       }
     };
 

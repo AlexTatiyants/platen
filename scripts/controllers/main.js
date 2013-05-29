@@ -42,52 +42,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     notify("error initializing file system", error, false);
   });
 
-
-  settings.clear();
-
-  settings.initialize(function() {
-    $scope.settings = settings.settings;
-    $scope.switchTheme($scope.settings.theme);
-    $scope.$broadcast(resources.events.FONT_CHANGED);
-    $scope.safeApply();
-    console.log("initialized settings");
-  });
-
-  // var getSetting = function(key, onCompletionCallback) {
-  //   settings.getSetting(key, function(result) {
-  //     $scope.settings[key] = result;
-  //     $scope.safeApply();
-  //   });
-  // };
-
-  // var setSetting = function(key, value, onCompletionCallback) {
-  //   settings.setSetting(key, value, onCompletionCallback);
-  // };
-
-
-  $scope.switchTheme = function(themeName) {
-    logger.log("set theme to '" + themeName + "'", "MainController");
-
-    _.each($('link'), function(link) {
-      link.disabled = (link.title !== themeName);
-    });
-
-    $scope.settings.theme = themeName;
-    // setSetting("theme", themeName);
-  };
-
-  // initialize settings
-  // settings.getAllSettings(function(settings) {
-  //   _.each(settings, function(value, key, list) {
-  //     $scope.settings[key] = value;
-  //   });
-
-  //   $scope.switchTheme($scope.settings.theme);
-  //   $scope.$broadcast(resources.events.FONT_CHANGED);
-  //   $scope.safeApply();
-  // });
-
-  // add local fonts installed by the app
+  // initialize fonts
   $scope.fonts.push('economica');
   $scope.fonts.push('inconsolata');
   $scope.fonts.push('goudy');
@@ -96,6 +51,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   if (chrome.fontSettings) {
     logger.log("adding system fonts", "MainController");
     $scope.systemFontsAvailable = true;
+
     chrome.fontSettings.getFontList(function(fonts) {
       // add available system fonts
       _.each(fonts, function(font) {
@@ -106,26 +62,51 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
 
   wordpress.loadConfiguration();
 
-  // $scope.resetFonts = function() {
-  //   resetSetting("postTitleFont");
-  //   resetSetting("postTitleFontSize");
-  //   resetSetting("postBodyFont");
-  //   resetSetting("postBodyFontSize");
-  //   resetSetting("postBodyLineHeight");
-  //   resetSetting("postHtmlFont");
-  //   resetSetting("postHtmlFontSize");
-  //   resetSetting("postHtmlH1FontSize");
-  //   resetSetting("postHtmlH2FontSize");
-  //   resetSetting("postHtmlH3FontSize");
-  //   resetSetting("postHtmlH4FontSize");
-  //   resetSetting("postHtmlH5FontSize");
-  //   resetSetting("postHtmlH6FontSize");
-  //   resetSetting("postHtmlLineHeight");
+  settings.initialize(function(settings) {
+    $scope.settings = settings;
+    $scope.switchTheme($scope.settings.theme);
+    $scope.$broadcast(resources.events.FONT_CHANGED);
+    $scope.safeApply();
+  });
 
-  //   logger.log("reset fonts", "MainController");
+  $scope.switchTheme = function(themeName) {
+    _.each($('link'), function(link) {
+      link.disabled = (link.title !== themeName);
+    });
 
-  //   $scope.$broadcast(resources.events.FONT_CHANGED);
-  // };
+    $scope.settings.theme = themeName;
+
+    settings.save($scope.settings, function() {
+      logger.log("set theme to '" + themeName + "'", "MainController");
+      // settings.getAll(function(results) {
+      //   console.log("all settings", results);
+      // });
+    });
+  };
+
+  settings.clear();
+
+  $scope.resetFonts = function() {
+    $scope.settings.postTitleFont = settings.defaults.postTitleFont;
+    $scope.settings.postTitleFontSize = settings.defaults.postTitleFontSize;
+    $scope.settings.postBodyFont = settings.defaults.postBodyFont;
+    $scope.settings.postBodyFontSize = settings.defaults.postBodyFontSize;
+    $scope.settings.postBodyLineHeight = settings.defaults.postBodyLineHeight;
+    $scope.settings.postHtmlFont = settings.defaults.postHtmlFont;
+    $scope.settings.postHtmlFontSize = settings.defaults.postHtmlFontSize;
+    $scope.settings.postHtmlH1FontSize = settings.defaults.postHtmlH1FontSize;
+    $scope.settings.postHtmlH2FontSize = settings.defaults.postHtmlH2FontSize;
+    $scope.settings.postHtmlH3FontSize = settings.defaults.postHtmlH3FontSize;
+    $scope.settings.postHtmlH4FontSize = settings.defaults.postHtmlH4FontSize;
+    $scope.settings.postHtmlH5FontSize = settings.defaults.postHtmlH5FontSize;
+    $scope.settings.postHtmlH6FontSize = settings.defaults.postHtmlH6FontSize;
+    $scope.settings.postHtmlLineHeight = settings.defaults.postHtmlLineHeight;
+
+    settings.save($scope.settings, function() {
+      logger.log("reset fonts", "MainController");
+      $scope.$broadcast(resources.events.FONT_CHANGED);
+    });
+  };
 
   $scope.loginCredentials = function() {
     $dialog.dialog({
@@ -138,161 +119,145 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   };
 
   $scope.saveFont = function(font, item) {
-    settings.save(function() {
+    settings.save($scope.settings, function() {
       $scope.$broadcast(resources.events.FONT_CHANGED);
     });
   };
 
-  $scope.increaseFontSize = function(fontSize) {
-    console.log("increasing " + fontSize);
-    $scope.settings[fontSize] = parseFloat($scope.settings[fontSize]) + resources.typography.INCREMENT;
-    settings.save(function() {
-      $scope.$broadcast(resources.events.FONT_CHANGED);
-    });
+  $scope.changeFontSize = function(fontSize, incrementDirection) {
+    var increment = (resources.typography.INCREMENT * incrementDirection);
+    $scope.settings[fontSize] = parseFloat($scope.settings[fontSize]) + increment;
 
-    // setSetting(fontSize, parseFloat($scope.settings[fontSize]) + resources.typography.INCREMENT);
-
-    // if (fontSize === 'postHtmlFontSize') {
-    //   settings.setSetting('postHtmlH1FontSize', parseFloat(settings.getSetting('postHtmlH1FontSize')) + resources.typography.INCREMENT);
-    //   settings.setSetting('postHtmlH2FontSize', parseFloat(settings.getSetting('postHtmlH2FontSize')) + resources.typography.INCREMENT);
-    //   settings.setSetting('postHtmlH3FontSize', parseFloat(settings.getSetting('postHtmlH3FontSize')) + resources.typography.INCREMENT);
-    //   settings.setSetting('postHtmlH4FontSize', parseFloat(settings.getSetting('postHtmlH4FontSize')) + resources.typography.INCREMENT);
-    //   settings.setSetting('postHtmlH5FontSize', parseFloat(settings.getSetting('postHtmlH5FontSize')) + resources.typography.INCREMENT);
-    //   settings.setSetting('postHtmlH6FontSize', parseFloat(settings.getSetting('postHtmlH6FontSize')) + resources.typography.INCREMENT);
-    // }
-    // $scope.$broadcast(resources.events.FONT_CHANGED);
-  };
-
-  $scope.decreaseFontSize = function(fontSize) {
-    // settings.setSetting(fontSize, parseFloat($scope.settings[] fontSize]) - resources.typography.INCREMENT);
-
-  // if (fontSize === 'postHtmlFontSize') {
-  //   settings.setSetting('postHtmlH1FontSize', parseFloat(settings.getSetting('postHtmlH1FontSize')) - resources.typography.INCREMENT);
-  //   settings.setSetting('postHtmlH2FontSize', parseFloat(settings.getSetting('postHtmlH2FontSize')) - resources.typography.INCREMENT);
-  //   settings.setSetting('postHtmlH3FontSize', parseFloat(settings.getSetting('postHtmlH3FontSize')) - resources.typography.INCREMENT);
-  //   settings.setSetting('postHtmlH4FontSize', parseFloat(settings.getSetting('postHtmlH4FontSize')) - resources.typography.INCREMENT);
-  //   settings.setSetting('postHtmlH5FontSize', parseFloat(settings.getSetting('postHtmlH5FontSize')) - resources.typography.INCREMENT);
-  //   settings.setSetting('postHtmlH6FontSize', parseFloat(settings.getSetting('postHtmlH6FontSize')) - resources.typography.INCREMENT);
-  // }
-  $scope.$broadcast(resources.events.FONT_CHANGED);
-};
-
-$scope.increaseLineHeight = function(lineHeight) {
-  var currentHeight = parseFloat(settings.getSetting(lineHeight));
-  settings.setSetting(lineHeight, currentHeight + resources.typography.INCREMENT);
-  $scope.$broadcast(resources.events.FONT_CHANGED);
-};
-
-$scope.decreaseLineHeight = function(lineHeight) {
-  var currentHeight = parseFloat(settings.getSetting(lineHeight));
-  settings.setSetting(lineHeight, currentHeight - resources.typography.INCREMENT);
-  $scope.$broadcast(resources.events.FONT_CHANGED);
-};
-
-$scope.toggleOptionsPanel = function() {
-  $scope.optionsPanelVisible = !$scope.optionsPanelVisible;
-};
-
-$scope.showMessage = function() {
-  $scope.appStatus.showMessage = true;
-  $timeout(function(e) {
-    $scope.appStatus.showMessage = false;
-  }, FADE_DURATION);
-};
-
-$scope.$on(resources.events.PROCESSING_STARTED, function(event, message) {
-  $scope.appStatus.isProcessing = true;
-  $scope.appStatus.showMessage = false;
-  $scope.appStatus.message = message;
-});
-
-$scope.$on(resources.events.PROCESSING_FINISHED, function(event, args) {
-  $scope.appStatus.isProcessing = false;
-  $scope.appStatus.message = args.message;
-  $scope.appStatus.isSuccess = args.success;
-  $scope.showMessage();
-
-  $scope.safeApply();
-});
-
-$scope.startProcessing = function() {
-  $scope.$emit(resources.events.PROCESSING_STARTED, "starting something");
-};
-
-$scope.stopProcessingWithFail = function() {
-  $scope.$emit(resources.events.PROCESSING_FINISHED, {
-    message: "bad things happened",
-    success: false
-  });
-};
-
-$scope.stopProcessingwithSuccess = function() {
-  $scope.$emit(resources.events.PROCESSING_FINISHED, {
-    message: "good things happened",
-    success: true
-  });
-};
-
-$scope.dismissMessage = function() {
-  $scope.appStatus.showMessage = false;
-};
-
-$scope.showAboutDialog = function() {
-  $scope.aboutDialogOpen = true;
-};
-
-$scope.closeAboutDialog = function() {
-  $scope.aboutDialogOpen = false;
-};
-
-$scope.deleteAllPosts = function() {
-  fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
-    logger.log("deleted all posts", "MainController");
-
-    $scope.postsList = [];
-    $scope.$emit(resources.events.PROCESSING_FINISHED, {
-      message: "all posts removed",
-      success: true
-    });
-
-  }, function(error) {
-    logger.log("error removing all posts: " + error, "MainController");
-
-    $scope.$emit(resources.events.PROCESSING_FINISHED, {
-      message: "removing posts failed",
-      success: false
-    });
-  });
-};
-
-$scope.deleteAllIMages = function() {
-  fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
-    logger.log("deleted all images", "ImagesController");
-    $scope.images = {};
-    $scope.$emit(resources.events.PROCESSING_FINISHED, {
-      message: "all images removed",
-      success: true
-    });
-  }, function(error) {
-    logger.log("error removing all images: " + error, "ImagesController");
-
-    $scope.$emit(resources.events.PROCESSING_FINISHED, {
-      message: "removing images failed",
-      success: false
-    });
-  });
-};
-
-$scope.safeApply = function(fn) {
-  var phase = this.$root.$$phase;
-  if (phase == '$apply' || phase == '$digest') {
-    if (fn && (typeof(fn) === 'function')) {
-      fn();
+    if (fontSize === 'postHtmlFontSize') {
+      $scope.settings.postHtmlH1FontSize = $scope.settings.postHtmlH1FontSize + increment;
+      $scope.settings.postHtmlH2FontSize = $scope.settings.postHtmlH2FontSize + increment;
+      $scope.settings.postHtmlH3FontSize = $scope.settings.postHtmlH3FontSize + increment;
+      $scope.settings.postHtmlH4FontSize = $scope.settings.postHtmlH4FontSize + increment;
+      $scope.settings.postHtmlH5FontSize = $scope.settings.postHtmlH5FontSize + increment;
+      $scope.settings.postHtmlH6FontSize = $scope.settings.postHtmlH6FontSize + increment;
     }
-  } else {
-    this.$apply(fn);
-  }
-};
+
+    settings.save($scope.settings, function() {
+      // console.log("changed " + fontSize + " direction: " + incrementDirection, $scope.settings);
+      $scope.$broadcast(resources.events.FONT_CHANGED);
+    });
+  };
+
+
+  $scope.changeLineHeight = function(lineHeight, incrementDirection) {
+    var increment = (resources.typography.INCREMENT * incrementDirection);
+    $scope.settings[lineHeight] = parseFloat($scope.settings[lineHeight]) + increment;
+
+    settings.save($scope.settings, function() {
+      // console.log("changed " + lineHeight + " direction: " + incrementDirection, $scope.settings);
+      $scope.$broadcast(resources.events.FONT_CHANGED);
+    });
+  };
+
+  $scope.toggleOptionsPanel = function() {
+    $scope.optionsPanelVisible = !$scope.optionsPanelVisible;
+  };
+
+  $scope.showMessage = function() {
+    $scope.appStatus.showMessage = true;
+    $timeout(function(e) {
+      $scope.appStatus.showMessage = false;
+    }, FADE_DURATION);
+  };
+
+  $scope.$on(resources.events.PROCESSING_STARTED, function(event, message) {
+    $scope.appStatus.isProcessing = true;
+    $scope.appStatus.showMessage = false;
+    $scope.appStatus.message = message;
+  });
+
+  $scope.$on(resources.events.PROCESSING_FINISHED, function(event, args) {
+    $scope.appStatus.isProcessing = false;
+    $scope.appStatus.message = args.message;
+    $scope.appStatus.isSuccess = args.success;
+    $scope.showMessage();
+
+    $scope.safeApply();
+  });
+
+  $scope.startProcessing = function() {
+    $scope.$emit(resources.events.PROCESSING_STARTED, "starting something");
+  };
+
+  $scope.stopProcessingWithFail = function() {
+    $scope.$emit(resources.events.PROCESSING_FINISHED, {
+      message: "bad things happened",
+      success: false
+    });
+  };
+
+  $scope.stopProcessingwithSuccess = function() {
+    $scope.$emit(resources.events.PROCESSING_FINISHED, {
+      message: "good things happened",
+      success: true
+    });
+  };
+
+  $scope.dismissMessage = function() {
+    $scope.appStatus.showMessage = false;
+  };
+
+  $scope.showAboutDialog = function() {
+    $scope.aboutDialogOpen = true;
+  };
+
+  $scope.closeAboutDialog = function() {
+    $scope.aboutDialogOpen = false;
+  };
+
+  $scope.deleteAllPosts = function() {
+    fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
+      logger.log("deleted all posts", "MainController");
+
+      $scope.postsList = [];
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "all posts removed",
+        success: true
+      });
+
+    }, function(error) {
+      logger.log("error removing all posts: " + error, "MainController");
+
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "removing posts failed",
+        success: false
+      });
+    });
+  };
+
+  $scope.deleteAllIMages = function() {
+    fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
+      logger.log("deleted all images", "ImagesController");
+      $scope.images = {};
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "all images removed",
+        success: true
+      });
+    }, function(error) {
+      logger.log("error removing all images: " + error, "ImagesController");
+
+      $scope.$emit(resources.events.PROCESSING_FINISHED, {
+        message: "removing images failed",
+        success: false
+      });
+    });
+  };
+
+  $scope.safeApply = function(fn) {
+    var phase = this.$root.$$phase;
+    if (phase == '$apply' || phase == '$digest') {
+      if (fn && (typeof(fn) === 'function')) {
+        fn();
+      }
+    } else {
+      this.$apply(fn);
+    }
+  };
 
 };
 

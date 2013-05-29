@@ -22,7 +22,7 @@ angular.module('platen.services').factory('logger', function() {
         date: new Date()
       });
 
-      console.log(message);
+      // console.log(message);
     },
 
     getLogs: function() {

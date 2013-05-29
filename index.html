@@ -44,8 +44,8 @@
 						data-ng-change="saveFont(settings.postTitleFont, settingsKeys.postTitleFont)"></input>
 
 						<div class="font-controls">
-							<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postTitleFontSize)></span>
-							<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postTitleFontSize)></span>
+							<span class="icon-larger-font" data-ng-click="changeFontSize('postTitleFontSize', 1)"></span>
+							<span class="icon-smaller-font" data-ng-click="changeFontSize('postTitleFontSize', -1)"></span>
 						</div>
 					</div>
 					<div class="option-group">
@@ -57,10 +57,10 @@
 						data-ng-change="saveFont(settings.postBodyFont, settingsKeys.postBodyFont)"></input>
 
 						<div class="font-controls">
-							<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postBodyFontSize)></span>
-							<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postBodyFontSize)></span>
-							<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postBodyLineHeight)></span>
-							<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postBodyLineHeight)></span>
+							<span class="icon-larger-font" data-ng-click="changeFontSize('postBodyFontSize', 1)"></span>
+							<span class="icon-smaller-font" data-ng-click="changeFontSize('postBodyFontSize', -1)"></span>
+							<span class="icon-larger-line-height" data-ng-click="changeFontSize('postBodyLineHeight', 1)"></span>
+							<span class="icon-smaller-line-height" data-ng-click="changeFontSize('postBodyLineHeight', -1)"></span>
 						</div>
 					</div>
 					<div class="option-group">
@@ -72,10 +72,10 @@
 						data-ng-change="saveFont(settings.postHtmlFont, settingsKeys.postHtmlFont)"></input>
 
 						<div class="font-controls">
-							<span class="icon-larger-font" data-ng-click=increaseFontSize(settingsKeys.postHtmlFontSize)></span>
-							<span class="icon-smaller-font" data-ng-click=decreaseFontSize(settingsKeys.postHtmlFontSize)></span>
-							<span class="icon-larger-line-height" data-ng-click=increaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
-							<span class="icon-smaller-line-height" data-ng-click=decreaseLineHeight(settingsKeys.postHtmlLineHeight)></span>
+							<span class="icon-larger-font" data-ng-click="changeFontSize('postHtmlFontSize', 1)"></span>
+							<span class="icon-smaller-font" data-ng-click="changeFontSize('postHtmlFontSize', -1)"></span>
+							<span class="icon-larger-line-height" data-ng-click="changeFontSize('postHtmlLineHeight', 1)"></span>
+							<span class="icon-smaller-line-height" data-ng-click="changeFontSize('postHtmlLineHeight', -1)"></span>
 						</div>
 					</div>
 					<div class="option-group">
