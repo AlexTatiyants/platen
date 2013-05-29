@@ -60,7 +60,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     });
   }
 
-  wordpress.loadConfiguration();
+  // wordpress.loadConfiguration();
 
   settings.load(function(settings) {
     $scope.settings = settings;
@@ -249,6 +249,22 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     } else {
       this.$apply(fn);
     }
+  };
+
+  $scope.loadPost = function() {
+    wordpressAsync.savePost({
+      // wordPressId: 409,
+      status: 'draft',
+      title: 'async test',
+      excerpt: 'blah',
+      content: 'to be or not to be, that is the question... or IS IT?'
+      // tags: '',
+      // categories: ''
+    }, function(response) {
+      console.log("good!", response);
+    }, function(error) {
+      console.log("bad!", error);
+    });
   };
 
 };

@@ -3024,6 +3024,262 @@
     });
 })(window);
 
+(function(g) {
+    var c = function() {
+        Error.apply(this, arguments);
+    };
+    c.prototype = new Error();
+    c.prototype.type = "XML-RPC fault";
+    var a = g.xmlrpc = function(i, k) {
+        if (arguments.length === 2) {
+            k.url = i;
+        } else {
+            k = i;
+            i = k.url;
+        }
+        k.dataType = "xml json";
+        k.type = "POST";
+        k.contentType = "text/xml";
+        k.converters = {
+            "xml json": a.parseDocument
+        };
+        var l = a.document(k.methodName, k.params);
+        var j = new XMLSerializer();
+        k.data = j.serializeToString(l);
+        return g.ajax(k);
+    };
+    a.document = function(l, o) {
+        var n = document.implementation.createDocument(null, null, null);
+        var m = function(p) {
+            return g(n.createElement(p));
+        };
+        var j = m("methodName").text(l);
+        var i = m("params").append(g.map(o, function(q) {
+            var p = m("value").append(a.toXmlRpc(q, m));
+            return m("param").append(p);
+        }));
+        var k = m("methodCall").append(j, i);
+        n.appendChild(k.get(0));
+        return n;
+    };
+    var b = function(i) {
+        return i === parseInt(i, 10) && !isNaN(i);
+    };
+    a.toXmlRpc = function(l, k) {
+        if (l instanceof f) {
+            return l.toXmlRpc(k);
+        }
+        var i = g.xmlrpc.types;
+        var j = g.type(l);
+        switch (j) {
+          case "undefined":
+          case "null":
+            return i.nil.encode(l, k);
+
+          case "date":
+            return i["datetime.iso8601"].encode(l, k);
+
+          case "object":
+            if (l instanceof ArrayBuffer) {
+                return i.base64.encode(l, k);
+            } else {
+                return i.struct.encode(l, k);
+            }
+            break;
+
+          case "number":
+            if (b(l)) {
+                return i["int"].encode(l, k);
+            } else {
+                return i["double"].encode(l, k);
+            }
+            break;
+
+          case "array":
+          case "boolean":
+          case "string":
+            return i[j].encode(l, k);
+
+          default:
+            throw new Error("Unknown type", l);
+        }
+    };
+    a.parseDocument = function(o) {
+        var p = g(o);
+        var i = p.children("methodresponse");
+        var l = i.find("> fault");
+        if (l.length === 0) {
+            var j = i.find("> params > param > value > *");
+            var k = j.toArray().map(a.parseNode);
+            return k;
+        } else {
+            var n = a.parseNode(l.find("> value > *").get(0));
+            var m = new c(n.faultString);
+            m.msg = m.message = n.faultString;
+            m.type = m.code = n.faultCode;
+            throw m;
+        }
+    };
+    a.parseNode = function(j) {
+        if (j === undefined) {
+            return null;
+        }
+        var i = j.nodeName.toLowerCase();
+        if (i in a.types) {
+            return a.types[i].decode(j);
+        } else {
+            throw new Error("Unknown type " + i);
+        }
+    };
+    a.parseValue = function(i) {
+        var j = g(i).children()[0];
+        if (j) {
+            return a.parseNode(j);
+        } else {
+            return g(i).text();
+        }
+    };
+    var f = function() {};
+    g.xmlrpc.types = {};
+    a.makeType = function(j, o, k, m) {
+        var i;
+        i = function(p) {
+            this.value = p;
+        };
+        i.prototype = new f();
+        i.prototype.tagName = j;
+        if (o) {
+            var l = k, n = m;
+            k = function(q, p) {
+                var r = l(q);
+                return p(i.tagName).text(r);
+            };
+            m = function(p) {
+                return n(g(p).text(), p);
+            };
+        }
+        i.prototype.toXmlRpc = function(p) {
+            return i.encode(this.value, p);
+        };
+        i.tagName = j;
+        i.encode = k;
+        i.decode = m;
+        a.types[j.toLowerCase()] = i;
+    };
+    var e = function(i) {
+        return "" + Math.floor(i);
+    };
+    var d = function(j, i) {
+        return parseInt(j, 10);
+    };
+    a.makeType("int", true, e, d), a.makeType("i4", true, e, d), a.makeType("i8", true, e, d), 
+    a.makeType("i16", true, e, d), a.makeType("i32", true, e, d), a.makeType("double", true, String, function(i) {
+        return parseFloat(i, 10);
+    });
+    a.makeType("string", true, String, String);
+    a.makeType("boolean", true, function(i) {
+        return i ? "1" : "0";
+    }, function(i) {
+        return i === "1";
+    });
+    var h = function(i) {
+        return i < 10 ? "0" + i : i;
+    };
+    a.makeType("dateTime.iso8601", true, function(i) {
+        return [ i.getUTCFullYear(), "-", h(i.getUTCMonth() + 1), "-", h(i.getUTCDate()), "T", h(i.getUTCHours()), ":", h(i.getUTCMinutes()), ":", h(i.getUTCSeconds()), "Z" ].join("");
+    }, function(i) {
+        return new Date(i);
+    });
+    a.binary = function() {
+        var k = "=";
+        var i = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".split("");
+        var j = i.reduce(function(n, m, l) {
+            n[m] = l;
+            return n;
+        }, {});
+        return {
+            toBase64: function(p) {
+                var o = [];
+                var q = new Uint8Array(p);
+                var m = 0, n;
+                for (;m < q.length; m += 3) {
+                    n = (q[m + 0] << 16) + (q[m + 1] << 8) + (q[m + 2] << 0);
+                    o.push(i[(n >> 18) % 64]);
+                    o.push(i[(n >> 12) % 64]);
+                    o.push(i[(n >> 6) % 64]);
+                    o.push(i[(n >> 0) % 64]);
+                }
+                var l = 3 - (p.byteLength % 3 || 3);
+                while (l--) {
+                    o[o.length - l - 1] = k;
+                }
+                return o.join("");
+            },
+            fromBase64: function(m) {
+                var l = m.length;
+                var s = l / 4 * 3;
+                if (m.charAt(l - 1) === k) {
+                    s--;
+                }
+                if (m.charAt(l - 2) === k) {
+                    s--;
+                }
+                var q = new ArrayBuffer(s);
+                var r = new Uint8Array(q);
+                var o = 0, n = 0, p;
+                for (;o < l; o += 4, n += 3) {
+                    p = (j[m[o + 0]] << 18) + (j[m[o + 1]] << 12) + (j[m[o + 2]] << 6) + (j[m[o + 3]] << 0);
+                    r[n + 0] = (p >> 16) % 256;
+                    r[n + 1] = (p >> 8) % 256;
+                    r[n + 2] = (p >> 0) % 256;
+                }
+                return q;
+            }
+        };
+    }();
+    a.makeType("base64", true, function(i) {
+        return a.binary.toBase64(i);
+    }, function(i) {
+        return a.binary.fromBase64(i);
+    });
+    a.makeType("nil", false, function(j, i) {
+        return i("nil");
+    }, function(i) {
+        return null;
+    });
+    a.makeType("struct", false, function(k, j) {
+        var i = j("struct");
+        g.each(k, function(l, n) {
+            var o = j("name").text(l);
+            var m = j("value").append(a.toXmlRpc(n, j));
+            i.append(j("member").append(o, m));
+        });
+        return i;
+    }, function(i) {
+        return g(i).find("> member").toArray().reduce(function(n, l) {
+            var k = g(l);
+            var j = k.find("> name").text();
+            var m = a.parseValue(k.find("> value"));
+            n[j] = m;
+            return n;
+        }, {});
+    });
+    a.makeType("array", false, function(l, j) {
+        var k = j("array");
+        var i = j("data");
+        g.each(l, function(m, n) {
+            i.append(j("value").append(a.toXmlRpc(n, j)));
+        });
+        k.append(i);
+        return k;
+    }, function(i) {
+        return g(i).find("> data > value").toArray().map(a.parseValue);
+    });
+    a.force = function(i, j) {
+        return new a.types[i](j);
+    };
+})(jQuery);
+
 function XmlRpc() {}
 
 XmlRpc.PROLOG = '<?xml version="1.0"?>\n';
@@ -11355,7 +11611,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
             });
         });
     }
-    wordpress.loadConfiguration();
     settings.load(function(settings) {
         $scope.settings = settings;
         $scope.switchTheme($scope.settings.theme);
@@ -11513,6 +11768,18 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
         } else {
             this.$apply(fn);
         }
+    };
+    $scope.loadPost = function() {
+        wordpressAsync.savePost({
+            status: "draft",
+            title: "async test",
+            excerpt: "blah",
+            content: "to be or not to be, that is the question... or IS IT?"
+        }, function(response) {
+            console.log("good!", response);
+        }, function(error) {
+            console.log("bad!", error);
+        });
     };
 };
 
@@ -11770,6 +12037,19 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
         },
         sync: function(onSuccessCallback, onErrorCallback) {
             data.content = marked(data.contentMarkdown).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            var saveOnSuccessCallback = function(result) {
+                logger.log("synched post '" + data.title + "'", "Post service");
+                data.state.lastUploadDate = new Date();
+                if (data.state.toBePublished) {
+                    data.state.toBePublished = false;
+                }
+                if (!data.wordPressId) {
+                    data.wordPressId = result[0];
+                    savePost(onSuccessCallback, onErrorCallback);
+                }
+                console.log("in Post sync", data);
+                onSuccessCallback();
+            };
             try {
                 uploadImages(data.content, function() {
                     var content = data.content;
@@ -11777,18 +12057,8 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                         content = replaceImageHtml(content, image);
                     });
                     data.content = content;
-                    wordpress.savePost(data, function(result) {
-                        data.state.lastUploadDate = new Date();
-                        if (data.state.toBePublished) {
-                            data.state.toBePublished = false;
-                        }
-                        if (!data.wordPressId) {
-                            data.wordPressId = result;
-                            savePost(onSuccessCallback, onErrorCallback);
-                        } else {
-                            onSuccessCallback();
-                        }
-                    }, onErrorCallback);
+                    console.log("uploading", data);
+                    wordpress.savePost(data, saveOnSuccessCallback, onErrorCallback);
                 });
             } catch (e) {
                 onErrorCallback(e);
@@ -12090,207 +12360,79 @@ angular.module("platen.services").factory("settings", function() {
     };
 });
 
-angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", "localStorage", function($dialog, logger, localStorage) {
+angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", function($dialog, logger) {
     var POST_TYPE = "post";
     var TAG_TYPE = "post_tag";
     var CATEGORY_TYPE = "category";
     var DEFAULT_BLOG_ID = 1;
     var DEFAULT_AUTHOR_ID = 1;
-    var l = {};
-    var dialogOpen = false;
-    var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = "platen.wordPressCredentials";
-    var wp = null;
-    var getConfiguration = function(key) {
-        return storage.getKey(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, key);
-    };
-    var setConfiguration = function(key, value) {
-        storage.setKey(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, key, value);
-    };
-    var loadConfiguration = function() {
-        storage.initialize(function(config) {
-            l.url = getConfiguration("url") || "";
-            l.username = getConfiguration("username") || "";
-            l.password = getConfiguration("password") || "";
-            l.rememberCredentials = getConfiguration("rememberCredentials") === "true" ? true : false;
-            logger.log("loaded WordPress configuration", "wordpress service");
-        });
-    };
-    var saveCredentials = function(login) {
-        l.url = login.url;
-        l.username = login.username;
-        l.password = login.password;
-        l.rememberCredentials = login.rememberCredentials;
-        setConfiguration("url", l.url);
-        setConfiguration("username", l.username);
-        setConfiguration("rememberCredentials", l.rememberCredentials);
-        if (l.rememberCredentials) {
-            setConfiguration("password", l.password);
-        } else {
-            setConfiguration("password", "");
-        }
-        logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
-    };
-    var initializeConnection = function(onSuccessCallback, onErrorCallback) {
-        if (l.url.trim() === "" || l.username.trim() === "" || l.password.trim() === "") {
-            if (!dialogOpen) {
-                var d = $dialog.dialog({
-                    backdrop: true,
-                    keyboard: true,
-                    backdropClick: true,
-                    controller: "LoginController",
-                    templateUrl: "views/modals/login.html"
-                });
-                dialogOpen = true;
-                d.open().then(function() {
-                    dialogOpen = false;
-                    createConnection(onSuccessCallback, onErrorCallback);
-                });
+    var _login = {};
+    _login.username = "admin";
+    _login.password = "admin";
+    _login.fullUrl = "http://localhost/wordpress/xmlrpc.php";
+    var callWordPress = function(methodName, additionalParams, onSuccessCallback, onErrorCallback) {
+        var loginParams = [ DEFAULT_BLOG_ID, _login.username, _login.password ];
+        var fullParams = loginParams.concat(additionalParams);
+        console.log("in wordpress service, calling " + methodName, fullParams);
+        $.xmlrpc({
+            url: _login.fullUrl,
+            methodName: methodName,
+            params: fullParams,
+            success: function(response, status, jqXHR) {
+                console.log("call to " + methodName + " succeeded", response);
+                onSuccessCallback(response);
+            },
+            error: function(jqXHR, status, error) {
+                console.log("call to " + methodName + " failed", error);
+                onErrorCallback(error);
             }
-        } else {
-            createConnection(onSuccessCallback, onErrorCallback);
-        }
-    };
-    var createConnection = function(onSuccessCallback, onErrorCallback) {
-        var fullUrl = l.url.replace(/\/$/, "") + "/xmlrpc.php";
-        try {
-            wp = new WordPress(fullUrl, l.username, l.password);
-            logger.log("logged into blog '" + l.url + "'", "wordpress service");
-        } catch (e) {
-            logger.log("unable to log into blog '" + l.url + "': " + e.message, "wordpress service");
-            onErrorCallback(e.message);
-        }
-        if (wp) {
-            try {
-                onSuccessCallback();
-            } catch (e) {
-                logger.log("error accessing WordPress blog '" + l.url + "': " + e.message, "wordpress service");
-                onErrorCallback(e.message);
-            }
-        }
-    };
-    var uploadPost = function(post, onSuccessCallback, onErrorCallback) {
-        var result;
-        var terms = {};
-        var data = {
-            post_type: POST_TYPE,
-            post_status: post.status,
-            post_title: post.title,
-            post_author: DEFAULT_AUTHOR_ID,
-            post_excerpt: post.excerpt,
-            post_content: post.content,
-            post_format: "",
-            terms_names: ""
-        };
-        if (post.tags.trim() !== "") {
-            terms.post_tag = post.tags.replace(" ", "").split(",");
-        }
-        if (post.categories.trim() !== "") {
-            terms.category = post.categories.replace(" ", "").split(",");
-        }
-        data.terms_names = terms;
-        if (post.wordPressId) {
-            result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
-            processResponse(result, post, function() {
-                logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
-                onSuccessCallback();
-            }, onErrorCallback);
-        } else {
-            result = wp.newPost(DEFAULT_BLOG_ID, data);
-            processResponse(result, post, function() {
-                logger.log("created post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
-                onSuccessCallback(result.concat());
-            }, onErrorCallback);
-        }
-    };
-    var getTerms = function(termType, onSuccessCallback, onErrorCallback) {
-        var result = wp.getTerms(DEFAULT_BLOG_ID, termType, "");
-        if (result.faultCode) {
-            var err = result.faultString.concat();
-            logger.log("error for loading tags for blog '" + l.url + "': " + err, "wordpress service");
-            onErrorCallback(err);
-        } else {
-            var terms = [], term;
-            _.each(result, function(rawTerm) {
-                term = {};
-                term.count = rawTerm.count;
-                term.name = rawTerm.name.concat();
-                term.slug = rawTerm.slug.concat();
-                term.taxonomy = rawTerm.taxonomy.concat();
-                term.term_id = rawTerm.term_id.concat();
-                terms.push(term);
-            });
-            onSuccessCallback(terms);
-        }
-    };
-    var processResponse = function(result, post, onSuccessCallback, onErrorCallback) {
-        if (result.faultCode) {
-            var err = result.faultString.concat();
-            logger.log("error for post '" + post.title + "' in blog '" + l.url + "': " + err, "wordpress service");
-            onErrorCallback(err);
-        } else {
-            onSuccessCallback();
-        }
-    };
-    var uploadFile = function(file, onSuccessCallback, onErrorCallback) {
-        var result = wp.uploadFile(1, {
-            name: file.fileName,
-            type: file.fileType,
-            bits: new Base64(file.fileData),
-            overwrite: false
         });
-        if (result.faultCode) {
-            var err = result.faultString.concat();
-            logger.log("unable to upload file '" + file.fileName + "' to blog '" + l.url + "': " + err, "wordpress service");
-            onErrorCallback(err);
-        } else {
-            logger.log("uploaded file '" + file.fileName + "' to blog '" + l.url, "wordpress service");
-            onSuccessCallback(result.id.concat(), result.url.concat());
-        }
-    };
-    var runCommand = function(runAction, args, onSuccessCallback, onErrorCallback) {
-        if (!wp) {
-            initializeConnection(function() {
-                runAction(args, onSuccessCallback, onErrorCallback);
-            }, onErrorCallback);
-        } else {
-            runAction(args, onSuccessCallback, onErrorCallback);
-        }
     };
     return {
-        login: l,
-        loadConfiguration: function() {},
-        initialize: function(onSuccessCallback, onErrorCallback) {
-            if (!wp) {
-                initializeConnection(onSuccessCallback, onErrorCallback);
-            }
-        },
-        saveCredentials: function(login) {
-            saveCredentials(login);
-        },
-        resetCredentials: function() {
-            saveCredentials({
-                url: "",
-                username: "",
-                password: ""
-            });
-            wp = null;
-            logger.log("reset WordPress credentials", "wordpress service");
+        saveCredentials: function(login) {},
+        resetCredentials: function() {},
+        getPost: function(postId, onSuccessCallback, onErrorCallback) {
+            callWordPress("wp.getPost", [ post_id ], onSuccessCallback, onErrorCallback);
         },
         savePost: function(post, onSuccessCallback, onErrorCallback) {
-            runCommand(uploadPost, post, onSuccessCallback, onErrorCallback);
+            var result, terms = {};
+            var data = {
+                post_type: POST_TYPE,
+                post_status: post.status,
+                post_title: post.title,
+                post_author: DEFAULT_AUTHOR_ID,
+                post_excerpt: post.excerpt,
+                post_content: post.content,
+                post_format: "",
+                terms_names: ""
+            };
+            if (post.tags && post.tags.trim() !== "") {
+                terms.post_tag = post.tags.replace(" ", "").split(",");
+            }
+            if (post.categories && post.categories.trim() !== "") {
+                terms.category = post.categories.replace(" ", "").split(",");
+            }
+            data.terms_names = terms;
+            if (post.wordPressId) {
+                callWordPress("wp.editPost", [ post.wordPressId, data ], onSuccessCallback, onErrorCallback);
+            } else {
+                callWordPress("wp.newPost", [ data ], onSuccessCallback, onErrorCallback);
+            }
         },
         getTags: function(onSuccessCallback, onErrorCallback) {
-            runCommand(getTerms, TAG_TYPE, onSuccessCallback, onErrorCallback);
+            callWordPress("wp.getTerms", [ TAG_TYPE ], onSuccessCallback, onErrorCallback);
         },
         getCategories: function(onSuccessCallback, onErrorCallback) {
-            runCommand(getTerms, CATEGORY_TYPE, onSuccessCallback, onErrorCallback);
+            callWordPress("wp.getTerms", [ CATEGORY_TYPE ], onSuccessCallback, onErrorCallback);
         },
         uploadFile: function(fileName, fileType, fileData, onSuccessCallback, onErrorCallback) {
-            var args = {};
-            args.fileName = fileName;
-            args.fileType = fileType;
-            args.fileData = fileData;
-            runCommand(uploadFile, args, onSuccessCallback, onErrorCallback);
+            var file = {
+                name: file.fileName,
+                type: file.fileType,
+                bits: new Base64(file.fileData),
+                overwrite: false
+            };
+            callWordPress("wp.uploadFile", [ file ], onSuccessCallback, onErrorCallback);
         }
     };
 } ]);

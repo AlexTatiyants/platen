@@ -2,6 +2,7 @@ module.exports = function(grunt) {
   var platen_scripts = ['scripts/app.js', 'scripts/*/*.js'];
 
   var all_scripts = ['vendor/jquery-1.9.1.min.js',
+      'vendor/jquery.xmlrpc.min.js',
       'vendor/mimic.js',
       'vendor/wordpress.min.js',
       'vendor/angular.min.1.1.4.js',
