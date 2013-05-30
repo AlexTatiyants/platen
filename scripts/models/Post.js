@@ -140,7 +140,7 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
       },
 
       sync: function(onSuccessCallback, onErrorCallback) {
-        data.content = marked(data.contentMarkdown).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        data.content = marked(data.contentMarkdown);
 
         var saveOnSuccessCallback = function(result) {
           // if this is the first time the post is being uploaded
@@ -154,7 +154,6 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
             data.wordPressId = result[0];
             savePost(onSuccessCallback, onErrorCallback);
           }
-          console.log("in Post sync", data);
           onSuccessCallback();
         };
 
@@ -169,7 +168,6 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
             });
             data.content = content;
 
-            console.log("uploading", data);
             wordpress.savePost(data, saveOnSuccessCallback, onErrorCallback);
 
             // wordpress.savePost(data, function(result) {

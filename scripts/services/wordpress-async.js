@@ -8,35 +8,67 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
 
     var _login = {};
 
-    _login.username = 'admin';
-    _login.password = 'admin';
-    _login.fullUrl = 'http://localhost/wordpress/xmlrpc.php';
+    var isLoginValid = function() {
+
+      var valid = (_login.url && _login.url.trim() === "") ||
+      (_login.username && _login.username.trim() === "") ||
+      (_login.password && _login.password.trim() === "");
+      return valid;
+    };
 
     var callWordPress = function(methodName, additionalParams, onSuccessCallback, onErrorCallback) {
-      var loginParams = [DEFAULT_BLOG_ID, _login.username, _login.password];
-      var fullParams = loginParams.concat(additionalParams);
 
-      console.log("in wordpress service, calling " + methodName, fullParams);
+      var codeToRun = function() {
+        var loginParams = [DEFAULT_BLOG_ID, _login.username, _login.password];
+        var fullParams = loginParams.concat(additionalParams);
 
-      $.xmlrpc({
-        url: _login.fullUrl,
-        methodName: methodName,
-        params: fullParams,
-        success: function(response, status, jqXHR) {
-          console.log("call to "+ methodName + " succeeded", response);
-          onSuccessCallback(response);
-        },
-        error: function(jqXHR, status, error) {
-          console.log("call to "+ methodName + " failed", error);
-          onErrorCallback(error);
-        }
-      });
+        $.xmlrpc({
+          url: _login.replace(/\/$/, "") + "/xmlrpc.php",
+          methodName: methodName,
+          params: fullParams,
+          success: function(response, status, jqXHR) {
+            console.log("call to " + methodName + " succeeded", response);
+            onSuccessCallback(response);
+          },
+          error: function(jqXHR, status, error) {
+            console.log("call to " + methodName + " failed", error);
+            onErrorCallback(error);
+          }
+        });
+      };
+
+      if (!isLoginValid()) {
+        var d = $dialog.dialog({
+          backdrop: true,
+          keyboard: true,
+          backdropClick: true,
+          controller: 'LoginController',
+          templateUrl: 'views/modals/login.html'
+        });
+
+        d.open().then(function() {
+          debugger;
+          console.log("login obtained", _login);
+          if (isLoginValid()) {
+            codeToRun();
+          } else {
+            onErrorCallback("cannot execute call, invalid credentials for WordPress blog");
+            logger.log("cannot execute call, invalid credentials for WordPress blog", "wordpress service");
+          }
+        });
+      } else {
+        codeToRun();
+      }
     };
 
     return {
-      // initialize: function(onSuccessCallback, onErrorCallback) {},
-      saveCredentials: function(login) {},
-      resetCredentials: function() {},
+      login: _login,
+      saveCredentials: function(login) {
+        _login = login;
+      },
+      resetCredentials: function() {
+        _login = {};
+      },
 
       getPost: function(postId, onSuccessCallback, onErrorCallback) {
         callWordPress('wp.getPost', [post_id], onSuccessCallback, onErrorCallback);

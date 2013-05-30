@@ -6,6 +6,9 @@
 //     var DEFAULT_BLOG_ID = 1;
 //     var DEFAULT_AUTHOR_ID = 1;
 //     var l = {};
+
+
+
 //     var dialogOpen = false;
 
 //     var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = 'platen.wordPressCredentials';
@@ -51,30 +54,37 @@
 //     };
 
 //     var initializeConnection = function(onSuccessCallback, onErrorCallback) {
-//       if (l.url.trim() === '' || l.username.trim() === '' || l.password.trim() === '') {
 
-//         // for some reason, dialog is sometimes instantiated twice. Check below is intended
-//         // to prevent that from happenning
-//         if (!dialogOpen) {
-//           var d = $dialog.dialog({
-//             backdrop: true,
-//             keyboard: true,
-//             backdropClick: true,
-//             controller: 'LoginController',
-//             templateUrl: 'views/modals/login.html'
-//           });
+//       l.username = 'admin';
+//       l.password = 'admin';
+//       l.url = 'http://localhost/wordpress/xmlrpc.php';
 
-//           dialogOpen = true;
+//       createConnection(onSuccessCallback, onErrorCallback);
 
-//           d.open().then(function() {
-//             dialogOpen = false;
-//             createConnection(onSuccessCallback, onErrorCallback);
-//           });
-//         }
+//       // if (l.url.trim() === '' || l.username.trim() === '' || l.password.trim() === '') {
 
-//       } else {
-//         createConnection(onSuccessCallback, onErrorCallback);
-//       }
+//       //   // for some reason, dialog is sometimes instantiated twice. Check below is intended
+//       //   // to prevent that from happenning
+//       //   if (!dialogOpen) {
+//       //     var d = $dialog.dialog({
+//       //       backdrop: true,
+//       //       keyboard: true,
+//       //       backdropClick: true,
+//       //       controller: 'LoginController',
+//       //       templateUrl: 'views/modals/login.html'
+//       //     });
+
+//       //     dialogOpen = true;
+
+//       //     d.open().then(function() {
+//       //       dialogOpen = false;
+//       //       createConnection(onSuccessCallback, onErrorCallback);
+//       //     });
+//       //   }
+
+//       // } else {
+//       //   createConnection(onSuccessCallback, onErrorCallback);
+//       // }
 //     };
 
 //     var createConnection = function(onSuccessCallback, onErrorCallback) {
@@ -98,6 +108,7 @@
 //     };
 
 //     var uploadPost = function(post, onSuccessCallback, onErrorCallback) {
+//       debugger;
 //       var result;
 //       var terms = {};
 

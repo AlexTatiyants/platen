@@ -11,6 +11,7 @@ var LoginController = function($scope, dialog, wordpress) {
 
   $scope.submit = function() {
     wordpress.saveCredentials($scope.login);
+    console.log("closing login dialog");
     dialog.close();
   };
 
