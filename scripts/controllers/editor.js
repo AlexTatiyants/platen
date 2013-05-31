@@ -1,6 +1,7 @@
 var EditorController = function(Post, $scope, $routeParams, $filter, fileManager, wordpress, logger, resources, settings) {
   var STATUS_DRAFT = 'draft';
   var STATUS_PUBLISH = 'publish';
+  var DEFAULT_IMAGE_ALIGNMENT = 'center';
 
   var POST_TITLE_ID = 'post-title';
   var POST_BODY_ID = 'post-content';
@@ -19,6 +20,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   $scope.insertImageDialogOpen = false;
   $scope.configureImageDialogOpen = false;
   $scope.deleteImageConfirmOpen = false;
+  $scope.tags = [];
+  $scope.categories = [];
 
   var notifyOnCompletion = function(message, error, isSuccess) {
     if (error) {
@@ -106,7 +109,8 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       name: imageName,
       fileName: fileName,
       filePath: resources.IMAGE_DIRECTORY_PATH + "/" + fileName,
-      alignment: settings.getSetting(settings.keys.imageAlignment)
+      alignment: DEFAULT_IMAGE_ALIGNMENT
+      //      alignment: settings.getSetting(settings.keys.imageAlignment)
     };
 
     var contentMarkdownHtml = $scope.post.contentMarkdownHtml;
@@ -209,8 +213,11 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   };
 
   $scope.getTags = function() {
-    wordpress.getTags(function(result) {
-      $scope.tags = result;
+    wordpress.getTags(function(tags) {
+      _.each(tags[0], function(tag) {
+        $scope.tags.push(tag);
+      });
+      $scope.safeApply();
     }, function(error) {
       notifyOnCompletion("error loading tags from WordPress", error, false);
     });
@@ -227,8 +234,11 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   };
 
   $scope.getCategories = function() {
-    wordpress.getCategories(function(result) {
-      $scope.categories = result;
+    wordpress.getCategories(function(categories) {
+      _.each(categories[0], function(category) {
+        $scope.categories.push(category);
+      });
+      $scope.safeApply();
     }, function(error) {
       notifyOnCompletion("error loading categories from WordPress", error, false);
     });

@@ -2,12 +2,15 @@ var LoginController = function($scope, dialog, wordpress) {
 
   console.log("opening login dialog");
 
-  $scope.login = {
-    url: wordpress.login.url,
-    username: wordpress.login.username,
-    password: wordpress.login.password,
-    rememberCredentials: wordpress.login.rememberCredentials
-  };
+  wordpress.loadCredentials(function(login) {
+    $scope.login = {
+      url: login.url,
+      username: login.username,
+      password: login.password,
+      rememberPassword: login.rememberPassword
+    };
+    $scope.$apply();
+  });
 
   $scope.submit = function() {
     wordpress.saveCredentials($scope.login);
@@ -17,6 +20,7 @@ var LoginController = function($scope, dialog, wordpress) {
 
   $scope.resetCredentials = function() {
     wordpress.resetCredentials();
+    console.log("closing login dialog");
     dialog.close();
   };
 

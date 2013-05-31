@@ -1,270 +1,174 @@
-// angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
-//   function($dialog, logger) {
-//     var POST_TYPE = 'post';
-//     var TAG_TYPE = 'post_tag';
-//     var CATEGORY_TYPE = 'category';
-//     var DEFAULT_BLOG_ID = 1;
-//     var DEFAULT_AUTHOR_ID = 1;
-//     var l = {};
+angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
+  function($dialog, logger) {
+    var POST_TYPE = 'post';
+    var TAG_TYPE = 'post_tag';
+    var CATEGORY_TYPE = 'category';
+    var DEFAULT_BLOG_ID = 1;
+    var DEFAULT_AUTHOR_ID = 1;
+    var _login = {};
 
+    var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = 'platen.wordPressCredentials';
 
+    var isLoginValid = function() {
+      return _login.url.trim() !== "" || _login.username.trim() !== "" || _login.password.trim() !== "";
+    };
 
-//     var dialogOpen = false;
+    var loadCredentialsFromStorage = function(onCompletionCallback) {
+      chrome.storage.local.get(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, function(storedValues) {
 
-//     var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = 'platen.wordPressCredentials';
+        _login.url = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].url || '';
+        _login.password = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].password || _login.currentSessionCachedPassword || '';
+        _login.username = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].username || '';
+        _login.rememberPassword = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].rememberPassword || '';
 
-//     var wp = null;
+        logger.log("loaded WordPress configuration", "wordpress service");
+        onCompletionCallback(_login);
+      });
+    };
 
-//     var getConfiguration = function(key) {
-//       return storage.getKey(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, key);
-//     };
+    var callWordPress = function(methodName, additionalParams, onSuccessCallback, onErrorCallback) {
 
-//     var setConfiguration = function(key, value) {
-//       storage.setKey(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, key, value);
-//     };
+      var codeToRun = function() {
+        var loginParams = [DEFAULT_BLOG_ID, _login.username, _login.password];
+        var fullParams = loginParams.concat(additionalParams);
+        var fullUrl = _login.url.replace(/\/$/, "") + "/xmlrpc.php";
 
-//     var loadConfiguration = function() {
-//       storage.initialize(function(config) {
-//         l.url = getConfiguration("url") || '';
-//         l.username = getConfiguration("username") || '';
-//         l.password = getConfiguration("password") || '';
-//         l.rememberCredentials = (getConfiguration("rememberCredentials") === 'true') ? true : false;
+        $.xmlrpc({
+          url: fullUrl,
+          methodName: methodName,
+          params: fullParams,
+          success: function(response, status, jqXHR) {
+            onSuccessCallback(response);
+          },
+          error: function(jqXHR, status, error) {
+            onErrorCallback(error);
+          }
+        });
+      };
 
-//         logger.log("loaded WordPress configuration", "wordpress service");
-//       });
-//     };
+      var obtainCredentialsFromUserIfNeeded = function() {
 
-//     var saveCredentials = function(login) {
-//       l.url = login.url;
-//       l.username = login.username;
-//       l.password = login.password;
-//       l.rememberCredentials = login.rememberCredentials;
+        if (!isLoginValid()) {
+          var d = $dialog.dialog({
+            controller: 'LoginController',
+            templateUrl: 'views/modals/login.html'
+          });
 
-//       setConfiguration("url", l.url);
-//       setConfiguration("username", l.username);
-//       setConfiguration("rememberCredentials", l.rememberCredentials);
+          d.open().then(function() {
+            if (isLoginValid()) {
+              codeToRun();
+            } else {
+              onErrorCallback("cannot execute call, invalid credentials for WordPress blog");
+              logger.log("cannot execute call, invalid credentials for WordPress blog", "wordpress service");
+            }
+          });
+        } else {
+          codeToRun();
+        }
+      };
 
-//       if (l.rememberCredentials) {
-//         setConfiguration("password", l.password);
-//       } else {
-//         setConfiguration("password", "");
-//       }
+      if (_.isEmpty(_login)) {
+        loadCredentialsFromStorage(obtainCredentialsFromUserIfNeeded);
+      } else {
+        obtainCredentialsFromUserIfNeeded();
+      }
+    };
 
-//       logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
-//     };
+    return {
+      loadCredentials: function(onCompletionCallback) {
+        loadCredentialsFromStorage(onCompletionCallback);
+      },
 
-//     var initializeConnection = function(onSuccessCallback, onErrorCallback) {
+      saveCredentials: function(login) {
+        var saveMe = {};
 
-//       l.username = 'admin';
-//       l.password = 'admin';
-//       l.url = 'http://localhost/wordpress/xmlrpc.php';
+        if (!login.rememberPassword) {
+          // if the user doesn't want the password persisted, we still want to hold on
+          // to it for the duration of this session
+          login.currentSessionCachedPassword = login.password;
+          login.password = '';
+        }
 
-//       createConnection(onSuccessCallback, onErrorCallback);
+        _login = login;
 
-//       // if (l.url.trim() === '' || l.username.trim() === '' || l.password.trim() === '') {
+        saveMe[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY] = login;
 
-//       //   // for some reason, dialog is sometimes instantiated twice. Check below is intended
-//       //   // to prevent that from happenning
-//       //   if (!dialogOpen) {
-//       //     var d = $dialog.dialog({
-//       //       backdrop: true,
-//       //       keyboard: true,
-//       //       backdropClick: true,
-//       //       controller: 'LoginController',
-//       //       templateUrl: 'views/modals/login.html'
-//       //     });
+        chrome.storage.local.set(saveMe, function() {
+          logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
+        });
+      },
 
-//       //     dialogOpen = true;
+      resetCredentials: function() {
+        _login = {
+          url: '',
+          username: '',
+          password: '',
+          rememberPassword: false
+        };
 
-//       //     d.open().then(function() {
-//       //       dialogOpen = false;
-//       //       createConnection(onSuccessCallback, onErrorCallback);
-//       //     });
-//       //   }
+        var saveMe = {};
 
-//       // } else {
-//       //   createConnection(onSuccessCallback, onErrorCallback);
-//       // }
-//     };
+        saveMe[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY] = _login;
 
-//     var createConnection = function(onSuccessCallback, onErrorCallback) {
-//       var fullUrl = l.url.replace(/\/$/, "") + "/xmlrpc.php";
+        chrome.storage.local.set(saveMe, function() {
+          logger.log("reset credentials", "wordpress service");
+        });
+      },
 
-//       try {
-//         wp = new WordPress(fullUrl, l.username, l.password);
-//         logger.log("logged into blog '" + l.url + "'", "wordpress service");
-//       } catch (e) {
-//         logger.log("unable to log into blog '" + l.url + "': " + e.message, "wordpress service");
-//         onErrorCallback(e.message);
-//       }
-//       if (wp) {
-//         try {
-//           onSuccessCallback();
-//         } catch (e) {
-//           logger.log("error accessing WordPress blog '" + l.url + "': " + e.message, "wordpress service");
-//           onErrorCallback(e.message);
-//         }
-//       }
-//     };
+      getPost: function(postId, onSuccessCallback, onErrorCallback) {
+        callWordPress('wp.getPost', [post_id], onSuccessCallback, onErrorCallback);
+      },
 
-//     var uploadPost = function(post, onSuccessCallback, onErrorCallback) {
-//       debugger;
-//       var result;
-//       var terms = {};
+      savePost: function(post, onSuccessCallback, onErrorCallback) {
+        var result, terms = {};
+        var data = {
+          post_type: POST_TYPE,
+          post_status: post.status,
+          post_title: post.title,
+          post_author: DEFAULT_AUTHOR_ID,
+          post_excerpt: post.excerpt,
+          post_content: post.content,
+          post_format: '',
+          terms_names: ''
+        };
 
-//       var data = {
-//         post_type: POST_TYPE,
-//         post_status: post.status,
-//         post_title: post.title,
-//         post_author: DEFAULT_AUTHOR_ID,
-//         post_excerpt: post.excerpt,
-//         post_content: post.content,
-//         post_format: '',
-//         terms_names: ''
-//       };
+        if (post.tags && post.tags.trim() !== '') {
+          terms.post_tag = post.tags.replace(' ', '').split(',');
+        }
 
-//       if (post.tags && post.tags.trim() !== '') {
-//         terms.post_tag = post.tags.replace(' ', '').split(',');
-//       }
+        if (post.categories && post.categories.trim() !== '') {
+          terms.category = post.categories.replace(' ', '').split(',');
+        }
 
-//       if (post.categories && post.categories.trim() !== '') {
-//         terms.category = post.categories.replace(' ', '').split(',');
-//       }
+        data.terms_names = terms;
 
-//       data.terms_names = terms;
+        if (post.wordPressId) {
+          callWordPress('wp.editPost', [post.wordPressId, data], onSuccessCallback, onErrorCallback);
+        } else {
+          callWordPress('wp.newPost', [data], onSuccessCallback, onErrorCallback);
+        }
+      },
 
-//       if (post.wordPressId) {
-//         result = wp.editPost(DEFAULT_BLOG_ID, post.wordPressId, data);
-//         processResponse(result, post, function() {
-//           logger.log("updated post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
-//           onSuccessCallback();
-//         }, onErrorCallback);
+      getTags: function(onSuccessCallback, onErrorCallback) {
+        callWordPress('wp.getTerms', [TAG_TYPE], onSuccessCallback, onErrorCallback);
+      },
 
-//       } else {
-//         result = wp.newPost(DEFAULT_BLOG_ID, data);
-//         processResponse(result, post, function() {
-//           logger.log("created post '" + post.title + "' in blog '" + l.url + "'", "wordpress service");
-//           onSuccessCallback(result.concat());
-//         }, onErrorCallback);
-//       }
-//     };
+      getCategories: function(onSuccessCallback, onErrorCallback) {
+        callWordPress('wp.getTerms', [CATEGORY_TYPE], onSuccessCallback, onErrorCallback);
+      },
 
-//     var getTerms = function(termType, onSuccessCallback, onErrorCallback) {
-//       var result = wp.getTerms(DEFAULT_BLOG_ID, termType, '');
-//       if (result.faultCode) {
-//         var err = result.faultString.concat();
-//         logger.log("error for loading tags for blog '" + l.url + "': " + err, "wordpress service");
-//         onErrorCallback(err);
-//       } else {
+      uploadFile: function(fileName, fileType, fileData, onSuccessCallback, onErrorCallback) {
+        var base64EncodedFile = new Base64(fileData);
 
-//         // create a proper terms array
-//         var terms = [],
-//           term;
+        var file = {
+          name: fileName,
+          type: fileType,
+          bits: $.xmlrpc.binary.fromBase64(base64EncodedFile.bytes),
+          overwrite: false
+        };
 
-//         _.each(result, function(rawTerm) {
-//           term = {};
-//           term.count = rawTerm.count;
-//           term.name = rawTerm.name.concat();
-//           term.slug = rawTerm.slug.concat();
-//           term.taxonomy = rawTerm.taxonomy.concat();
-//           term.term_id = rawTerm.term_id.concat();
-//           terms.push(term);
-
-//         });
-
-//         onSuccessCallback(terms);
-//       }
-//     };
-
-//     var processResponse = function(result, post, onSuccessCallback, onErrorCallback) {
-//       if (result.faultCode) {
-//         var err = result.faultString.concat();
-//         logger.log("error for post '" + post.title + "' in blog '" + l.url + "': " + err, "wordpress service");
-//         onErrorCallback(err);
-//       } else {
-//         onSuccessCallback();
-//       }
-//     };
-
-//     var uploadFile = function(file, onSuccessCallback, onErrorCallback) {
-//       var result = wp.uploadFile(1, {
-//         name: file.fileName,
-//         type: file.fileType,
-//         bits: new Base64(file.fileData),
-//         overwrite: false
-//       });
-
-//       if (result.faultCode) {
-//         var err = result.faultString.concat();
-//         logger.log("unable to upload file '" + file.fileName + "' to blog '" + l.url + "': " + err, "wordpress service");
-//         onErrorCallback(err);
-//       } else {
-//         logger.log("uploaded file '" + file.fileName + "' to blog '" + l.url, "wordpress service");
-//         onSuccessCallback(result.id.concat(), result.url.concat());
-//       }
-//     };
-
-//     var runCommand = function(runAction, args, onSuccessCallback, onErrorCallback) {
-//       if (!wp) {
-//         initializeConnection(function() {
-//           runAction(args, onSuccessCallback, onErrorCallback);
-//         }, onErrorCallback);
-//       } else {
-//         runAction(args, onSuccessCallback, onErrorCallback);
-//       }
-//     };
-
-//     return {
-//       login: l,
-
-//       loadConfiguration: function() {
-//         // loadConfiguration();
-//       },
-
-//       initialize: function(onSuccessCallback, onErrorCallback) {
-//         if (!wp) {
-//           initializeConnection(onSuccessCallback, onErrorCallback);
-//         }
-//       },
-
-//       saveCredentials: function(login) {
-//         saveCredentials(login);
-//       },
-
-//       resetCredentials: function() {
-//         saveCredentials({
-//           url: "",
-//           username: "",
-//           password: ""
-//         });
-
-//         wp = null;
-//         logger.log("reset WordPress credentials", "wordpress service");
-//       },
-
-//       // getPost: function(postId, onSuccessCallback, onErrorCallback) {
-//       //   if (!wp) initialize();
-//       // },
-
-//       savePost: function(post, onSuccessCallback, onErrorCallback) {
-//         runCommand(uploadPost, post, onSuccessCallback, onErrorCallback);
-//       },
-
-//       getTags: function(onSuccessCallback, onErrorCallback) {
-//         runCommand(getTerms, TAG_TYPE, onSuccessCallback, onErrorCallback);
-//       },
-
-//       getCategories: function(onSuccessCallback, onErrorCallback) {
-//         runCommand(getTerms, CATEGORY_TYPE, onSuccessCallback, onErrorCallback);
-//       },
-
-//       uploadFile: function(fileName, fileType, fileData, onSuccessCallback, onErrorCallback) {
-//         var args = {};
-//         args.fileName = fileName;
-//         args.fileType = fileType;
-//         args.fileData = fileData;
-//         runCommand(uploadFile, args, onSuccessCallback, onErrorCallback);
-//       },
-//     };
-//   }
-// ]);
+        callWordPress('wp.uploadFile', [file], onSuccessCallback, onErrorCallback);
+      },
+    };
+  }
+]);

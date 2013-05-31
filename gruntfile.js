@@ -6,7 +6,7 @@ module.exports = function(grunt) {
       'vendor/mimic.js',
       'vendor/wordpress.min.js',
       'vendor/angular.min.1.1.4.js',
-      'vendor/ui-bootstrap-0.2.0.min.js',
+      'vendor/ui-bootstrap-0.3.0.js',
       'vendor/angular-ui.min.js',
       'vendor/marked.js',
       'vendor/moment.min.js',

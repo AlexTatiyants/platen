@@ -363,6 +363,7 @@
   padding: 0;
   max-height: 100px;
   overflow-y: auto;
+  margin-top: 10px;
 }
 .term-list li {
   width: 43%;
@@ -381,6 +382,19 @@
   background-color: #8c8c8c;
   color: #404040;
 }
+.term-list::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 5px;
+  background-color: #272727;
+}
+.term-list::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #666666;
+}
+.term-list::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #272727;
+}
 .image-list {
   float: left;
   margin-top: 20px;
@@ -393,6 +407,19 @@
   border-radius: 3px;
   overflow-y: auto;
   margin-top: 10px;
+}
+.image-list ul::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 5px;
+  background-color: #272727;
+}
+.image-list ul::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #666666;
+}
+.image-list ul::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #272727;
 }
 .image-controls {
   position: absolute;
@@ -862,7 +889,6 @@ aside.page-links h3 {
   margin-left: 10px;
   width: 100%;
   height: 40px;
-  z-index: 5;
 }
 .status-bar .icon-close {
   float: right;

@@ -366,6 +366,7 @@ body {
   padding: 0;
   max-height: 100px;
   overflow-y: auto;
+  margin-top: 10px;
 }
 .term-list li {
   width: 43%;
@@ -384,6 +385,19 @@ body {
   background-color: #363636;
   color: #cacaca;
 }
+.term-list::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 5px;
+  background-color: #e3e3e3;
+}
+.term-list::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #5c5c5c;
+}
+.term-list::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #e3e3e3;
+}
 .image-list {
   float: left;
   margin-top: 20px;
@@ -396,6 +410,19 @@ body {
   border-radius: 3px;
   overflow-y: auto;
   margin-top: 10px;
+}
+.image-list ul::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 5px;
+  background-color: #e3e3e3;
+}
+.image-list ul::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #5c5c5c;
+}
+.image-list ul::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #e3e3e3;
 }
 .image-controls {
   position: absolute;
@@ -865,7 +892,6 @@ aside.page-links h3 {
   margin-left: 10px;
   width: 100%;
   height: 40px;
-  z-index: 5;
 }
 .status-bar .icon-close {
   float: right;

@@ -251,22 +251,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     }
   };
 
-  $scope.loadPost = function() {
-    wordpressAsync.savePost({
-      // wordPressId: 409,
-      status: 'draft',
-      title: 'async test',
-      excerpt: 'blah',
-      content: 'to be or not to be, that is the question... or IS IT?'
-      // tags: '',
-      // categories: ''
-    }, function(response) {
-      console.log("good!", response);
-    }, function(error) {
-      console.log("bad!", error);
-    });
-  };
-
 };
 
 MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'logger', 'resources', 'settings', 'wordpress'];
