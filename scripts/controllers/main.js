@@ -1,4 +1,4 @@
-var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings, wordpress) {
+var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings) {
   var FADE_DURATION = 3000;
   $scope.optionsPanelVisible = false;
   $scope.aboutDialogOpen = false;
@@ -43,10 +43,15 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   });
 
   // initialize fonts
+  $scope.fonts.push("serif");
+  $scope.fonts.push("sans-serif");
   $scope.fonts.push('economica');
   $scope.fonts.push('inconsolata');
   $scope.fonts.push('goudy');
   $scope.fonts.push('merriweather');
+  $scope.fonts.push('arvo');
+  $scope.fonts.push('cabin');
+  $scope.fonts.push('crimson text');
 
   if (chrome.fontSettings) {
     logger.log("adding system fonts", "MainController");
@@ -59,8 +64,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
       });
     });
   }
-
-  // wordpress.loadConfiguration();
 
   settings.load(function(settings) {
     $scope.settings = settings;
@@ -250,7 +253,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
       this.$apply(fn);
     }
   };
-
 };
 
-MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'logger', 'resources', 'settings', 'wordpress'];
+MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'logger', 'resources', 'settings'];

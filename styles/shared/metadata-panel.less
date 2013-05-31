@@ -46,22 +46,7 @@
     padding-right: @pad-unit;
     margin-top: @pad-unit/2;
     margin-bottom: @pad-unit/2;
-
-    &::-webkit-scrollbar {
-        width: @pad-unit/2;
-        border-radius: @pad-unit/4;
-        background-color: @alt-text-color-weak;
-    }
-
-    &::-webkit-scrollbar-track {
-        border-radius: @pad-unit/4;
-        background-color: @alt-base-color-weak;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        border-radius: @pad-unit/4;
-        background-color: @alt-text-color-weak;
-    }
+    .scrollbar-styles;
 }
 
 .field-group {
@@ -170,22 +155,7 @@
         border-radius: @border-radius;
         overflow-y: auto;
         margin-top: @pad-unit * 0.5;
-
-        &::-webkit-scrollbar {
-            width: @pad-unit/2;
-            border-radius: @pad-unit/4;
-            background-color: @alt-text-color-weak;
-        }
-
-        &::-webkit-scrollbar-track {
-            border-radius: @pad-unit/4;
-            background-color: @alt-base-color-weak;
-        }
-
-        &::-webkit-scrollbar-thumb {
-            border-radius: @pad-unit/4;
-            background-color: @alt-text-color-weak;
-        }
+        .scrollbar-styles;
     }
 }
 

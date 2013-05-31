@@ -3662,348 +3662,6 @@ Base64.prototype.decode = function() {
     }
 };
 
-function WordPress(url, username, password) {
-    this.url = url;
-    this.username = username;
-    this.password = password;
-    this.request = new XmlRpcRequest(this.url);
-}
-
-WordPress.prototype.getPost = function(blog_id, post_id, fields) {
-    this.request.methodName = "wp.getPost";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(post_id);
-    this.request.addParam(fields);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getPosts = function(blog_id, filter, fields) {
-    this.request.methodName = "wp.getPosts";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(filter);
-    this.request.addParam(fields);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.newPost = function(blog_id, content) {
-    this.request.methodName = "wp.newPost";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(content);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.editPost = function(blog_id, post_id, content) {
-    this.request.methodName = "wp.editPost";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(post_id);
-    this.request.addParam(content);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.deletePost = function(blog_id, post_id) {
-    this.request.methodName = "wp.deletePost";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(post_id);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getPostType = function(blog_id, post_type_name, fields) {
-    this.request.methodName = "wp.getPostType";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(post_type_name);
-    this.request.addParam(fields);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getPostTypes = function(blog_id, filter, fields) {
-    this.request.methodName = "wp.getPostTypes";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(filter);
-    this.request.addParam(fields);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getPostFormats = function(blog_id, filter) {
-    this.request.methodName = "wp.getPostFormats";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(filter);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getPostStatusList = function(blog_id) {
-    this.request.methodName = "wp.getPostStatusList";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getTaxonomy = function(blog_id, taxonomy) {
-    this.request.methodName = "wp.getTaxonomy";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(taxonomy);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getTaxonomies = function(blog_id) {
-    this.request.methodName = "wp.getTaxonomies";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getTerm = function(blog_id, taxonomy, term_id) {
-    this.request.methodName = "wp.getTerm";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(taxonomy);
-    this.request.addParam(term_id);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getTerms = function(blog_id, taxonomy, filter) {
-    this.request.methodName = "wp.getTerms";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(taxonomy);
-    this.request.addParam(filter);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.newTerm = function(blog_id, content) {
-    this.request.methodName = "wp.newTerm";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(content);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.editTerm = function(blog_id, term_id, content) {
-    this.request.methodName = "wp.editTerm";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(term_id);
-    this.request.addParam(content);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.deleteTerm = function(blog_id, taxonomy, term_id) {
-    this.request.methodName = "wp.deleteTerm";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(taxonomy);
-    this.request.addParam(term_id);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getMediaItem = function(blog_id, attachment_id) {
-    this.request.methodName = "wp.getMediaItem";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(attachment_id);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getMediaLibrary = function(blog_id, filter) {
-    this.request.methodName = "wp.getMediaLibrary";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(filter);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.uploadFile = function(blog_id, data) {
-    this.request.methodName = "wp.uploadFile";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(data);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getCommentCount = function(blog_id, post_id) {
-    this.request.methodName = "wp.getCommentCount";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(post_id);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getComment = function(blog_id, comment_id) {
-    this.request.methodName = "wp.getComment";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(comment_id);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getComments = function(blog_id, filter) {
-    this.request.methodName = "wp.getComments";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(filter);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.newComment = function(blog_id, post_id, content) {
-    this.request.methodName = "wp.newComment";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(post_id);
-    this.request.addParam(content);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.editComment = function(blog_id, comment_id, comment) {
-    this.request.methodName = "wp.editComment";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(comment_id);
-    this.request.addParam(comment);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.deleteComment = function(blog_id, comment_id) {
-    this.request.methodName = "wp.deleteComment";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(comment_id);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getCommentStatusList = function(blog_id) {
-    this.request.methodName = "wp.getCommentStatusList";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getOptions = function(blog_id, options) {
-    this.request.methodName = "wp.getOptions";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(options);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.setOptions = function(blog_id, options) {
-    this.request.methodName = "wp.setOptions";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    this.request.addParam(options);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getUsersBlogs = function() {
-    this.request.methodName = "wp.getUsersBlogs";
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
-WordPress.prototype.getAuthors = function(blog_id) {
-    this.request.methodName = "wp.getAuthors";
-    this.request.addParam(blog_id);
-    this.request.addParam(this.username);
-    this.request.addParam(this.password);
-    var resp = this.request.send();
-    this.request.clearParams();
-    return resp.parseXML();
-};
-
 (function(M, V, s) {
     "use strict";
     function gc() {
@@ -12248,7 +11906,7 @@ var LogsController = function($scope, logger) {
 
 LogsController.$inject = [ "$scope", "logger" ];
 
-var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings, wordpress) {
+var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings) {
     var FADE_DURATION = 3e3;
     $scope.optionsPanelVisible = false;
     $scope.aboutDialogOpen = false;
@@ -12286,10 +11944,15 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     }, function(error) {
         notify("error initializing file system", error, false);
     });
+    $scope.fonts.push("serif");
+    $scope.fonts.push("sans-serif");
     $scope.fonts.push("economica");
     $scope.fonts.push("inconsolata");
     $scope.fonts.push("goudy");
     $scope.fonts.push("merriweather");
+    $scope.fonts.push("arvo");
+    $scope.fonts.push("cabin");
+    $scope.fonts.push("crimson text");
     if (chrome.fontSettings) {
         logger.log("adding system fonts", "MainController");
         $scope.systemFontsAvailable = true;
@@ -12459,7 +12122,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     };
 };
 
-MainController.$inject = [ "$scope", "$dialog", "$timeout", "fileManager", "logger", "resources", "settings", "wordpress" ];
+MainController.$inject = [ "$scope", "$dialog", "$timeout", "fileManager", "logger", "resources", "settings" ];
 
 var PostsController = function($scope, $location, fileManager, logger, resources) {
     $scope.postsList = [];
@@ -12476,7 +12139,7 @@ var PostsController = function($scope, $location, fileManager, logger, resources
                 var post = JSON.parse(file);
                 $scope.postsList.push(post);
                 $scope.loaded = true;
-                $scope.$apply();
+                $scope.safeApply();
             } catch (error) {
                 logger.log("error reading file [" + file + "]: " + error, "PostsController");
                 $scope.$emit(resources.events.PROCESSING_FINISHED, {
@@ -12653,9 +12316,9 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
         try {
             fileManager.readFile(image.filePath, false, function(imageData) {
                 var cleanFileName = image.fileName.substr(0, image.fileName.lastIndexOf("."));
-                wordpress.uploadFile(cleanFileName, image.type, imageData, function(id, url) {
-                    image.blogUrl = url;
-                    image.blogId = id;
+                wordpress.uploadFile(cleanFileName, image.type, imageData, function(response) {
+                    image.blogUrl = response[0].url;
+                    image.blogId = response[0].id;
                     logger.log("uploaded image '" + image.fileName + "' to '" + image.blogUrl, "Post module");
                     d.resolve();
                 }, function(e) {
@@ -12780,6 +12443,14 @@ angular.module("platen.services").factory("fileManager", function() {
             }, onErrorCallback);
         }
     };
+    var getFileSystem = function(onSuccessCallback, onErrorCallback) {
+        window.webkitRequestFileSystem(PERSISTENT, SIZE, function(fileSystem) {
+            fs = fileSystem;
+            onSuccessCallback();
+        }, function(e) {
+            onErrorCallback(getError(e, "while initializing file system"));
+        });
+    };
     return {
         directoryAccessActions: {
             LIST: LIST_FILE,
@@ -12787,56 +12458,57 @@ angular.module("platen.services").factory("fileManager", function() {
             REMOVE: REMOVE_FILE
         },
         initialize: function(onSuccessCallback, onErrorCallback) {
-            window.webkitRequestFileSystem(PERSISTENT, SIZE, function(fileSystem) {
-                fs = fileSystem;
-                onSuccessCallback();
-            }, function(e) {
-                onErrorCallback(getError(e, "while initializing file system"));
-            });
+            getFileSystem(onSuccessCallback, onErrorCallback);
         },
         accessFilesInDirectory: function(directoryPath, accessAction, onSuccessCallback, onErrorCallback) {
-            if (fs) {
+            var accessFiles = function() {
                 fs.root.getDirectory(directoryPath, doCreate, function(dirEntry) {
                     dirEntry.createReader().readEntries(function(entries) {
-                        _.each(entries, function(entry) {
-                            if (entry.isFile) {
-                                switch (accessAction) {
-                                  case LIST_FILE:
-                                    onSuccessCallback(entry);
-                                    break;
-
-                                  case READ_FILE:
-                                    processFile(entry.fullPath, dontCreate, function(file) {
-                                        var reader = new FileReader();
-                                        reader.onloadend = function(e) {
-                                            onSuccessCallback(this.result);
-                                        };
-                                        reader.readAsText(file);
-                                    }, function(e) {
-                                        onErrorCallback(getError(e, "while reading file " + entry.fullPath));
-                                    });
-                                    break;
-
-                                  case REMOVE_FILE:
-                                    getFileEntryAndDoAction(entry.fullPath, dontCreate, function(fileEntry) {
-                                        fileEntry.remove(onSuccessCallback, function(e) {
-                                            onErrorCallback(getError(e, " while removing file " + entry.fullPath));
-                                        });
-                                    });
-                                    break;
-
-                                  default:
-                                    onSuccessCallback(entry);
-                                    break;
-                                }
-                            }
-                        });
+                        _.each(entries, readEntry);
                     }, function(e) {
                         onErrorCallback(getError(e, "while reading entries in " + directoryPath));
                     });
                 }, function(e) {
                     onErrorCallback(getError(e, "while reading getting directory " + directoryPath));
                 });
+            };
+            var readEntry = function(entry) {
+                if (entry.isFile) {
+                    switch (accessAction) {
+                      case LIST_FILE:
+                        onSuccessCallback(entry);
+                        break;
+
+                      case READ_FILE:
+                        processFile(entry.fullPath, dontCreate, function(file) {
+                            var reader = new FileReader();
+                            reader.onloadend = function(e) {
+                                onSuccessCallback(this.result);
+                            };
+                            reader.readAsText(file);
+                        }, function(e) {
+                            onErrorCallback(getError(e, "while reading file " + entry.fullPath));
+                        });
+                        break;
+
+                      case REMOVE_FILE:
+                        getFileEntryAndDoAction(entry.fullPath, dontCreate, function(fileEntry) {
+                            fileEntry.remove(onSuccessCallback, function(e) {
+                                onErrorCallback(getError(e, " while removing file " + entry.fullPath));
+                            });
+                        });
+                        break;
+
+                      default:
+                        onSuccessCallback(entry);
+                        break;
+                    }
+                }
+            };
+            if (fs) {
+                accessFiles();
+            } else {
+                getFileSystem(accessFiles, onErrorCallback);
             }
         },
         writeFile: function(filePath, fileBody, onSuccessCallback, onErrorCallback) {
@@ -12913,6 +12585,7 @@ angular.module("platen.services").factory("logger", function() {
                 location: location,
                 date: new Date()
             });
+            console.log(message);
         },
         getLogs: function() {
             return log.reverse();
@@ -13019,6 +12692,7 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
                 methodName: methodName,
                 params: fullParams,
                 success: function(response, status, jqXHR) {
+                    console.log("response from wordpress for call " + methodName, response);
                     onSuccessCallback(response);
                 },
                 error: function(jqXHR, status, error) {

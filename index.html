@@ -37,11 +37,8 @@
 					<header>fonts</header>
 					<div class="option-group">
 						<label>post title</label>
-
-						<select data-ng-show="systemFontsAvailable" data-ng-options="font for font in fonts" data-ng-model="settings.postTitleFont"
+						<select data-ng-options="font for font in fonts" data-ng-model="settings.postTitleFont"
 						data-ng-change="saveFont(settings.postTitleFont, settingsKeys.postTitleFont)"></select>
-						<input data-ng-show="!systemFontsAvailable" type="text" class="input-box" data-ng-model="settings.postTitleFont"
-						data-ng-change="saveFont(settings.postTitleFont, settingsKeys.postTitleFont)"></input>
 
 						<div class="font-controls">
 							<span class="icon-larger-font" data-ng-click="changeFontSize('postTitleFontSize', 1)"></span>
@@ -50,11 +47,8 @@
 					</div>
 					<div class="option-group">
 						<label>post body</label>
-
-						<select data-ng-show="systemFontsAvailable" data-ng-options="font for font in fonts" data-ng-model="settings.postBodyFont"
+						<select data-ng-options="font for font in fonts" data-ng-model="settings.postBodyFont"
 						data-ng-change="saveFont(settings.postBodyFont, settingsKeys.postBodyFont)"></select>
-						<input data-ng-show="!systemFontsAvailable" type="text" class="input-box" data-ng-model="settings.postBodyFont"
-						data-ng-change="saveFont(settings.postBodyFont, settingsKeys.postBodyFont)"></input>
 
 						<div class="font-controls">
 							<span class="icon-larger-font" data-ng-click="changeFontSize('postBodyFontSize', 1)"></span>
@@ -65,11 +59,8 @@
 					</div>
 					<div class="option-group">
 						<label>post html</label>
-
-						<select data-ng-show="systemFontsAvailable" data-ng-options="font for font in fonts" data-ng-model="settings.postHtmlFont"
+						<select data-ng-options="font for font in fonts" data-ng-model="settings.postHtmlFont"
 						data-ng-change="saveFont(settings.postHtmlFont, settingsKeys.postHtmlFont)"></select>
-						<input data-ng-show="!systemFontsAvailable" type="text" class="input-box" data-ng-model="settings.postHtmlFont"
-						data-ng-change="saveFont(settings.postHtmlFont, settingsKeys.postHtmlFont)"></input>
 
 						<div class="font-controls">
 							<span class="icon-larger-font" data-ng-click="changeFontSize('postHtmlFontSize', 1)"></span>

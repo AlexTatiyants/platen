@@ -38,6 +38,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
           methodName: methodName,
           params: fullParams,
           success: function(response, status, jqXHR) {
+            console.log("response from wordpress for call " + methodName, response);
             onSuccessCallback(response);
           },
           error: function(jqXHR, status, error) {

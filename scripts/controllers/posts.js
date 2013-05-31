@@ -16,7 +16,7 @@ var PostsController = function($scope, $location, fileManager, logger, resources
         var post = JSON.parse(file);
         $scope.postsList.push(post);
         $scope.loaded = true;
-        $scope.$apply();
+        $scope.safeApply();
 
       } catch (error) {
         logger.log("error reading file [" + file + "]: " + error, "PostsController");

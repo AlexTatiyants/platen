@@ -128,26 +128,28 @@
       <div class="modal-header">
         <h2>Configure Image '<span data-ng-bind="imageToConfigure.name"></span>'</h2>
       </div>
-
-      <div class="image-thumb-container">
-        <img class="image" data-ng-src="{{imageToConfigure.localUrl}}"></img>
-        <span class="caption" data-ng-bind="imageToConfigure.fileName"></span>
-      </div>
-
-      <div class="modal-body pad-right">
-        <div class="field-group full">
-          <label>width <em>(in px)</em></label>
-          <input type="text" class="input-box" data-ng-model="imageToConfigure.width"></input>
+      <div class="modal-body">
+        <div class="image-thumb-container">
+          <img class="image" data-ng-src="{{imageToConfigure.localUrl}}"></img>
+          <span class="caption" data-ng-bind="imageToConfigure.fileName"></span>
         </div>
-        <div class="field-group full">
-          <label>alignment</label>
-            <input type="radio" ng-model="imageToConfigure.alignment" value="none"> none <br/>
-            <input type="radio" ng-model="imageToConfigure.alignment" value="left"> left <br/>
-            <input type="radio" ng-model="imageToConfigure.alignment" value="center"> center <br/>
-            <input type="radio" ng-model="imageToConfigure.alignment" value="right"> right <br/>
-          </ul>
+
+        <div class="image-info-container">
+          <div class="field-group full">
+            <label>width <em>(in px)</em></label>
+            <input type="text" class="input-box" data-ng-model="imageToConfigure.width"></input>
+          </div>
+          <div class="field-group full">
+            <label>alignment</label>
+              <input type="radio" ng-model="imageToConfigure.alignment" value="none"> none <br/>
+              <input type="radio" ng-model="imageToConfigure.alignment" value="left"> left <br/>
+              <input type="radio" ng-model="imageToConfigure.alignment" value="center"> center <br/>
+              <input type="radio" ng-model="imageToConfigure.alignment" value="right"> right <br/>
+            </ul>
+          </div>
         </div>
       </div>
+       <div data-ng-show="imageToConfigure.blogUrl" class="image-info">uploaded to <span data-ng-bind="imageToConfigure.blogUrl"></span></div>
       <div class="modal-footer">
         <button class="btn btn-warning cancel" ng-click="closeConfigureImage()">Ok</button>
       </div>

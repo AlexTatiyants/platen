@@ -29,6 +29,27 @@ body {
   font-style: normal;
   -webkit-font-smoothing: antialiased;
 }
+@font-face {
+  font-family: 'arvo';
+  src: url('/fonts/Arvo-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'cabin';
+  src: url('/fonts/Cabin-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'crimson text';
+  src: url('/fonts/CrimsonText-Roman.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
 .list {
   padding: 0;
   margin-top: 20px;
@@ -260,6 +281,17 @@ body {
   font-size: 0.8rem;
   font-style: italic;
   margin-top: 10px;
+}
+.image-info-container {
+  width: 45%;
+  float: right;
+  margin-right: 20px;
+}
+.image-info {
+  width: 100%;
+  margin: 10px 10px 20px 20px;
+  font-size: 0.8rem;
+  font-style: italic;
 }
 #metadata-panel {
   position: fixed;
@@ -540,6 +572,20 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   height: 100%;
+  margin-right: 2px;
+}
+.settings-container::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 5px;
+  background-color: #e3e3e3;
+}
+.settings-container::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #5c5c5c;
+}
+.settings-container::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #e3e3e3;
 }
 section.option-container {
   padding: 10px 20px 10px 10px;
@@ -1147,4 +1193,17 @@ h2 {
   float: right;
   margin-left: 20px;
   margin-bottom: 20px;
+}
+.scrollbar-styles::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 5px;
+  background-color: #e3e3e3;
+}
+.scrollbar-styles::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #5c5c5c;
+}
+.scrollbar-styles::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #e3e3e3;
 }

@@ -48,6 +48,15 @@ angular.module('platen.services').factory('fileManager', function() {
     }
   };
 
+  var getFileSystem = function(onSuccessCallback, onErrorCallback) {
+    window.webkitRequestFileSystem(PERSISTENT, SIZE, function(fileSystem) {
+      fs = fileSystem;
+      onSuccessCallback();
+    }, function(e) {
+      onErrorCallback(getError(e, "while initializing file system"));
+    });
+  };
+
   return {
     directoryAccessActions: {
       LIST: LIST_FILE,
@@ -56,64 +65,61 @@ angular.module('platen.services').factory('fileManager', function() {
     },
 
     initialize: function(onSuccessCallback, onErrorCallback) {
-      window.webkitRequestFileSystem(PERSISTENT, SIZE, function(fileSystem) {
-        fs = fileSystem;
-        onSuccessCallback();
-      }, function(e) {
-        onErrorCallback(getError(e, "while initializing file system"));
-      });
+      getFileSystem(onSuccessCallback, onErrorCallback);
     },
 
     accessFilesInDirectory: function(directoryPath, accessAction, onSuccessCallback, onErrorCallback) {
-      if (fs) {
+
+      var accessFiles = function() {
         fs.root.getDirectory(directoryPath, doCreate, function(dirEntry) {
           dirEntry.createReader().readEntries(function(entries) {
-            _.each(entries, function(entry) {
-              if (entry.isFile) {
-
-                switch (accessAction) {
-                  case LIST_FILE:
-                    onSuccessCallback(entry);
-                    break;
-
-                  case READ_FILE:
-                    processFile(entry.fullPath, dontCreate,
-
-                    function(file) {
-                      var reader = new FileReader();
-                      reader.onloadend = function(e) {
-                        onSuccessCallback(this.result);
-                      };
-                      reader.readAsText(file);
-                    },
-
-                    function(e) {
-                      onErrorCallback(getError(e, "while reading file " + entry.fullPath));
-                    });
-                    break;
-
-                  case REMOVE_FILE:
-                    getFileEntryAndDoAction(entry.fullPath, dontCreate,
-
-                    function(fileEntry) {
-                      fileEntry.remove(onSuccessCallback, function(e) {
-                        onErrorCallback(getError(e, " while removing file " + entry.fullPath));
-                      });
-                    });
-                    break;
-
-                  default:
-                    onSuccessCallback(entry);
-                    break;
-                }
-              }
-            });
+            _.each(entries, readEntry);
           }, function(e) {
             onErrorCallback(getError(e, "while reading entries in " + directoryPath));
           });
         }, function(e) {
           onErrorCallback(getError(e, "while reading getting directory " + directoryPath));
         });
+      };
+
+      var readEntry = function(entry) {
+        if (entry.isFile) {
+          switch (accessAction) {
+            case LIST_FILE:
+              onSuccessCallback(entry);
+              break;
+
+            case READ_FILE:
+              processFile(entry.fullPath, dontCreate, function(file) {
+                var reader = new FileReader();
+                reader.onloadend = function(e) {
+                  onSuccessCallback(this.result);
+                };
+                reader.readAsText(file);
+              }, function(e) {
+                onErrorCallback(getError(e, "while reading file " + entry.fullPath));
+              });
+              break;
+
+            case REMOVE_FILE:
+              getFileEntryAndDoAction(entry.fullPath, dontCreate, function(fileEntry) {
+                fileEntry.remove(onSuccessCallback, function(e) {
+                  onErrorCallback(getError(e, " while removing file " + entry.fullPath));
+                });
+              });
+              break;
+
+            default:
+              onSuccessCallback(entry);
+              break;
+          }
+        }
+      };
+
+      if (fs) {
+        accessFiles();
+      } else {
+        getFileSystem(accessFiles, onErrorCallback);
       }
     },
 

@@ -61,9 +61,9 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
           // platen suffixes images with a unique identifier which has to be removed
           // prior to uploading the file to WordPress
           var cleanFileName = image.fileName.substr(0, image.fileName.lastIndexOf("."));
-          wordpress.uploadFile(cleanFileName, image.type, imageData, function(id, url) {
-            image.blogUrl = url;
-            image.blogId = id;
+          wordpress.uploadFile(cleanFileName, image.type, imageData, function(response) {
+            image.blogUrl = response[0].url;
+            image.blogId = response[0].id;
             logger.log("uploaded image '" + image.fileName + "' to '" + image.blogUrl, "Post module");
             d.resolve();
 

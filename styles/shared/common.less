@@ -143,3 +143,21 @@ h2 {
   margin-bottom: @pad-unit;
 }
 
+.scrollbar-styles {
+  &::-webkit-scrollbar {
+      width: @pad-unit/2;
+      border-radius: @pad-unit/4;
+      background-color: @alt-text-color-weak;
+  }
+
+  &::-webkit-scrollbar-track {
+      border-radius: @pad-unit/4;
+      background-color: @alt-base-color-weak;
+  }
+
+  &::-webkit-scrollbar-thumb {
+      border-radius: @pad-unit/4;
+      background-color: @alt-text-color-weak;
+  }
+}
+
