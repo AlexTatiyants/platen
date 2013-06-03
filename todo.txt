@@ -14,3 +14,6 @@ Pasting
 
 Image
 - when deleting from Images screen, remove from all posts where used (could be time consuming)
+
+Posts
+- when deleting a post, delete all associated images

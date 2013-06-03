@@ -1,6 +1,5 @@
-angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager', 'wordpress', 'logger',
-
-  function($q, resources, fileManager, wordpress, logger) {
+angular.module('platen.models').factory('Post', ['$rootScope', '$q', 'resources', 'fileManager', 'wordpress', 'logger',
+  function($rootScope, $q, resources, fileManager, wordpress, logger) {
     var data = {};
     var STATUS_DRAFT = 'draft';
     var STATUS_PUBLISH = 'publish';
@@ -19,8 +18,7 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
         contentMarkdown - raw text written using markdown formatting (innerText property of the editor window)
         contentMarkdownHTML - markdown text, HTMLified by the browswer (innerHTML property of the editor window)
         contentHTMLPreview - markdown text converted to HTML (innerHTML content of the preview window)
-        content - markdown text converted to HTML and encoded (i.e. content of the post for Wordpress)
-    */
+        content - markdown text converted to HTML and encoded (i.e. content of the post for Wordpress) */
       data.content = '';
       data.contentMarkdown = ''; // set by editable-markdown directive
       data.contentMarkdownHtml = '';
@@ -58,25 +56,32 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
 
       try {
         fileManager.readFile(image.filePath, false, function(imageData) {
-          // platen suffixes images with a unique identifier which has to be removed
-          // prior to uploading the file to WordPress
+          // platen suffixes images with a unique identifier which has to be removed prior to uploading the file to WordPress
           var cleanFileName = image.fileName.substr(0, image.fileName.lastIndexOf("."));
+
           wordpress.uploadFile(cleanFileName, image.type, imageData, function(response) {
             image.blogUrl = response[0].url;
             image.blogId = response[0].id;
+
+            logger.log("uploaded image '" + image.name + "' to '" + image.blogUrl + "'", "Post module");
             d.resolve();
-            logger.log("uploaded image '" + image.fileName + "' to '" + image.blogUrl, "Post module");
+            $rootScope.$apply();
+
           }, function(e) {
+            logger.log("error uploading image '" + image.name + "'", "Post Module");
             d.reject();
-            logger.log("error uploading image '" + image.fileName + "'", "Post Module");
+            $rootScope.$apply();
           });
+
         }, function(e) {
+          logger.log("error reading image '" + image.name + "'", "Post Module");
           d.reject();
-          logger.log("error reading image " + image.fileName, "Post Module");
+          $rootScope.$apply();
         });
+
       } catch (e) {
         d.reject();
-        logger.log("error uploading image " + image.fileName, "Post Module");
+        logger.log("error uploading image '" + image.name + "'", "Post Module");
       }
 
       return d.promise;
@@ -84,11 +89,11 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
 
     var uploadImages = function(content, onCompletionCallback) {
       var promises = [];
+
       _.each(data.images, function(image) {
         if (!image.blogId || image.blogId.trim() === '') {
           // for each image to be uploaded, initiate upload to wordpress
           // because this operation is asyncronous, we need to get a promise for it
-          console.log("in uploadImages, created promise for", image);
           promises.push(uploadImage(image));
         }
       });
@@ -104,7 +109,7 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
     };
 
     var replaceImageHtml = function(content, image) {
-      var imgReplacement = '&lt;a href="' + image.blogUrl + '"&gt; &lt;img class="align' + image.alignment;
+      var imgReplacement = '<a href="' + image.blogUrl + '"><img class="align' + image.alignment;
 
       if (image.width > 0) {
         imgReplacement += '" width="' + image.width;
@@ -112,8 +117,9 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
 
       imgReplacement += '" src="' + image.blogUrl;
 
-      return content.replace('&lt;img src="' + image.localUrl, imgReplacement)
-        .replace('alt="' + image.title + '"&gt;', 'alt="' + image.title + '"&gt;&lt;/a&gt;');
+      return content
+        .replace('<img src="' + image.localUrl, imgReplacement)
+        .replace('alt="' + image.title + '">', 'alt="' + image.title + '"></a>');
     };
 
     return {
@@ -142,35 +148,31 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
         data.content = marked(data.contentMarkdown);
 
         var saveOnSuccessCallback = function(result) {
-          // if this is the first time the post is being uploaded
-          // we'll get a WordPress id which should be saved locally
           logger.log("synched post '" + data.title + "'", "Post service");
+
           data.state.lastUploadDate = new Date();
           if (data.state.toBePublished) {
             data.state.toBePublished = false;
           }
           if (!data.wordPressId) {
             data.wordPressId = result[0];
-            savePost(onSuccessCallback, onErrorCallback);
           }
-          onSuccessCallback();
+
+          savePost(onSuccessCallback, onErrorCallback);
         };
 
         try {
           // before uploading the post to WordPress, we need to
           // extract and upload any images which haven't already been uploaded
-          console.log("in Post, uploading images");
           uploadImages(data.content, function() {
-            console.log("in Post, image upload done", data.images);
             // replace references to images within the post body with WordPress urls
             var content = data.content;
 
             _.each(data.images, function(image) {
               content = replaceImageHtml(content, image);
             });
-            data.content = content;
 
-            console.log("in Post, calling wordpress save with content", data.content);
+            data.content = content;
 
             wordpress.savePost(data, saveOnSuccessCallback, onErrorCallback);
 
