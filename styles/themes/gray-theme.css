@@ -928,6 +928,12 @@ aside.page-links h3 {
   font-size: 0.9rem;
   line-height: 1.52rem;
 }
+.tip-container iframe,
+.tip-container webview {
+  border: 0px;
+  width: 80%;
+  height: 60px;
+}
 .tip-container .btn {
   font-size: 1.2rem;
   width: 100%;
