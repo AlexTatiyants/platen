@@ -12330,6 +12330,13 @@ var PostsController = function($scope, $location, fileManager, logger, resources
     };
     $scope.proceedWithDelete = function() {
         $scope.deletePostConfirmOpen = false;
+        _.each($scope.postToDelete.images, function(image) {
+            fileManager.removeFile(image.filePath, function() {
+                logger.log("deleted image '" + image.name + "'", "PostsController");
+            }, function(error) {
+                logger.log("failed to delete image '" + image.name + "'", "PostsController");
+            });
+        });
         fileManager.removeFile($scope.postToDelete.path, function() {
             var newList = _.reject($scope.postsList, function(post) {
                 return post.id === $scope.postToDelete.id;

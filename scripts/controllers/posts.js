@@ -61,7 +61,13 @@ var PostsController = function($scope, $location, fileManager, logger, resources
     $scope.deletePostConfirmOpen = false;
 
     // delete all related images
-
+    _.each($scope.postToDelete.images, function(image) {
+      fileManager.removeFile(image.filePath, function() {
+        logger.log("deleted image '" + image.name + "'", "PostsController");
+      }, function(error) {
+        logger.log("failed to delete image '" + image.name + "'", "PostsController");
+      });
+    });
 
     // delete the post itself
     fileManager.removeFile($scope.postToDelete.path, function() {
