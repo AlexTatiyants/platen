@@ -568,7 +568,7 @@
 .settings-container {
   overflow-y: auto;
   overflow-x: hidden;
-  height: 100%;
+  height: 90%;
   margin-right: 2px;
 }
 .settings-container::-webkit-scrollbar {

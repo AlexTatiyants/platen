@@ -10,7 +10,10 @@ var PostsController = function($scope, $location, fileManager, logger, resources
   $scope.filters = {};
   $scope.filters.dateSortOrder = SORT_DESCENDING;
 
-  if (!$scope.loaded) {
+  var loadPosts = function() {
+    $scope.postsList = [];
+    $scope.safeApply();
+
     fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.READ, function(file) {
       try {
         var post = JSON.parse(file);
@@ -34,7 +37,15 @@ var PostsController = function($scope, $location, fileManager, logger, resources
         success: false
       });
     });
+  };
+
+  if (!$scope.loaded) {
+    loadPosts();
   }
+
+  $scope.$on(resources.events.ALL_POSTS_DELETED, function(event, args) {
+    loadPosts();
+  });
 
   $scope.deletePost = function(post) {
     $scope.postToDelete = post;
@@ -48,6 +59,11 @@ var PostsController = function($scope, $location, fileManager, logger, resources
 
   $scope.proceedWithDelete = function() {
     $scope.deletePostConfirmOpen = false;
+
+    // delete all related images
+
+
+    // delete the post itself
     fileManager.removeFile($scope.postToDelete.path, function() {
       var newList = _.reject($scope.postsList, function(post) {
         return (post.id === $scope.postToDelete.id);

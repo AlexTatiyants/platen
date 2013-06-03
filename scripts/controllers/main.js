@@ -141,9 +141,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
 
   $scope.loginCredentials = function() {
     $dialog.dialog({
-      backdrop: true,
-      keyboard: true,
-      backdropClick: true,
       controller: 'LoginController',
       templateUrl: 'views/modals/login.html'
     }).open();
@@ -206,14 +203,23 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   };
 
   $scope.deleteAllPosts = function() {
+    $scope.deleteAllPostsConfirmOpen = true;
+  };
+
+  $scope.cancelAllPostsDelete = function() {
+    $scope.deleteAllPostsConfirmOpen = false;
+  };
+
+  $scope.proceedWithAllPostsDelete = function() {
     fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
       logger.log("deleted all posts", "MainController");
 
-      $scope.postsList = [];
       $scope.$emit(resources.events.PROCESSING_FINISHED, {
         message: "all posts removed",
         success: true
       });
+
+      $scope.$broadcast(resources.events.ALL_POSTS_DELETED);
 
     }, function(error) {
       logger.log("error removing all posts: " + error, "MainController");
@@ -223,16 +229,28 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
         success: false
       });
     });
+    $scope.deleteAllPostsConfirmOpen = false;
   };
 
-  $scope.deleteAllIMages = function() {
+  $scope.deleteAllImages = function() {
+    $scope.deleteAllImagesConfirmOpen = true;
+  };
+
+  $scope.cancelAllImagesDelete = function() {
+    $scope.deleteAllImagesConfirmOpen = false;
+  };
+
+  $scope.proceedWithAllImagesDelete = function() {
     fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
       logger.log("deleted all images", "ImagesController");
-      $scope.images = {};
+
       $scope.$emit(resources.events.PROCESSING_FINISHED, {
         message: "all images removed",
         success: true
       });
+
+      $scope.$broadcast(resources.events.ALL_IMAGES_DELETED);
+
     }, function(error) {
       logger.log("error removing all images: " + error, "ImagesController");
 
@@ -241,6 +259,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
         success: false
       });
     });
+    $scope.deleteAllImagesConfirmOpen = false;
   };
 
   $scope.safeApply = function(fn) {

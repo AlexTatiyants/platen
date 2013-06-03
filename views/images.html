@@ -3,7 +3,7 @@
 
     <ul class="list">
         <li class="list-item-tile" data-ng-repeat="image in images">
-            <!-- <span class="icon icon-delete" data-ng-click="deleteImage(image)"></span> -->
+            <span class="icon icon-delete" data-ng-click="deleteImage(image)"></span>
             <h3 data-ng-bind="image.name"></h3>
             <img class="large-thumbnail" data-ng-src="{{image.url}}"></img>
         </li>

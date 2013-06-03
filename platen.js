@@ -11966,7 +11966,9 @@ var ImagesController = function($scope, fileManager, logger, resources) {
     $scope.confirm = {};
     $scope.loaded = false;
     $scope.imageToDelete = {};
-    if (!$scope.loaded) {
+    var loadImages = function() {
+        $scope.images = {};
+        $scope.safeApply();
         fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.LIST, function(file) {
             var image = {};
             image.name = file.name;
@@ -11982,7 +11984,13 @@ var ImagesController = function($scope, fileManager, logger, resources) {
                 success: false
             });
         });
+    };
+    if (!$scope.loaded) {
+        loadImages();
     }
+    $scope.$on(resources.events.ALL_IMAGES_DELETED, function(event, args) {
+        loadImages();
+    });
     $scope.deleteImage = function(image) {
         $scope.imageToDelete = image;
         $scope.deleteImageConfirmOpen = true;
@@ -12163,9 +12171,6 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     };
     $scope.loginCredentials = function() {
         $dialog.dialog({
-            backdrop: true,
-            keyboard: true,
-            backdropClick: true,
             controller: "LoginController",
             templateUrl: "views/modals/login.html"
         }).open();
@@ -12216,13 +12221,19 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
         $scope.aboutDialogOpen = false;
     };
     $scope.deleteAllPosts = function() {
+        $scope.deleteAllPostsConfirmOpen = true;
+    };
+    $scope.cancelAllPostsDelete = function() {
+        $scope.deleteAllPostsConfirmOpen = false;
+    };
+    $scope.proceedWithAllPostsDelete = function() {
         fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
             logger.log("deleted all posts", "MainController");
-            $scope.postsList = [];
             $scope.$emit(resources.events.PROCESSING_FINISHED, {
                 message: "all posts removed",
                 success: true
             });
+            $scope.$broadcast(resources.events.ALL_POSTS_DELETED);
         }, function(error) {
             logger.log("error removing all posts: " + error, "MainController");
             $scope.$emit(resources.events.PROCESSING_FINISHED, {
@@ -12230,15 +12241,22 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
                 success: false
             });
         });
+        $scope.deleteAllPostsConfirmOpen = false;
     };
-    $scope.deleteAllIMages = function() {
+    $scope.deleteAllImages = function() {
+        $scope.deleteAllImagesConfirmOpen = true;
+    };
+    $scope.cancelAllImagesDelete = function() {
+        $scope.deleteAllImagesConfirmOpen = false;
+    };
+    $scope.proceedWithAllImagesDelete = function() {
         fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.REMOVE, function(file) {
             logger.log("deleted all images", "ImagesController");
-            $scope.images = {};
             $scope.$emit(resources.events.PROCESSING_FINISHED, {
                 message: "all images removed",
                 success: true
             });
+            $scope.$broadcast(resources.events.ALL_IMAGES_DELETED);
         }, function(error) {
             logger.log("error removing all images: " + error, "ImagesController");
             $scope.$emit(resources.events.PROCESSING_FINISHED, {
@@ -12246,6 +12264,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
                 success: false
             });
         });
+        $scope.deleteAllImagesConfirmOpen = false;
     };
     $scope.safeApply = function(fn) {
         var phase = this.$root.$$phase;
@@ -12270,7 +12289,9 @@ var PostsController = function($scope, $location, fileManager, logger, resources
     var SORT_ASCENDING = "ascending";
     $scope.filters = {};
     $scope.filters.dateSortOrder = SORT_DESCENDING;
-    if (!$scope.loaded) {
+    var loadPosts = function() {
+        $scope.postsList = [];
+        $scope.safeApply();
         fileManager.accessFilesInDirectory(resources.POST_DIRECTORY_PATH, fileManager.directoryAccessActions.READ, function(file) {
             try {
                 var post = JSON.parse(file);
@@ -12292,7 +12313,13 @@ var PostsController = function($scope, $location, fileManager, logger, resources
                 success: false
             });
         });
+    };
+    if (!$scope.loaded) {
+        loadPosts();
     }
+    $scope.$on(resources.events.ALL_POSTS_DELETED, function(event, args) {
+        loadPosts();
+    });
     $scope.deletePost = function(post) {
         $scope.postToDelete = post;
         $scope.deletePostConfirmOpen = true;
@@ -12740,7 +12767,9 @@ angular.module("platen.services").value("resources", {
         PROCESSING_FINISHED: "processingFinished",
         ELEMENT_EDITED: "elementEdited",
         FONT_CHANGED: "fontChanged",
-        IMAGE_INSERTED: "imageInserted"
+        IMAGE_INSERTED: "imageInserted",
+        ALL_POSTS_DELETED: "allPostsDeleted",
+        ALL_IMAGES_DELETED: "allImagesDeleted"
     },
     typography: {
         UNIT_OF_MEASURE: "rem",

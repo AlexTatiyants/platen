@@ -4,7 +4,10 @@ var ImagesController = function($scope, fileManager, logger, resources) {
   $scope.loaded = false;
   $scope.imageToDelete = {};
 
-  if (!$scope.loaded) {
+  var loadImages = function() {
+    $scope.images = {};
+    $scope.safeApply();
+
     fileManager.accessFilesInDirectory(resources.IMAGE_DIRECTORY_PATH, fileManager.directoryAccessActions.LIST, function(file) {
       var image = {};
 
@@ -23,7 +26,16 @@ var ImagesController = function($scope, fileManager, logger, resources) {
         success: false
       });
     });
+
+  };
+
+  if (!$scope.loaded) {
+    loadImages();
   }
+
+  $scope.$on(resources.events.ALL_IMAGES_DELETED, function(event, args) {
+    loadImages();
+  });
 
   $scope.deleteImage = function(image) {
     $scope.imageToDelete = image;
