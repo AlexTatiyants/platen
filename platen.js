@@ -1,4 +1,4 @@
-/*! DEV ! platen 2013-05-31 */
+/*! DEV ! platen 2013-06-02 */
 (function(e, t) {
     var n, r, i = typeof t, o = e.document, a = e.location, s = e.jQuery, u = e.$, l = {}, c = [], p = "1.9.1", f = c.concat, d = c.push, h = c.slice, g = c.indexOf, m = l.toString, y = l.hasOwnProperty, v = p.trim, b = function(e, t) {
         return new b.fn.init(e, t, r);
@@ -3660,6 +3660,348 @@ Base64.prototype.decode = function() {
         }
         return d.join("");
     }
+};
+
+function WordPress(url, username, password) {
+    this.url = url;
+    this.username = username;
+    this.password = password;
+    this.request = new XmlRpcRequest(this.url);
+}
+
+WordPress.prototype.getPost = function(blog_id, post_id, fields) {
+    this.request.methodName = "wp.getPost";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(post_id);
+    this.request.addParam(fields);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getPosts = function(blog_id, filter, fields) {
+    this.request.methodName = "wp.getPosts";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(filter);
+    this.request.addParam(fields);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.newPost = function(blog_id, content) {
+    this.request.methodName = "wp.newPost";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(content);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.editPost = function(blog_id, post_id, content) {
+    this.request.methodName = "wp.editPost";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(post_id);
+    this.request.addParam(content);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.deletePost = function(blog_id, post_id) {
+    this.request.methodName = "wp.deletePost";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(post_id);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getPostType = function(blog_id, post_type_name, fields) {
+    this.request.methodName = "wp.getPostType";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(post_type_name);
+    this.request.addParam(fields);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getPostTypes = function(blog_id, filter, fields) {
+    this.request.methodName = "wp.getPostTypes";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(filter);
+    this.request.addParam(fields);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getPostFormats = function(blog_id, filter) {
+    this.request.methodName = "wp.getPostFormats";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(filter);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getPostStatusList = function(blog_id) {
+    this.request.methodName = "wp.getPostStatusList";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getTaxonomy = function(blog_id, taxonomy) {
+    this.request.methodName = "wp.getTaxonomy";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(taxonomy);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getTaxonomies = function(blog_id) {
+    this.request.methodName = "wp.getTaxonomies";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getTerm = function(blog_id, taxonomy, term_id) {
+    this.request.methodName = "wp.getTerm";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(taxonomy);
+    this.request.addParam(term_id);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getTerms = function(blog_id, taxonomy, filter) {
+    this.request.methodName = "wp.getTerms";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(taxonomy);
+    this.request.addParam(filter);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.newTerm = function(blog_id, content) {
+    this.request.methodName = "wp.newTerm";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(content);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.editTerm = function(blog_id, term_id, content) {
+    this.request.methodName = "wp.editTerm";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(term_id);
+    this.request.addParam(content);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.deleteTerm = function(blog_id, taxonomy, term_id) {
+    this.request.methodName = "wp.deleteTerm";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(taxonomy);
+    this.request.addParam(term_id);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getMediaItem = function(blog_id, attachment_id) {
+    this.request.methodName = "wp.getMediaItem";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(attachment_id);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getMediaLibrary = function(blog_id, filter) {
+    this.request.methodName = "wp.getMediaLibrary";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(filter);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.uploadFile = function(blog_id, data) {
+    this.request.methodName = "wp.uploadFile";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(data);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getCommentCount = function(blog_id, post_id) {
+    this.request.methodName = "wp.getCommentCount";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(post_id);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getComment = function(blog_id, comment_id) {
+    this.request.methodName = "wp.getComment";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(comment_id);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getComments = function(blog_id, filter) {
+    this.request.methodName = "wp.getComments";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(filter);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.newComment = function(blog_id, post_id, content) {
+    this.request.methodName = "wp.newComment";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(post_id);
+    this.request.addParam(content);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.editComment = function(blog_id, comment_id, comment) {
+    this.request.methodName = "wp.editComment";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(comment_id);
+    this.request.addParam(comment);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.deleteComment = function(blog_id, comment_id) {
+    this.request.methodName = "wp.deleteComment";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(comment_id);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getCommentStatusList = function(blog_id) {
+    this.request.methodName = "wp.getCommentStatusList";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getOptions = function(blog_id, options) {
+    this.request.methodName = "wp.getOptions";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(options);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.setOptions = function(blog_id, options) {
+    this.request.methodName = "wp.setOptions";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    this.request.addParam(options);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getUsersBlogs = function() {
+    this.request.methodName = "wp.getUsersBlogs";
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
+};
+
+WordPress.prototype.getAuthors = function(blog_id) {
+    this.request.methodName = "wp.getAuthors";
+    this.request.addParam(blog_id);
+    this.request.addParam(this.username);
+    this.request.addParam(this.password);
+    var resp = this.request.send();
+    this.request.clearParams();
+    return resp.parseXML();
 };
 
 (function(M, V, s) {
@@ -11720,10 +12062,12 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
     };
     $scope.sync = function() {
         $scope.$emit(resources.events.PROCESSING_STARTED, "starting upload to WordPress");
-        Post.sync(function() {
-            notifyOnCompletion("finished upload to WordPress", null, true);
-        }, function(error) {
-            notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
+        wordpress.getCredentials(function() {
+            Post.sync(function() {
+                notifyOnCompletion("finished upload to WordPress", null, true);
+            }, function(error) {
+                notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
+            });
         });
     };
     $scope.getTags = function() {
@@ -12319,8 +12663,8 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                 wordpress.uploadFile(cleanFileName, image.type, imageData, function(response) {
                     image.blogUrl = response[0].url;
                     image.blogId = response[0].id;
-                    logger.log("uploaded image '" + image.fileName + "' to '" + image.blogUrl, "Post module");
                     d.resolve();
+                    logger.log("uploaded image '" + image.fileName + "' to '" + image.blogUrl, "Post module");
                 }, function(e) {
                     d.reject();
                     logger.log("error uploading image '" + image.fileName + "'", "Post Module");
@@ -12339,11 +12683,12 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
         var promises = [];
         _.each(data.images, function(image) {
             if (!image.blogId || image.blogId.trim() === "") {
+                console.log("in uploadImages, created promise for", image);
                 promises.push(uploadImage(image));
             }
         });
         if (promises.length > 0) {
-            $q.all(promises).then(onCompletionCallback());
+            $q.all(promises).then(onCompletionCallback);
         } else {
             onCompletionCallback();
         }
@@ -12389,12 +12734,15 @@ angular.module("platen.models").factory("Post", [ "$q", "resources", "fileManage
                 onSuccessCallback();
             };
             try {
+                console.log("in Post, uploading images");
                 uploadImages(data.content, function() {
+                    console.log("in Post, image upload done", data.images);
                     var content = data.content;
                     _.each(data.images, function(image) {
                         content = replaceImageHtml(content, image);
                     });
                     data.content = content;
+                    console.log("in Post, calling wordpress save with content", data.content);
                     wordpress.savePost(data, saveOnSuccessCallback, onErrorCallback);
                 });
             } catch (e) {
@@ -12670,17 +13018,56 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
     var _login = {};
     var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = "platen.wordPressCredentials";
     var isLoginValid = function() {
-        return _login.url.trim() !== "" || _login.username.trim() !== "" || _login.password.trim() !== "";
+        return !_.isEmpty(_login) && _login.url.trim() !== "" && _login.username.trim() !== "" && _login.password.trim() !== "";
     };
     var loadCredentialsFromStorage = function(onCompletionCallback) {
+        console.log("in loadCredentialsFromStorage");
         chrome.storage.local.get(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, function(storedValues) {
-            _login.url = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].url || "";
-            _login.password = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].password || _login.currentSessionCachedPassword || "";
-            _login.username = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].username || "";
-            _login.rememberPassword = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].rememberPassword || "";
+            if (storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY]) {
+                _login.url = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].url || "";
+                _login.password = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].password || _login.currentSessionCachedPassword || "";
+                _login.username = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].username || "";
+                _login.rememberPassword = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].rememberPassword || false;
+            } else {
+                _login.url = "";
+                _login.username = "";
+                _login.password = "";
+                _login.rememberPassword = false;
+            }
             logger.log("loaded WordPress configuration", "wordpress service");
             onCompletionCallback(_login);
         });
+    };
+    var obtainCredentialsFromUserIfNeeded = function(onSuccessCallback) {
+        console.log("in obtainCredentialsFromUserIfNeeded");
+        var getLoginIfNeeded = function() {
+            console.log("in getLoginIfNeeded");
+            if (!isLoginValid()) {
+                console.log("in getLoginIfNeeded, login not valid, opening dialog");
+                var d = $dialog.dialog({
+                    controller: "LoginController",
+                    templateUrl: "views/modals/login.html"
+                });
+                d.open().then(function() {
+                    if (isLoginValid()) {
+                        onSuccessCallback();
+                    } else {
+                        onErrorCallback("cannot execute call, invalid credentials for WordPress blog");
+                        logger.log("cannot execute call, invalid credentials for WordPress blog", "wordpress service");
+                    }
+                });
+            } else {
+                console.log("in getLoginIfNeeded, login valid, calling onSuccessCallback");
+                onSuccessCallback();
+            }
+        };
+        if (_.isEmpty(_login)) {
+            console.log("login empty, loading credentials");
+            loadCredentialsFromStorage(getLoginIfNeeded);
+        } else {
+            console.log("login not empty, moving on");
+            getLoginIfNeeded();
+        }
     };
     var callWordPress = function(methodName, additionalParams, onSuccessCallback, onErrorCallback) {
         var codeToRun = function() {
@@ -12700,33 +13087,20 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "logger", fu
                 }
             });
         };
-        var obtainCredentialsFromUserIfNeeded = function() {
-            if (!isLoginValid()) {
-                var d = $dialog.dialog({
-                    controller: "LoginController",
-                    templateUrl: "views/modals/login.html"
-                });
-                d.open().then(function() {
-                    if (isLoginValid()) {
-                        codeToRun();
-                    } else {
-                        onErrorCallback("cannot execute call, invalid credentials for WordPress blog");
-                        logger.log("cannot execute call, invalid credentials for WordPress blog", "wordpress service");
-                    }
-                });
-            } else {
-                codeToRun();
-            }
-        };
-        if (_.isEmpty(_login)) {
-            loadCredentialsFromStorage(obtainCredentialsFromUserIfNeeded);
+        if (isLoginValid) {
+            console.log("in callWordPress, login valid");
+            codeToRun();
         } else {
-            obtainCredentialsFromUserIfNeeded();
+            console.log("in callWordPress, login invalid, getting login");
+            obtainCredentialsFromUserIfNeeded(codeToRun);
         }
     };
     return {
         loadCredentials: function(onCompletionCallback) {
             loadCredentialsFromStorage(onCompletionCallback);
+        },
+        getCredentials: function(onSuccessCallback) {
+            obtainCredentialsFromUserIfNeeded(onSuccessCallback);
         },
         saveCredentials: function(login) {
             var saveMe = {};

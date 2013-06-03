@@ -64,14 +64,12 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
           wordpress.uploadFile(cleanFileName, image.type, imageData, function(response) {
             image.blogUrl = response[0].url;
             image.blogId = response[0].id;
-            logger.log("uploaded image '" + image.fileName + "' to '" + image.blogUrl, "Post module");
             d.resolve();
-
+            logger.log("uploaded image '" + image.fileName + "' to '" + image.blogUrl, "Post module");
           }, function(e) {
             d.reject();
             logger.log("error uploading image '" + image.fileName + "'", "Post Module");
           });
-
         }, function(e) {
           d.reject();
           logger.log("error reading image " + image.fileName, "Post Module");
@@ -90,6 +88,7 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
         if (!image.blogId || image.blogId.trim() === '') {
           // for each image to be uploaded, initiate upload to wordpress
           // because this operation is asyncronous, we need to get a promise for it
+          console.log("in uploadImages, created promise for", image);
           promises.push(uploadImage(image));
         }
       });
@@ -97,7 +96,7 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
       if (promises.length > 0) {
         // once all promises are fullfilled (i.e. all items have been uploaded),
         // proceed with uploading the post
-        $q.all(promises).then(onCompletionCallback());
+        $q.all(promises).then(onCompletionCallback);
       } else {
         // if there were no promises to begin with, just proceed with uploading
         onCompletionCallback();
@@ -160,28 +159,21 @@ angular.module('platen.models').factory('Post', ['$q', 'resources', 'fileManager
         try {
           // before uploading the post to WordPress, we need to
           // extract and upload any images which haven't already been uploaded
+          console.log("in Post, uploading images");
           uploadImages(data.content, function() {
+            console.log("in Post, image upload done", data.images);
             // replace references to images within the post body with WordPress urls
             var content = data.content;
+
             _.each(data.images, function(image) {
               content = replaceImageHtml(content, image);
             });
             data.content = content;
 
+            console.log("in Post, calling wordpress save with content", data.content);
+
             wordpress.savePost(data, saveOnSuccessCallback, onErrorCallback);
 
-            // wordpress.savePost(data, function(result) {
-            //   data.state.lastUploadDate = new Date();
-            //   if (data.state.toBePublished) {
-            //     data.state.toBePublished = false;
-            //   }
-            //   if (!data.wordPressId) {
-            //     data.wordPressId = result;
-            //     savePost(onSuccessCallback, onErrorCallback);
-            //   } else {
-            //     onSuccessCallback();
-            //   }
-            // }, onErrorCallback);
           });
         } catch (e) {
           onErrorCallback(e);

@@ -205,10 +205,12 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   $scope.sync = function() {
     $scope.$emit(resources.events.PROCESSING_STARTED, "starting upload to WordPress");
 
-    Post.sync(function() {
-      notifyOnCompletion("finished upload to WordPress", null, true);
-    }, function(error) {
-      notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
+    wordpress.getCredentials(function() {
+      Post.sync(function() {
+        notifyOnCompletion("finished upload to WordPress", null, true);
+      }, function(error) {
+        notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
+      });
     });
   };
 

@@ -10,24 +10,67 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
     var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = 'platen.wordPressCredentials';
 
     var isLoginValid = function() {
-      return _login.url.trim() !== "" || _login.username.trim() !== "" || _login.password.trim() !== "";
+      return !_.isEmpty(_login) && _login.url.trim() !== "" && _login.username.trim() !== "" && _login.password.trim() !== "";
     };
 
     var loadCredentialsFromStorage = function(onCompletionCallback) {
+      console.log("in loadCredentialsFromStorage");
       chrome.storage.local.get(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, function(storedValues) {
 
-        _login.url = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].url || '';
-        _login.password = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].password || _login.currentSessionCachedPassword || '';
-        _login.username = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].username || '';
-        _login.rememberPassword = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].rememberPassword || '';
+        if (storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY]) {
+          _login.url = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].url || '';
+          _login.password = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].password || _login.currentSessionCachedPassword || '';
+          _login.username = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].username || '';
+          _login.rememberPassword = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].rememberPassword || false;
+        } else {
+          _login.url = '';
+          _login.username = '';
+          _login.password = '';
+          _login.rememberPassword = false;
+        }
 
         logger.log("loaded WordPress configuration", "wordpress service");
         onCompletionCallback(_login);
       });
     };
 
-    var callWordPress = function(methodName, additionalParams, onSuccessCallback, onErrorCallback) {
+    var obtainCredentialsFromUserIfNeeded = function(onSuccessCallback) {
+      console.log("in obtainCredentialsFromUserIfNeeded");
 
+      var getLoginIfNeeded = function() {
+        console.log("in getLoginIfNeeded");
+
+        if (!isLoginValid()) {
+          console.log("in getLoginIfNeeded, login not valid, opening dialog");
+          var d = $dialog.dialog({
+            controller: 'LoginController',
+            templateUrl: 'views/modals/login.html'
+          });
+
+          d.open().then(function() {
+            if (isLoginValid()) {
+              onSuccessCallback();
+            } else {
+              onErrorCallback("cannot execute call, invalid credentials for WordPress blog");
+              logger.log("cannot execute call, invalid credentials for WordPress blog", "wordpress service");
+            }
+          });
+        } else {
+          console.log("in getLoginIfNeeded, login valid, calling onSuccessCallback");
+          onSuccessCallback();
+        }
+      };
+
+      if (_.isEmpty(_login)) {
+        console.log("login empty, loading credentials");
+        loadCredentialsFromStorage(getLoginIfNeeded);
+      } else {
+        console.log("login not empty, moving on");
+        getLoginIfNeeded();
+      }
+    };
+
+    var callWordPress = function(methodName, additionalParams, onSuccessCallback, onErrorCallback) {
       var codeToRun = function() {
         var loginParams = [DEFAULT_BLOG_ID, _login.username, _login.password];
         var fullParams = loginParams.concat(additionalParams);
@@ -47,37 +90,22 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
         });
       };
 
-      var obtainCredentialsFromUserIfNeeded = function() {
-
-        if (!isLoginValid()) {
-          var d = $dialog.dialog({
-            controller: 'LoginController',
-            templateUrl: 'views/modals/login.html'
-          });
-
-          d.open().then(function() {
-            if (isLoginValid()) {
-              codeToRun();
-            } else {
-              onErrorCallback("cannot execute call, invalid credentials for WordPress blog");
-              logger.log("cannot execute call, invalid credentials for WordPress blog", "wordpress service");
-            }
-          });
-        } else {
-          codeToRun();
-        }
-      };
-
-      if (_.isEmpty(_login)) {
-        loadCredentialsFromStorage(obtainCredentialsFromUserIfNeeded);
+      if (isLoginValid) {
+        console.log("in callWordPress, login valid");
+        codeToRun();
       } else {
-        obtainCredentialsFromUserIfNeeded();
+        console.log("in callWordPress, login invalid, getting login");
+        obtainCredentialsFromUserIfNeeded(codeToRun);
       }
     };
 
     return {
       loadCredentials: function(onCompletionCallback) {
         loadCredentialsFromStorage(onCompletionCallback);
+      },
+
+      getCredentials: function(onSuccessCallback) {
+        obtainCredentialsFromUserIfNeeded(onSuccessCallback);
       },
 
       saveCredentials: function(login) {
