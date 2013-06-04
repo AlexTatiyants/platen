@@ -1,4 +1,4 @@
-/*! DEV ! platen 2013-06-03 */
+/*! DEV ! platen 2013-06-04 */
 (function(e, t) {
     var n, r, i = typeof t, o = e.document, a = e.location, s = e.jQuery, u = e.$, l = {}, c = [], p = "1.9.1", f = c.concat, d = c.push, h = c.slice, g = c.indexOf, m = l.toString, y = l.hasOwnProperty, v = p.trim, b = function(e, t) {
         return new b.fn.init(e, t, r);
@@ -12089,15 +12089,9 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     }, function(error) {
         notify("error initializing file system", error, false);
     });
-    $scope.fonts.push("serif");
-    $scope.fonts.push("sans-serif");
-    $scope.fonts.push("economica");
-    $scope.fonts.push("inconsolata");
-    $scope.fonts.push("goudy");
-    $scope.fonts.push("merriweather");
-    $scope.fonts.push("arvo");
-    $scope.fonts.push("cabin");
-    $scope.fonts.push("crimson text");
+    _.each(settings.fonts, function(font) {
+        $scope.fonts.push(font);
+    });
     if (chrome.fontSettings) {
         logger.log("adding system fonts", "MainController");
         $scope.systemFontsAvailable = true;
@@ -12811,9 +12805,11 @@ angular.module("platen.services").factory("settings", function() {
         dark: "dark",
         gray: "gray"
     };
+    var FONTS = [ "sans", "serif", "arvo", "cabin", "crimson text", "droid sans", "droid serif", "droid sans mono", "economica", "francois one", "goudy", "inconsolata", "josefin sans", "josefin slab", "libre baskerville", "lobster", "lobster two", "maven pro", "merriweather sans", "open sans", "oswald", "PT sans", "PT serif", "PT mono", "ubuntu", "ubuntu mono" ];
     return {
         themes: THEMES,
         defaults: DEFAULTS,
+        fonts: FONTS,
         load: function(onCompletionCallback) {
             chrome.storage.local.get(LOCAL_STORAGE_SETTINGS_KEY, function(rawValue) {
                 var settings = {};

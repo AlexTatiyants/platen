@@ -42,16 +42,9 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     notify("error initializing file system", error, false);
   });
 
-  // initialize fonts
-  $scope.fonts.push("serif");
-  $scope.fonts.push("sans-serif");
-  $scope.fonts.push('economica');
-  $scope.fonts.push('inconsolata');
-  $scope.fonts.push('goudy');
-  $scope.fonts.push('merriweather');
-  $scope.fonts.push('arvo');
-  $scope.fonts.push('cabin');
-  $scope.fonts.push('crimson text');
+  _.each(settings.fonts, function(font) {
+    $scope.fonts.push(font);
+  });
 
   if (chrome.fontSettings) {
     logger.log("adding system fonts", "MainController");

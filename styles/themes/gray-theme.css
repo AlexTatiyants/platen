@@ -23,7 +23,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 @font-face {
-  font-family: 'merriweather';
+  font-family: 'merriweather sans light';
   src: url('/fonts/MerriweatherSans-Light.ttf');
   font-weight: 300;
   font-style: normal;
@@ -46,6 +46,139 @@ body {
 @font-face {
   font-family: 'crimson text';
   src: url('/fonts/CrimsonText-Roman.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'droid sans';
+  src: url('/fonts/DroidSans.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'droid serif';
+  src: url('/fonts/DroidSerif.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'droid sans mono';
+  src: url('/fonts/DroidSansMono.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'francois one';
+  src: url('/fonts/FrancoisOne.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'josefin sans';
+  src: url('/fonts/JosefinSans-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'josefin slab';
+  src: url('/fonts/JosefinSlab-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'libre baskerville';
+  src: url('/fonts/LibreBaskerville-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'lobster';
+  src: url('/fonts/Lobster.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'lobster two';
+  src: url('/fonts/LobsterTwo-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'maven pro';
+  src: url('/fonts/MavenPro-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'merriweather sans';
+  src: url('/fonts/MerriweatherSans-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'open sans';
+  src: url('/fonts/OpenSans-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'PT sans';
+  src: url('/fonts/PT_Sans-Web-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'nobile';
+  src: url('/fonts/nobile.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'ubuntu';
+  src: url('/fonts/Ubuntu-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'ubuntu mono';
+  src: url('/fonts/UbuntuMono-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'PT serif';
+  src: url('/fonts/PT_Serif-Web-Regular.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'PT mono';
+  src: url('/fonts/PTM55FT.ttf');
+  font-weight: 300;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+}
+@font-face {
+  font-family: 'owsald';
+  src: url('/fonts/Oswald-Regular.ttf');
   font-weight: 300;
   font-style: normal;
   -webkit-font-smoothing: antialiased;

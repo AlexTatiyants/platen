@@ -30,9 +30,39 @@ angular.module('platen.services').factory('settings', function() {
     gray: 'gray'
   };
 
+  var FONTS = [
+    'sans',
+    'serif',
+    'arvo',
+    'cabin',
+    'crimson text',
+    'droid sans',
+    'droid serif',
+    'droid sans mono',
+    'economica',
+    'francois one',
+    'goudy',
+    'inconsolata',
+    'josefin sans',
+    'josefin slab',
+    'libre baskerville',
+    'lobster',
+    'lobster two',
+    'maven pro',
+    'merriweather sans',
+    'open sans',
+    'oswald',
+    'PT sans',
+    'PT serif',
+    'PT mono',
+    'ubuntu',
+    'ubuntu mono'
+  ];
+
   return {
     themes: THEMES,
     defaults: DEFAULTS,
+    fonts: FONTS,
 
     load: function(onCompletionCallback) {
       chrome.storage.local.get(LOCAL_STORAGE_SETTINGS_KEY, function(rawValue) {
