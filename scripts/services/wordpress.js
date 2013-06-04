@@ -1,5 +1,5 @@
-angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
-  function($dialog, logger) {
+angular.module('platen.services').factory('wordpress', ['$dialog', '$rootScope', 'logger',
+  function($dialog, $rootScope, logger) {
     var POST_TYPE = 'post';
     var TAG_TYPE = 'post_tag';
     var CATEGORY_TYPE = 'category';
@@ -34,12 +34,10 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
       });
     };
 
-    var obtainCredentialsFromUserIfNeeded = function(onSuccessCallback) {
+    var obtainCredentialsFromUserIfNeeded = function(onSuccessCallback, onErrorCallback) {
       console.log("in obtainCredentialsFromUserIfNeeded");
 
       var getLoginIfNeeded = function() {
-        console.log("in getLoginIfNeeded");
-
         if (!isLoginValid()) {
           console.log("in getLoginIfNeeded, login not valid, opening dialog");
           var d = $dialog.dialog({
@@ -55,6 +53,9 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
               logger.log("cannot execute call, invalid credentials for WordPress blog", "wordpress service");
             }
           });
+
+          $rootScope.$apply();
+
         } else {
           console.log("in getLoginIfNeeded, login valid, calling onSuccessCallback");
           onSuccessCallback();
@@ -95,17 +96,17 @@ angular.module('platen.services').factory('wordpress', ['$dialog', 'logger',
         codeToRun();
       } else {
         console.log("in callWordPress, login invalid, getting login");
-        obtainCredentialsFromUserIfNeeded(codeToRun);
+        obtainCredentialsFromUserIfNeeded(codeToRun, onErrorCallback);
       }
     };
 
     return {
-      loadCredentials: function(onCompletionCallback) {
-        loadCredentialsFromStorage(onCompletionCallback);
+      loadCredentials: function(onCompletionCallback, onErrorCallback) {
+        loadCredentialsFromStorage(onCompletionCallback, onErrorCallback);
       },
 
-      getCredentials: function(onSuccessCallback) {
-        obtainCredentialsFromUserIfNeeded(onSuccessCallback);
+      getCredentials: function(onSuccessCallback, onErrorCallback) {
+        obtainCredentialsFromUserIfNeeded(onSuccessCallback, onErrorCallback);
       },
 
       saveCredentials: function(login) {

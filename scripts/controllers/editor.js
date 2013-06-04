@@ -211,17 +211,26 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       }, function(error) {
         notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
       });
+    }, function(error) {
+      notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
     });
   };
 
   $scope.getTags = function() {
-    wordpress.getTags(function(tags) {
-      _.each(tags[0], function(tag) {
-        $scope.tags.push(tag);
+    $scope.$emit(resources.events.PROCESSING_STARTED, "getting tags from WordPress");
+
+    wordpress.getCredentials(function() {
+      wordpress.getTags(function(tags) {
+        _.each(tags[0], function(tag) {
+          $scope.tags.push(tag);
+        });
+        notifyOnCompletion("got tags from WordPress", null, true);
+        $scope.safeApply();
+      }, function(error) {
+        notifyOnCompletion("error loading tags from WordPress", error, false);
+      }, function(error) {
+        notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
       });
-      $scope.safeApply();
-    }, function(error) {
-      notifyOnCompletion("error loading tags from WordPress", error, false);
     });
   };
 
