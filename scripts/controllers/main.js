@@ -51,9 +51,16 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.systemFontsAvailable = true;
 
     chrome.fontSettings.getFontList(function(fonts) {
+
       // add available system fonts
+      var lowerCasedFonts = settings.fonts.map(function(font) {
+          return font.toLowerCase();
+      });
+
       _.each(fonts, function(font) {
-        $scope.fonts.push(font.fontId);
+        if (_.indexOf(lowerCasedFonts, font.fontId.toLowerCase()) === -1) {
+          $scope.fonts.push(font.fontId);
+        }
       });
     });
   }

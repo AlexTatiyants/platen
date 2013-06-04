@@ -31,8 +31,8 @@ angular.module('platen.services').factory('settings', function() {
   };
 
   var FONTS = [
-    'sans',
     'serif',
+    'sans-serif',
     'arvo',
     'cabin',
     'crimson text',
