@@ -1,4 +1,4 @@
-var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings) {
+var MainController = function($rootScope, $scope, $dialog, $timeout, fileManager, logger, resources, settings) {
   var FADE_DURATION = 3000;
   $scope.optionsPanelVisible = false;
   $scope.aboutDialogOpen = false;
@@ -262,7 +262,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     $scope.deleteAllImagesConfirmOpen = false;
   };
 
-  $scope.safeApply = function(fn) {
+  $rootScope.safeApply = $scope.safeApply = function(fn) {
     var phase = this.$root.$$phase;
     if (phase == '$apply' || phase == '$digest') {
       if (fn && (typeof(fn) === 'function')) {
@@ -274,4 +274,4 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
   };
 };
 
-MainController.$inject = ['$scope', '$dialog', '$timeout', 'fileManager', 'logger', 'resources', 'settings'];
+MainController.$inject = ['$rootScope', '$scope', '$dialog', '$timeout', 'fileManager', 'logger', 'resources', 'settings'];

@@ -11877,7 +11877,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
             }, function(error) {
                 notifyOnCompletion("error loading tags from WordPress", error, false);
             }, function(error) {
-                notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
+                notifyOnCompletion("error loading tags from WordPress", error, false);
             });
         });
     };
@@ -11891,13 +11891,19 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
         }
     };
     $scope.getCategories = function() {
-        wordpress.getCategories(function(categories) {
-            _.each(categories[0], function(category) {
-                $scope.categories.push(category);
+        $scope.$emit(resources.events.PROCESSING_STARTED, "getting categories from WordPress");
+        wordpress.getCredentials(function() {
+            wordpress.getCategories(function(categories) {
+                _.each(categories[0], function(category) {
+                    $scope.categories.push(category);
+                });
+                notifyOnCompletion("got categories from WordPress", null, true);
+                $scope.safeApply();
+            }, function(error) {
+                notifyOnCompletion("error loading categories from WordPress", error, false);
+            }, function(error) {
+                notifyOnCompletion("error loading categories from WordPress", error, false);
             });
-            $scope.safeApply();
-        }, function(error) {
-            notifyOnCompletion("error loading categories from WordPress", error, false);
         });
     };
     $scope.addCategory = function(category) {
@@ -12026,7 +12032,6 @@ var ImagesController = function($scope, fileManager, logger, resources) {
 ImagesController.$inject = [ "$scope", "fileManager", "logger", "resources" ];
 
 var LoginController = function($scope, dialog, wordpress) {
-    console.log("opening login dialog");
     wordpress.loadCredentials(function(login) {
         $scope.login = {
             url: login.url,
@@ -12038,12 +12043,10 @@ var LoginController = function($scope, dialog, wordpress) {
     });
     $scope.submit = function() {
         wordpress.saveCredentials($scope.login);
-        console.log("closing login dialog");
         dialog.close();
     };
     $scope.resetCredentials = function() {
         wordpress.resetCredentials();
-        console.log("closing login dialog");
         dialog.close();
     };
     $scope.cancel = function() {
@@ -12059,7 +12062,7 @@ var LogsController = function($scope, logger) {
 
 LogsController.$inject = [ "$scope", "logger" ];
 
-var MainController = function($scope, $dialog, $timeout, fileManager, logger, resources, settings) {
+var MainController = function($rootScope, $scope, $dialog, $timeout, fileManager, logger, resources, settings) {
     var FADE_DURATION = 3e3;
     $scope.optionsPanelVisible = false;
     $scope.aboutDialogOpen = false;
@@ -12273,7 +12276,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
         });
         $scope.deleteAllImagesConfirmOpen = false;
     };
-    $scope.safeApply = function(fn) {
+    $rootScope.safeApply = $scope.safeApply = function(fn) {
         var phase = this.$root.$$phase;
         if (phase == "$apply" || phase == "$digest") {
             if (fn && typeof fn === "function") {
@@ -12285,7 +12288,7 @@ var MainController = function($scope, $dialog, $timeout, fileManager, logger, re
     };
 };
 
-MainController.$inject = [ "$scope", "$dialog", "$timeout", "fileManager", "logger", "resources", "settings" ];
+MainController.$inject = [ "$rootScope", "$scope", "$dialog", "$timeout", "fileManager", "logger", "resources", "settings" ];
 
 var PostsController = function($scope, $location, fileManager, logger, resources) {
     $scope.postsList = [];
@@ -12851,71 +12854,75 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "$rootScope"
     var CATEGORY_TYPE = "category";
     var DEFAULT_BLOG_ID = 1;
     var DEFAULT_AUTHOR_ID = 1;
-    var _login = {};
     var LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY = "platen.wordPressCredentials";
-    var isLoginValid = function() {
-        return !_.isEmpty(_login) && _login.url.trim() !== "" && _login.username.trim() !== "" && _login.password.trim() !== "";
+    var _credentials = {};
+    var areCredentialsValid = function() {
+        return !_.isEmpty(_credentials) && _credentials.url.trim() !== "" && _credentials.username.trim() !== "" && _credentials.password.trim() !== "";
+    };
+    var valueOrDefault = function(value, defaultValue) {
+        if (value !== null) {
+            return value;
+        } else {
+            if (defaultValue) {
+                return defaultValue;
+            } else {
+                return "";
+            }
+        }
     };
     var loadCredentialsFromStorage = function(onCompletionCallback) {
-        console.log("in loadCredentialsFromStorage");
         chrome.storage.local.get(LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY, function(storedValues) {
             if (storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY]) {
-                _login.url = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].url || "";
-                _login.password = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].password || _login.currentSessionCachedPassword || "";
-                _login.username = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].username || "";
-                _login.rememberPassword = storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].rememberPassword || false;
+                _credentials.url = valueOrDefault(storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].url, "");
+                _credentials.password = valueOrDefault(storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].password, _credentials.currentSessionCachedPassword);
+                _credentials.username = valueOrDefault(storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].username, "");
+                _credentials.rememberPassword = valueOrDefault(storedValues[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY].rememberPassword, false);
             } else {
-                _login.url = "";
-                _login.username = "";
-                _login.password = "";
-                _login.rememberPassword = false;
+                _credentials.url = "";
+                _credentials.username = "";
+                _credentials.password = "";
+                _credentials.rememberPassword = false;
             }
             logger.log("loaded WordPress configuration", "wordpress service");
-            onCompletionCallback(_login);
+            onCompletionCallback(_credentials);
         });
     };
     var obtainCredentialsFromUserIfNeeded = function(onSuccessCallback, onErrorCallback) {
-        console.log("in obtainCredentialsFromUserIfNeeded");
-        var getLoginIfNeeded = function() {
-            if (!isLoginValid()) {
-                console.log("in getLoginIfNeeded, login not valid, opening dialog");
+        var createLoginDialog = function() {
+            if (!areCredentialsValid()) {
                 var d = $dialog.dialog({
                     controller: "LoginController",
                     templateUrl: "views/modals/login.html"
                 });
                 d.open().then(function() {
-                    if (isLoginValid()) {
+                    if (areCredentialsValid()) {
                         onSuccessCallback();
                     } else {
                         onErrorCallback("cannot execute call, invalid credentials for WordPress blog");
                         logger.log("cannot execute call, invalid credentials for WordPress blog", "wordpress service");
                     }
                 });
-                $rootScope.$apply();
+                $rootScope.safeApply();
             } else {
-                console.log("in getLoginIfNeeded, login valid, calling onSuccessCallback");
                 onSuccessCallback();
             }
         };
-        if (_.isEmpty(_login)) {
-            console.log("login empty, loading credentials");
-            loadCredentialsFromStorage(getLoginIfNeeded);
+        if (_.isEmpty(_credentials)) {
+            loadCredentialsFromStorage(createLoginDialog);
         } else {
-            console.log("login not empty, moving on");
-            getLoginIfNeeded();
+            createLoginDialog();
         }
     };
     var callWordPress = function(methodName, additionalParams, onSuccessCallback, onErrorCallback) {
         var codeToRun = function() {
-            var loginParams = [ DEFAULT_BLOG_ID, _login.username, _login.password ];
+            var loginParams = [ DEFAULT_BLOG_ID, _credentials.username, _credentials.password ];
             var fullParams = loginParams.concat(additionalParams);
-            var fullUrl = _login.url.replace(/\/$/, "") + "/xmlrpc.php";
+            var fullUrl = _credentials.url.replace(/\/$/, "") + "/xmlrpc.php";
             $.xmlrpc({
                 url: fullUrl,
                 methodName: methodName,
                 params: fullParams,
                 success: function(response, status, jqXHR) {
-                    console.log("response from wordpress for call " + methodName, response);
                     onSuccessCallback(response);
                 },
                 error: function(jqXHR, status, error) {
@@ -12923,11 +12930,9 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "$rootScope"
                 }
             });
         };
-        if (isLoginValid) {
-            console.log("in callWordPress, login valid");
+        if (areCredentialsValid) {
             codeToRun();
         } else {
-            console.log("in callWordPress, login invalid, getting login");
             obtainCredentialsFromUserIfNeeded(codeToRun, onErrorCallback);
         }
     };
@@ -12938,27 +12943,29 @@ angular.module("platen.services").factory("wordpress", [ "$dialog", "$rootScope"
         getCredentials: function(onSuccessCallback, onErrorCallback) {
             obtainCredentialsFromUserIfNeeded(onSuccessCallback, onErrorCallback);
         },
-        saveCredentials: function(login) {
+        saveCredentials: function(userSuppliedCredentials) {
             var saveMe = {};
-            if (!login.rememberPassword) {
-                login.currentSessionCachedPassword = login.password;
-                login.password = "";
+            _.each(userSuppliedCredentials, function(value, key, list) {
+                _credentials[key] = userSuppliedCredentials[key];
+            });
+            if (!userSuppliedCredentials.rememberPassword) {
+                _credentials.currentSessionCachedPassword = userSuppliedCredentials.password;
+                userSuppliedCredentials.password = "";
             }
-            _login = login;
-            saveMe[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY] = login;
+            saveMe[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY] = userSuppliedCredentials;
             chrome.storage.local.set(saveMe, function() {
-                logger.log("saved login credentials for blog '" + login.url + "'", "wordpress service");
+                logger.log("saved login credentials for blog '" + _credentials.url + "'", "wordpress service");
             });
         },
         resetCredentials: function() {
-            _login = {
+            _credentials = {
                 url: "",
                 username: "",
                 password: "",
                 rememberPassword: false
             };
             var saveMe = {};
-            saveMe[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY] = _login;
+            saveMe[LOCAL_STORAGE_WORDPRESS_CREDENTIALS_KEY] = _credentials;
             chrome.storage.local.set(saveMe, function() {
                 logger.log("reset credentials", "wordpress service");
             });

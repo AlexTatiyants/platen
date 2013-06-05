@@ -1,7 +1,4 @@
 var LoginController = function($scope, dialog, wordpress) {
-
-  console.log("opening login dialog");
-
   wordpress.loadCredentials(function(login) {
     $scope.login = {
       url: login.url,
@@ -14,13 +11,11 @@ var LoginController = function($scope, dialog, wordpress) {
 
   $scope.submit = function() {
     wordpress.saveCredentials($scope.login);
-    console.log("closing login dialog");
     dialog.close();
   };
 
   $scope.resetCredentials = function() {
     wordpress.resetCredentials();
-    console.log("closing login dialog");
     dialog.close();
   };
 

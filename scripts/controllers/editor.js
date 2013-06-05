@@ -229,7 +229,7 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
       }, function(error) {
         notifyOnCompletion("error loading tags from WordPress", error, false);
       }, function(error) {
-        notifyOnCompletion("error uploading post '" + $scope.post.title + "'", error, false);
+        notifyOnCompletion("error loading tags from WordPress", error, false);
       });
     });
   };
@@ -245,13 +245,20 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
   };
 
   $scope.getCategories = function() {
-    wordpress.getCategories(function(categories) {
-      _.each(categories[0], function(category) {
-        $scope.categories.push(category);
+    $scope.$emit(resources.events.PROCESSING_STARTED, "getting categories from WordPress");
+
+    wordpress.getCredentials(function() {
+      wordpress.getCategories(function(categories) {
+        _.each(categories[0], function(category) {
+          $scope.categories.push(category);
+        });
+        notifyOnCompletion("got categories from WordPress", null, true);
+        $scope.safeApply();
+      }, function(error) {
+        notifyOnCompletion("error loading categories from WordPress", error, false);
+      }, function(error) {
+        notifyOnCompletion("error loading categories from WordPress", error, false);
       });
-      $scope.safeApply();
-    }, function(error) {
-      notifyOnCompletion("error loading categories from WordPress", error, false);
     });
   };
 
