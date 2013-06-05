@@ -11,6 +11,7 @@ module.exports = function(grunt) {
       'vendor/marked.js',
       'vendor/moment.min.js',
       'vendor/underscore.1.4.4.min.js',
+      'vendor/embedded_ga_host.js',
       'scripts/app.js',
       'scripts/*/*.js'
   ];

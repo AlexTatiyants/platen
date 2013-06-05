@@ -19,5 +19,8 @@
   "icons": {
     "16": "images/icon_16.png",
     "128": "images/icon_128.png"
+  },
+  "sandbox": {
+    "pages": ["views/embedded_ga_host.html"]
   }
 }

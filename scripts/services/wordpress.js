@@ -41,7 +41,7 @@ angular.module('platen.services').factory('wordpress', ['$dialog', '$rootScope',
           _credentials.rememberPassword = false;
         }
 
-        logger.log("loaded WordPress configuration", "wordpress service");
+        logger.log("loaded login credentials", "wordpress service");
         onCompletionCallback(_credentials);
       });
     };
