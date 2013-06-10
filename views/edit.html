@@ -36,7 +36,9 @@
             <span>last uploaded:<strong>
               <span data-ng-show="post.state.lastUploadDate" data-ng-bind="post.state.lastUploadDate | date:'short'"></span>
               <span data-ng-show="!post.state.lastUploadDate">never</span></strong>
-              <span data-ng-show="post.wordPressId>0">WordPress id: <span data-ng-bind="post.wordPressId"></span></span>
+              <span data-ng-show="post.wordPressId>0">WordPress id: <span data-ng-bind="post.wordPressId"></span>
+                <button class="btn small" data-ng-click="resetWordPressInfo()">reset</button>
+              </span>
             </span>
           </span>
         </div>

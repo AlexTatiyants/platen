@@ -1069,7 +1069,7 @@ aside.page-links h3 {
 }
 .status-bar {
   position: fixed;
-  bottom: 20px;
+  bottom: 40px;
   margin-left: 10px;
   width: 100%;
   height: 40px;
@@ -1111,7 +1111,7 @@ aside.page-links h3 {
   left: 23px;
 }
 .processing {
-  background-color: #8c8c8c;
+  background-color: #262626;
 }
 .error {
   background-color: #f26a57;
@@ -1122,8 +1122,8 @@ aside.page-links h3 {
 .status-message-common {
   float: left;
   position: absolute;
-  top: 6px;
-  left: 62px;
+  top: 15px;
+  left: 59px;
   width: 85%;
   padding: 10px;
   color: #ffffff;
@@ -1143,8 +1143,8 @@ aside.page-links h3 {
 .status-message.error {
   float: left;
   position: absolute;
-  top: 6px;
-  left: 62px;
+  top: 15px;
+  left: 59px;
   width: 85%;
   padding: 10px;
   color: #ffffff;
@@ -1165,8 +1165,8 @@ aside.page-links h3 {
 .status-message.success {
   float: left;
   position: absolute;
-  top: 6px;
-  left: 62px;
+  top: 15px;
+  left: 59px;
   width: 85%;
   padding: 10px;
   color: #ffffff;

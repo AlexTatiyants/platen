@@ -3,10 +3,9 @@ module.exports = function(grunt) {
 
   var all_scripts = ['vendor/jquery-1.9.1.min.js',
       'vendor/jquery.xmlrpc.min.js',
-      'vendor/mimic.js',
       'vendor/wordpress.min.js',
       'vendor/angular.min.1.1.5.js',
-      'vendor/ui-bootstrap-0.3.0.js',
+      'vendor/ui-bootstrap-0.3.0.min.js',
       'vendor/angular-ui.min.js',
       'vendor/marked.js',
       'vendor/moment.min.js',

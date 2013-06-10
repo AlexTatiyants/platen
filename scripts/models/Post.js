@@ -110,6 +110,7 @@ angular.module('platen.models').factory('Post', ['$rootScope', '$q', 'resources'
 
     var replaceImageHtml = function(content, image) {
       var imgReplacement = '<a href="' + image.blogUrl + '"><img class="align' + image.alignment;
+      var endingPTag = '';
 
       if (image.width > 0) {
         imgReplacement += '" width="' + image.width;
@@ -117,9 +118,14 @@ angular.module('platen.models').factory('Post', ['$rootScope', '$q', 'resources'
 
       imgReplacement += '" src="' + image.blogUrl;
 
+      if (image.alignment === 'center') {
+        imgReplacement = '<p style="text-align: center;">' + imgReplacement;
+        endingPTag = '</p>';
+      }
+
       return content
         .replace('<img src="' + image.localUrl, imgReplacement)
-        .replace('alt="' + image.title + '">', 'alt="' + image.title + '"></a>');
+        .replace('alt="' + image.name + '">', 'alt="' + image.name + '"></a>') + endingPTag;
     };
 
     return {
@@ -180,7 +186,15 @@ angular.module('platen.models').factory('Post', ['$rootScope', '$q', 'resources'
         } catch (e) {
           onErrorCallback(e);
         }
-      }
-    };
+      },
+
+      resetWordPressInfo: function() {
+        data.wordPressId = 0;
+        _.each(data.images, function(image) {
+            image.blogUrl = null;
+            image.blogId = null;
+        });     
+      },
+    }; 
   }
 ]);

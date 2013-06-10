@@ -342,6 +342,10 @@ var EditorController = function(Post, $scope, $routeParams, $filter, fileManager
 
     savePost();
   };
+
+  $scope.resetWordPressInfo = function() {
+    Post.resetWordPressInfo();
+  };
 };
 
 EditorController.$inject = ['Post', '$scope', '$routeParams', '$filter', 'fileManager', 'wordpress', 'logger', 'resources', 'settings'];

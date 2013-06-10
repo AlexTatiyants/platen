@@ -191,12 +191,19 @@ angular.module('platen.services').factory('wordpress', ['$dialog', '$rootScope',
       },
 
       uploadFile: function(fileName, fileType, fileData, onSuccessCallback, onErrorCallback) {
-        var base64EncodedFile = new Base64(fileData);
+        // though the jquery xmlrpc library does have a base64 type, its implementation doesn't
+        // leverage native btoa() and atob() methods. The code below overrides the default implementation
+        
+        $.xmlrpc.makeType('base64', true, function(value) {
+          return btoa(value);
+        }, function(text) {
+          return atob(text);
+        });
 
         var file = {
           name: fileName,
           type: fileType,
-          bits: $.xmlrpc.binary.fromBase64(base64EncodedFile.bytes),
+          bits: $.xmlrpc.force('base64', fileData),
           overwrite: false
         };
 

@@ -5,7 +5,7 @@
 @status-light-top: 27px;
 
 @circle-radius: 30px;
-@circle-border: 6px;
+@circle-border: 15px;
 @top-margin: @pad-unit;
 @left-margin: @pad-unit * 0.5;
 
@@ -14,7 +14,7 @@
 
 .status-bar {
   position: fixed;
-  bottom: @pad-unit;
+  bottom: @pad-unit*2;
   margin-left: @pad-unit/2;
   width: 100%;
   height: @status-bar-height;
@@ -65,7 +65,7 @@
 }
 
 .processing {
-  background-color: @text-color-weak;
+  background-color: @base-color;
 }
 
 .error {
@@ -80,7 +80,7 @@
   float: left;
   position: absolute;
   top: @circle-border;
-  left: @pad-unit * 0.5 + @left-margin + @circle-radius + @circle-border * 2;
+  left: @left-margin + @circle-radius + @circle-border + @pad-unit/5;
   width: 85%;
   padding: @pad-unit * 0.5;
   color: @status-text-color;
