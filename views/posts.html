@@ -26,6 +26,7 @@
                 <strong data-ng-bind="post.status"></strong>
             </span>
         </li>
+        <li id="no-posts-found" class="list-item-line" ng-hide="postsList.length">no posts yet. <a href="#/posts/0">start writing one?</a></li>
     </ul>
 
     <div id="delete-post-confirm">
