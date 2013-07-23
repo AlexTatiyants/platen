@@ -10,6 +10,10 @@ var LoginController = function($scope, dialog, wordpress) {
   });
 
   $scope.submit = function() {
+    // Ensure that the url starts with a http, if it isn't already specified
+    if(!/^https?:\/\//i.test($scope.login.url)) {
+      $scope.login.url = 'http://' + $scope.login.url;
+    }
     wordpress.saveCredentials($scope.login);
     dialog.close();
   };
